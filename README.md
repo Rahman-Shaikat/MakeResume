@@ -1,58 +1,262 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
-
 <p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
+    <img src="public/assets/common/media/logo.png" width="96" alt="Resume Studio logo">
 </p>
 
-## About Laravel
+<h1 align="center">Resume Studio</h1>
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+<p align="center">
+    Build, customize, save, and export professional resumes from one focused workspace.
+</p>
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+<p align="center">
+    <img src="https://img.shields.io/badge/Laravel-13-FF2D20?logo=laravel&logoColor=white" alt="Laravel 13">
+    <img src="https://img.shields.io/badge/PHP-8.3+-777BB4?logo=php&logoColor=white" alt="PHP 8.3 or newer">
+    <img src="https://img.shields.io/badge/Bootstrap-5.3-7952B3?logo=bootstrap&logoColor=white" alt="Bootstrap 5.3">
+    <img src="https://img.shields.io/badge/Vite-8-646CFF?logo=vite&logoColor=white" alt="Vite 8">
+    <img src="https://img.shields.io/badge/Tests-Pest-805AD5" alt="Tested with Pest">
+</p>
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+## Overview
 
-## Learning Laravel
+Resume Studio is a Laravel-based resume builder designed to help users move from
+a blank page to a polished, print-ready resume. Users create a verified account,
+choose a professionally coded template, edit their information beside a live
+preview, and retain multiple resumes in their personal dashboard.
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+Every template is built with Blade and CSS rather than displayed as a static
+image. Resume content therefore remains editable, responsive, accessible, and
+ready for A4 printing or PDF export.
 
-In addition, [Laracasts](https://laracasts.com) contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+## Features
 
-You can also watch bite-sized lessons with real-world projects on [Laravel Learn](https://laravel.com/learn), where you will be guided through building a Laravel application from scratch while learning PHP fundamentals.
+- Secure registration, login, logout, and signed email verification.
+- Verified-user middleware protecting the dashboard and resume workspace.
+- Six selectable, professionally designed resume templates.
+- Responsive template slider with embedded live previews.
+- Multiple saved resumes per user with direct edit access from the dashboard.
+- Live resume builder with debounced autosaving.
+- Personal details, summary, experience, education, skills, projects, courses,
+  awards, languages, and custom sections.
+- Drag-and-drop ordering for sections and individual entries.
+- Section visibility controls, editable section names, and custom sections.
+- Profile image uploads stored on the public disk under `images/`.
+- Live A4 preview with print and Save as PDF support.
+- Ownership authorization to prevent users from accessing another user's resume.
+- Responsive Bootstrap interface with application-branded email templates.
 
-## Agentic Development
+## Application Workflow
 
-Laravel's predictable structure and conventions make it ideal for AI coding agents like Claude Code, Cursor, and GitHub Copilot. Install [Laravel Boost](https://laravel.com/docs/ai) to supercharge your AI workflow:
+1. Register an account and verify the submitted email address.
+2. Open the dashboard and browse the resume template slider.
+3. Select a template to create a separate resume in the user's workspace.
+4. Add content, upload a profile image, and organize resume sections.
+5. Review changes immediately in the live A4 preview.
+6. Print the finished resume or save it as a PDF.
+7. Return to the dashboard later to edit any previously saved resume.
+
+## Resume Templates
+
+Template configuration is centralized in
+[`config/resume_templates.php`](config/resume_templates.php). The current catalog
+contains:
+
+| Slug | Template |
+| --- | --- |
+| `template-one` | Professional Cyan |
+| `template-two` | Classic Blue Sidebar |
+| `template-three` | Modern Mint Professional |
+| `template-four` | Teal Impact |
+| `template-five` | Structured Indigo |
+| `template-six` | Indigo Profile Sidebar |
+
+Template Blade files are located in
+[`resources/views/resumes/templates`](resources/views/resumes/templates), with
+their dynamic and sample partials stored in
+[`resources/views/resumes/partials`](resources/views/resumes/partials).
+
+## Technology Stack
+
+| Layer | Technology |
+| --- | --- |
+| Backend | PHP 8.3+, Laravel 13 |
+| Frontend | Blade, Bootstrap 5.3, JavaScript, jQuery |
+| Asset pipeline | Vite 8 |
+| Database | MySQL by default; Laravel-supported databases can be configured |
+| Authentication | Laravel session authentication and email verification |
+| File storage | Laravel public filesystem disk |
+| Testing | Pest 5, PHPUnit 13 |
+| Code style | Laravel Pint |
+
+## Requirements
+
+- PHP 8.3 or newer
+- Composer
+- Node.js and npm
+- MySQL or another Laravel-supported database
+- A configured mail transport for delivering verification emails
+
+## Installation
+
+Clone the repository, enter the project directory, and install the dependencies:
 
 ```bash
-composer require laravel/boost --dev
-
-php artisan boost:install
+composer install
+npm install
 ```
 
-Boost provides your agent 15+ tools and skills that help agents build Laravel applications while following best practices.
+Create the environment file and generate an application key:
 
-## Contributing
+```bash
+cp .env.example .env
+php artisan key:generate
+```
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+On Windows PowerShell, use the following command instead of `cp`:
 
-## Code of Conduct
+```powershell
+Copy-Item .env.example .env
+```
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+Configure the application URL and database connection in `.env`:
 
-## Security Vulnerabilities
+```dotenv
+APP_NAME="Resume Studio"
+APP_URL=http://localhost:8000
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=makeresume
+DB_USERNAME=root
+DB_PASSWORD=
+```
 
-## License
+Run the migrations and expose public uploads:
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+```bash
+php artisan migrate
+php artisan storage:link
+```
+
+The storage link is required for profile images. Uploaded files are saved to
+`storage/app/public/images` and served through `/storage/images`.
+
+## Email Verification
+
+Local development uses the `log` mail driver by default, so verification
+messages are written to `storage/logs/laravel.log`. For real email delivery,
+configure an SMTP provider:
+
+```dotenv
+MAIL_MAILER=smtp
+MAIL_HOST=your-smtp-host
+MAIL_PORT=587
+MAIL_SCHEME=smtp
+MAIL_USERNAME=your-username
+MAIL_PASSWORD=your-password
+MAIL_FROM_ADDRESS="hello@example.com"
+MAIL_FROM_NAME="${APP_NAME}"
+```
+
+Verification URLs are signed, throttled, and expire according to
+`EMAIL_VERIFICATION_EXPIRE`.
+
+## Running the Application
+
+Start the Laravel server, queue listener, and Vite development server together:
+
+```bash
+composer run dev
+```
+
+Then open the URL configured in `APP_URL`.
+
+When using Laravel Herd, the PHP application is already served by Herd, so the
+frontend development server can be started separately:
+
+```bash
+npm run dev
+```
+
+## Production Build
+
+Compile optimized frontend assets with:
+
+```bash
+npm run build
+```
+
+For production deployment, also ensure that:
+
+- `APP_ENV=production`
+- `APP_DEBUG=false`
+- the database is migrated with `php artisan migrate --force`
+- the public storage link exists
+- a production mail transport is configured
+- the web server points to the `public` directory
+
+## Testing and Code Quality
+
+Run the complete automated test suite:
+
+```bash
+php vendor/bin/pest
+```
+
+Run only the resume feature tests:
+
+```bash
+php vendor/bin/pest tests/Feature/ResumeTest.php
+```
+
+Check PHP formatting without modifying files:
+
+```bash
+vendor/bin/pint --test
+```
+
+Verify that frontend assets compile:
+
+```bash
+npm run build
+```
+
+## Project Structure
+
+```text
+app/
+|-- Http/Controllers/       Authentication, dashboard, resume, and builder flows
+|-- Http/Requests/          Registration, builder, and upload validation
+|-- Http/Resources/         Resume builder JSON representation
+|-- Models/                 User, Resume, ResumeSection, and ResumeSectionItem
+|-- Notifications/          Branded email verification notification
+|-- Policies/               Resume ownership authorization
+\-- Services/               Resume section initialization and loading
+
+config/
+\-- resume_templates.php    Template catalog and sample content
+
+resources/
+|-- css/app.css             Application, builder, and resume template styles
+|-- js/                     Slider, selection, autosave, and reordering behavior
+\-- views/                  Blade layouts, emails, dashboard, builder, and resumes
+
+public/
+\-- assets/common/media/    Resume Studio logo and favicon
+
+tests/
+\-- Feature/                Authentication, verification, and resume workflows
+```
+
+## Adding Another Resume Template
+
+1. Add the sequential Blade file under `resources/views/resumes/templates`.
+2. Add any template-specific partials under `resources/views/resumes/partials`.
+3. Add an entry and sample data to `config/resume_templates.php`.
+4. Add the template's A4, embedded preview, responsive, and print styles.
+5. Add feature coverage for selection and dynamic section rendering.
+6. Update [`docs/Templates/README.md`](docs/Templates/README.md) with the source
+   reference and sequential application slug.
+
+Keep the same sequential slug across configuration, Blade filenames, partials,
+CSS namespaces, and tests so future template work remains predictable.
