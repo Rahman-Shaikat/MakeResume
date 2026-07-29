@@ -8,7 +8,7 @@
     <title>{{ $content['full_name'] }} - {{ $content['professional_title'] }}</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
-<body class="resume-preview-page temp-one-preview {{ $embedded ? 'is-embedded' : '' }} {{ request()->boolean('builder') ? 'is-builder-embedded' : '' }}">
+<body class="resume-preview-page template-two-preview {{ $embedded ? 'is-embedded' : '' }} {{ request()->boolean('builder') ? 'is-builder-embedded' : '' }}">
     @unless ($embedded)
         <header class="resume-toolbar">
             <a href="{{ route('dashboard') }}" class="btn btn-outline-secondary">
@@ -36,29 +36,29 @@
     @endphp
 
     <main class="resume-canvas">
-        <article class="resume-temp-one">
-            <div class="temp-one-primary">
-                <header class="temp-one-identity {{ $resume?->profile_image ? 'has-photo' : '' }}">
+        <article class="resume-template-two">
+            <div class="template-two-primary">
+                <header class="template-two-identity {{ $resume?->profile_image ? 'has-photo' : '' }}">
                     <div>
                         <h1>{{ $content['full_name'] }}</h1>
                         <h2>{{ $content['professional_title'] }}</h2>
                     </div>
                     @if ($resume?->profile_image)
-                        <div class="temp-one-photo">
+                        <div class="template-two-photo">
                             <img src="{{ Storage::url($resume->profile_image) }}" alt="{{ $content['full_name'] }}">
                         </div>
                     @endif
                 </header>
 
                 @if ($resume)
-                    @include('resumes.partials.temp-one-main')
+                    @include('resumes.partials.template-two-main')
                 @else
-                    @include('resumes.partials.temp-one-sample-main')
+                    @include('resumes.partials.template-two-sample-main')
                 @endif
             </div>
 
-            <aside class="temp-one-sidebar">
-                <section class="temp-one-section temp-one-contact">
+            <aside class="template-two-sidebar">
+                <section class="template-two-section template-two-contact">
                     <h3>Contact</h3>
                     <ul>
                         @if ($content['location']) <li>{{ $content['location'] }}</li> @endif
@@ -71,9 +71,9 @@
                 </section>
 
                 @if ($resume)
-                    @include('resumes.partials.temp-one-sidebar')
+                    @include('resumes.partials.template-two-sidebar')
                 @else
-                    @include('resumes.partials.temp-one-sample-sidebar')
+                    @include('resumes.partials.template-two-sample-sidebar')
                 @endif
             </aside>
         </article>

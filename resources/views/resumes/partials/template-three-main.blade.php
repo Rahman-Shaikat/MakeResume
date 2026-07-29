@@ -1,9 +1,9 @@
 @php
-    $sidebarTypes = ['personal', 'skills', 'education', 'courses', 'awards', 'languages'];
+    $mainTypes = ['summary', 'experience', 'projects'];
 @endphp
 
 @foreach ($sections->where('is_visible', true) as $section)
-    @continue(in_array($section->type, $sidebarTypes, true))
+    @continue(! in_array($section->type, $mainTypes, true))
 
     @php
         $items = $section->items;
@@ -14,21 +14,21 @@
 
     @continue(! $hasContent)
 
-    <section class="temp-one-section temp-one-main-section temp-one-section-{{ $section->type }}">
-        <h3>{{ $section->title }}</h3>
+    <section class="template-three-section template-three-main-section template-three-section-{{ $section->type }}">
+        @include('resumes.partials.template-three-heading', ['type' => $section->type, 'title' => $section->title])
 
         @if ($section->type === 'summary')
-            <p class="temp-one-summary">{{ $content['summary'] }}</p>
+            <p class="template-three-summary">{{ $content['summary'] }}</p>
         @elseif ($section->type === 'experience')
             @foreach ($items as $item)
-                <article class="temp-one-experience">
-                    <p class="temp-one-employer">
+                <article class="template-three-experience">
+                    <div class="template-three-entry-heading">
                         <strong>{{ $item->data['company'] ?? '' }}</strong>
                         @if (filled($item->data['location'] ?? null))
-                            <span>, {{ $item->data['location'] }}</span>
+                            <span>{{ $item->data['location'] }}</span>
                         @endif
-                    </p>
-                    <div class="temp-one-role-row">
+                    </div>
+                    <div class="template-three-entry-heading template-three-role-row">
                         <h4>{{ $item->data['title'] ?? '' }}</h4>
                         @if (filled($item->data['start_date'] ?? null) || filled($item->data['end_date'] ?? null))
                             <time>
@@ -39,40 +39,33 @@
                         @endif
                     </div>
                     @if (filled($item->data['description'] ?? null))
-                        <ul class="temp-one-achievements">
+                        <ul class="template-three-bullets">
                             @foreach (preg_split('/\r\n|\r|\n/', $item->data['description']) as $achievement)
-                                @if (filled($achievement)) <li>{{ $achievement }}</li> @endif
+                                @if (filled($achievement))
+                                    <li>{{ $achievement }}</li>
+                                @endif
                             @endforeach
                         </ul>
                     @endif
                 </article>
             @endforeach
-        @elseif ($section->type === 'projects')
+        @else
             @foreach ($items as $item)
-                <article class="temp-one-project">
-                    <div class="temp-one-project-heading">
-                        <h4>{{ $item->data['name'] ?? '' }}</h4>
-                        @if (filled($item->data['role'] ?? null)) <span>{{ $item->data['role'] }}</span> @endif
+                <article class="template-three-project">
+                    <div class="template-three-entry-heading">
+                        <strong>{{ $item->data['name'] ?? '' }}</strong>
+                        @if (filled($item->data['role'] ?? null))
+                            <span>{{ $item->data['role'] }}</span>
+                        @endif
                     </div>
                     @if (filled($item->data['tech_stack'] ?? null))
-                        <p class="temp-one-tech">{{ $item->data['tech_stack'] }}</p>
+                        <p class="template-three-detail">{{ $item->data['tech_stack'] }}</p>
                     @endif
                     @if (filled($item->data['url'] ?? null))
                         <a href="{{ $item->data['url'] }}" target="_blank" rel="noopener">{{ preg_replace('#^https?://(www\.)?#', '', $item->data['url']) }}</a>
                     @endif
                     @if (filled($item->data['description'] ?? null))
                         <p>{{ $item->data['description'] }}</p>
-                    @endif
-                </article>
-            @endforeach
-        @else
-            @foreach ($items as $item)
-                <article class="temp-one-custom">
-                    @if (filled($item->data['title'] ?? $item->data['name'] ?? null))
-                        <h4>{{ $item->data['title'] ?? $item->data['name'] }}</h4>
-                    @endif
-                    @if (filled($item->data['content'] ?? $item->data['description'] ?? null))
-                        <p>{{ $item->data['content'] ?? $item->data['description'] }}</p>
                     @endif
                 </article>
             @endforeach

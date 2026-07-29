@@ -2,8 +2,8 @@
     $headingType = $type ?? 'custom';
 @endphp
 
-<div class="temp-two-section-heading">
-    <span class="temp-two-heading-icon" aria-hidden="true">
+<div class="template-three-section-heading">
+    <span class="template-three-heading-icon" aria-hidden="true">
         @switch($headingType)
             @case('contact')
                 <svg viewBox="0 0 24 24"><path d="M3 6.5 12 13l9-6.5M4 5h16a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1Z"/></svg>

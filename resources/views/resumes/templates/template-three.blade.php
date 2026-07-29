@@ -8,7 +8,7 @@
     <title>{{ $content['full_name'] }} - {{ $content['professional_title'] }}</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
-<body class="resume-preview-page temp-two-preview {{ $embedded ? 'is-embedded' : '' }} {{ request()->boolean('builder') ? 'is-builder-embedded' : '' }}">
+<body class="resume-preview-page template-three-preview {{ $embedded ? 'is-embedded' : '' }} {{ request()->boolean('builder') ? 'is-builder-embedded' : '' }}">
     @unless ($embedded)
         <header class="resume-toolbar">
             <a href="{{ route('dashboard') }}" class="btn btn-outline-secondary">
@@ -36,10 +36,10 @@
     @endphp
 
     <main class="resume-canvas">
-        <article class="resume-temp-two">
-            <aside class="temp-two-sidebar">
-                <section class="temp-two-section temp-two-contact">
-                    @include('resumes.partials.temp-two-heading', ['type' => 'contact', 'title' => 'Contacts'])
+        <article class="resume-template-three">
+            <aside class="template-three-sidebar">
+                <section class="template-three-section template-three-contact">
+                    @include('resumes.partials.template-three-heading', ['type' => 'contact', 'title' => 'Contacts'])
                     <ul>
                         @if ($content['phone'])
                             <li><span aria-hidden="true">☎</span>{{ $content['phone'] }}</li>
@@ -61,18 +61,18 @@
                 </section>
 
                 @if ($resume)
-                    @include('resumes.partials.temp-two-sidebar')
+                    @include('resumes.partials.template-three-sidebar')
                 @else
-                    @include('resumes.partials.temp-two-sample-sidebar')
+                    @include('resumes.partials.template-three-sample-sidebar')
                 @endif
             </aside>
 
-            <div class="temp-two-primary">
-                <header class="temp-two-identity">
-                    <div class="temp-two-name-row {{ $resume?->profile_image ? 'has-photo' : '' }}">
+            <div class="template-three-primary">
+                <header class="template-three-identity">
+                    <div class="template-three-name-row {{ $resume?->profile_image ? 'has-photo' : '' }}">
                         <h1>{{ $content['full_name'] }}</h1>
                         @if ($resume?->profile_image)
-                            <div class="temp-two-photo">
+                            <div class="template-three-photo">
                                 <img src="{{ Storage::url($resume->profile_image) }}" alt="{{ $content['full_name'] }}">
                             </div>
                         @endif
@@ -81,9 +81,9 @@
                 </header>
 
                 @if ($resume)
-                    @include('resumes.partials.temp-two-main')
+                    @include('resumes.partials.template-three-main')
                 @else
-                    @include('resumes.partials.temp-two-sample-main')
+                    @include('resumes.partials.template-three-sample-main')
                 @endif
             </div>
         </article>

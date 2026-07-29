@@ -108,33 +108,32 @@
                         <h2>Choose a resume template</h2>
                         <p>Each selection creates a separate resume in your workspace.</p>
                     </div>
-                    <div class="template-heading-actions">
-                        <span class="template-count">{{ count($templates) }} {{ Str::plural('template', count($templates)) }}</span>
-                        @if (count($templates) > 1)
-                            <div class="template-slider-controls" role="group" aria-label="Resume template navigation">
-                                <button
-                                    type="button"
-                                    data-template-slider-previous
-                                    aria-label="Show previous templates"
-                                    aria-controls="resume-template-slider"
-                                    disabled
-                                >
-                                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg>
-                                </button>
-                                <button
-                                    type="button"
-                                    data-template-slider-next
-                                    aria-label="Show next templates"
-                                    aria-controls="resume-template-slider"
-                                >
-                                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>
-                                </button>
-                            </div>
-                        @endif
-                    </div>
+                    <span class="template-count">{{ count($templates) }} {{ Str::plural('template', count($templates)) }}</span>
                 </div>
 
                 <div class="template-slider">
+                    @if (count($templates) > 1)
+                        <div class="template-slider-controls" role="group" aria-label="Resume template navigation">
+                            <button
+                                type="button"
+                                data-template-slider-previous
+                                aria-label="Show previous templates"
+                                aria-controls="resume-template-slider"
+                                disabled
+                            >
+                                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg>
+                            </button>
+                            <button
+                                type="button"
+                                data-template-slider-next
+                                aria-label="Show next templates"
+                                aria-controls="resume-template-slider"
+                            >
+                                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>
+                            </button>
+                        </div>
+                    @endif
+
                     <div
                         class="template-grid"
                         id="resume-template-slider"

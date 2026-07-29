@@ -1,5 +1,5 @@
 @php
-    $mainTypes = ['summary', 'experience', 'projects'];
+    $mainTypes = ['summary', 'experience', 'education'];
 @endphp
 
 @foreach ($sections->where('is_visible', true) as $section)
@@ -14,21 +14,15 @@
 
     @continue(! $hasContent)
 
-    <section class="temp-two-section temp-two-main-section temp-two-section-{{ $section->type }}">
-        @include('resumes.partials.temp-two-heading', ['type' => $section->type, 'title' => $section->title])
+    <section class="template-four-section template-four-main-section template-four-section-{{ $section->type }}">
+        <h3>{{ $section->title }}</h3>
 
         @if ($section->type === 'summary')
-            <p class="temp-two-summary">{{ $content['summary'] }}</p>
+            <p class="template-four-summary">{{ $content['summary'] }}</p>
         @elseif ($section->type === 'experience')
             @foreach ($items as $item)
-                <article class="temp-two-experience">
-                    <div class="temp-two-entry-heading">
-                        <strong>{{ $item->data['company'] ?? '' }}</strong>
-                        @if (filled($item->data['location'] ?? null))
-                            <span>{{ $item->data['location'] }}</span>
-                        @endif
-                    </div>
-                    <div class="temp-two-entry-heading temp-two-role-row">
+                <article class="template-four-experience">
+                    <div class="template-four-entry-row">
                         <h4>{{ $item->data['title'] ?? '' }}</h4>
                         @if (filled($item->data['start_date'] ?? null) || filled($item->data['end_date'] ?? null))
                             <time>
@@ -38,8 +32,14 @@
                             </time>
                         @endif
                     </div>
+                    <div class="template-four-entry-row template-four-organization-row">
+                        <strong>{{ $item->data['company'] ?? '' }}</strong>
+                        @if (filled($item->data['location'] ?? null))
+                            <span>{{ $item->data['location'] }}</span>
+                        @endif
+                    </div>
                     @if (filled($item->data['description'] ?? null))
-                        <ul class="temp-two-bullets">
+                        <ul>
                             @foreach (preg_split('/\r\n|\r|\n/', $item->data['description']) as $achievement)
                                 @if (filled($achievement))
                                     <li>{{ $achievement }}</li>
@@ -51,19 +51,19 @@
             @endforeach
         @else
             @foreach ($items as $item)
-                <article class="temp-two-project">
-                    <div class="temp-two-entry-heading">
-                        <strong>{{ $item->data['name'] ?? '' }}</strong>
-                        @if (filled($item->data['role'] ?? null))
-                            <span>{{ $item->data['role'] }}</span>
+                <article class="template-four-education">
+                    <div class="template-four-entry-row">
+                        <h4>{{ $item->data['degree'] ?? '' }}</h4>
+                        @if (filled($item->data['start_date'] ?? null) || filled($item->data['end_date'] ?? null))
+                            <time>{{ $formatMonth($item->data['start_date'] ?? null) }} - {{ $formatMonth($item->data['end_date'] ?? null) }}</time>
                         @endif
                     </div>
-                    @if (filled($item->data['tech_stack'] ?? null))
-                        <p class="temp-two-detail">{{ $item->data['tech_stack'] }}</p>
-                    @endif
-                    @if (filled($item->data['url'] ?? null))
-                        <a href="{{ $item->data['url'] }}" target="_blank" rel="noopener">{{ preg_replace('#^https?://(www\.)?#', '', $item->data['url']) }}</a>
-                    @endif
+                    <div class="template-four-entry-row template-four-organization-row">
+                        <strong>{{ $item->data['institution'] ?? '' }}</strong>
+                        @if (filled($item->data['location'] ?? null))
+                            <span>{{ $item->data['location'] }}</span>
+                        @endif
+                    </div>
                     @if (filled($item->data['description'] ?? null))
                         <p>{{ $item->data['description'] }}</p>
                     @endif

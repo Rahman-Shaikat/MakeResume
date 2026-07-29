@@ -6,11 +6,11 @@
     @continue(in_array($section->type, $excludedTypes, true))
     @continue($section->items->isEmpty())
 
-    <section class="temp-two-section temp-two-side-section temp-two-section-{{ $section->type }}">
-        @include('resumes.partials.temp-two-heading', ['type' => $section->type, 'title' => $section->title])
+    <section class="template-three-section template-three-side-section template-three-section-{{ $section->type }}">
+        @include('resumes.partials.template-three-heading', ['type' => $section->type, 'title' => $section->title])
 
         @if ($section->type === 'skills')
-            <div class="temp-two-inline-list">
+            <div class="template-three-inline-list">
                 @foreach ($section->items as $item)
                     <span>
                         {{ $item->data['name'] ?? '' }}
@@ -22,10 +22,10 @@
             </div>
         @elseif ($section->type === 'education')
             @foreach ($section->items as $item)
-                <article class="temp-two-education">
+                <article class="template-three-education">
                     <h4>{{ $item->data['institution'] ?? '' }}</h4>
                     <p>{{ $item->data['degree'] ?? '' }}</p>
-                    <div class="temp-two-side-meta">
+                    <div class="template-three-side-meta">
                         <span>{{ $item->data['location'] ?? '' }}</span>
                         @if (filled($item->data['start_date'] ?? null) || filled($item->data['end_date'] ?? null))
                             <time>{{ $formatMonth($item->data['start_date'] ?? null) }} - {{ $formatMonth($item->data['end_date'] ?? null) }}</time>
@@ -37,7 +37,7 @@
                 </article>
             @endforeach
         @elseif ($section->type === 'languages')
-            <div class="temp-two-inline-list">
+            <div class="template-three-inline-list">
                 @foreach ($section->items as $item)
                     <span>
                         {{ $item->data['name'] ?? '' }}
@@ -48,7 +48,7 @@
                 @endforeach
             </div>
         @else
-            <div class="temp-two-feature-list">
+            <div class="template-three-feature-list">
                 @foreach ($section->items as $item)
                     <article>
                         <h4>{{ $item->data['title'] ?? $item->data['name'] ?? '' }}</h4>

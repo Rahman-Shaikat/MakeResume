@@ -43,25 +43,25 @@ test('classic blue sidebar template is registered and available for selection', 
         ->get(route('dashboard'))
         ->assertOk()
         ->assertSee('Classic Blue Sidebar')
-        ->assertSee('data-template-card="temp-1"', false);
+        ->assertSee('data-template-card="template-two"', false);
 
     $this->actingAs($user)
-        ->get(route('resume.templates.show', 'temp-1'))
+        ->get(route('resume.templates.show', 'template-two'))
         ->assertOk()
-        ->assertSee('resume-temp-one')
+        ->assertSee('resume-template-two')
         ->assertSee($user->name)
         ->assertSee('Software Engineer');
 
     $response = $this->actingAs($user)
         ->postJson(route('resume.template.select'), [
-            'template_slug' => 'temp-1',
+            'template_slug' => 'template-two',
         ])
         ->assertCreated()
-        ->assertJsonPath('template_slug', 'temp-1');
+        ->assertJsonPath('template_slug', 'template-two');
 
     $resume = Resume::query()->findOrFail($response->json('resume_id'));
 
-    expect($resume->template_slug)->toBe('temp-1');
+    expect($resume->template_slug)->toBe('template-two');
 
     $this->actingAs($user)
         ->get($response->json('builder_url'))
@@ -72,12 +72,12 @@ test('classic blue sidebar template is registered and available for selection', 
 test('classic blue sidebar preview renders saved content and ordered dynamic sections', function (): void {
     Storage::fake('public');
     $user = User::factory()->create();
-    Storage::disk('public')->put('images/temp-one-profile.jpg', 'profile');
+    Storage::disk('public')->put('images/template-two-profile.jpg', 'profile');
 
     $resume = Resume::query()->create([
         'user_id' => $user->id,
-        'template_slug' => 'temp-1',
-        'profile_image' => 'images/temp-one-profile.jpg',
+        'template_slug' => 'template-two',
+        'profile_image' => 'images/template-two-profile.jpg',
         'content' => [
             'full_name' => 'Taylor Morgan',
             'professional_title' => 'Principal Engineer',
@@ -140,7 +140,7 @@ test('classic blue sidebar preview renders saved content and ordered dynamic sec
         ->assertSee('Bristol University')
         ->assertSee('Selected Publications')
         ->assertSee('Reliable Delivery')
-        ->assertSee('/storage/images/temp-one-profile.jpg', false);
+        ->assertSee('/storage/images/template-two-profile.jpg', false);
 });
 
 test('modern mint professional template is registered and available for selection', function (): void {
@@ -150,25 +150,25 @@ test('modern mint professional template is registered and available for selectio
         ->get(route('dashboard'))
         ->assertOk()
         ->assertSee('Modern Mint Professional')
-        ->assertSee('data-template-card="temp-2"', false);
+        ->assertSee('data-template-card="template-three"', false);
 
     $this->actingAs($user)
-        ->get(route('resume.templates.show', 'temp-2'))
+        ->get(route('resume.templates.show', 'template-three'))
         ->assertOk()
-        ->assertSee('resume-temp-two')
+        ->assertSee('resume-template-three')
         ->assertSee($user->name)
         ->assertSee('Research Software Engineer');
 
     $response = $this->actingAs($user)
         ->postJson(route('resume.template.select'), [
-            'template_slug' => 'temp-2',
+            'template_slug' => 'template-three',
         ])
         ->assertCreated()
-        ->assertJsonPath('template_slug', 'temp-2');
+        ->assertJsonPath('template_slug', 'template-three');
 
     $resume = Resume::query()->findOrFail($response->json('resume_id'));
 
-    expect($resume->template_slug)->toBe('temp-2');
+    expect($resume->template_slug)->toBe('template-three');
 
     $this->actingAs($user)
         ->get($response->json('builder_url'))
@@ -179,12 +179,12 @@ test('modern mint professional template is registered and available for selectio
 test('modern mint preview renders profile and every supported dynamic section', function (): void {
     Storage::fake('public');
     $user = User::factory()->create();
-    Storage::disk('public')->put('images/temp-two-profile.jpg', 'profile');
+    Storage::disk('public')->put('images/template-three-profile.jpg', 'profile');
 
     $resume = Resume::query()->create([
         'user_id' => $user->id,
-        'template_slug' => 'temp-2',
-        'profile_image' => 'images/temp-two-profile.jpg',
+        'template_slug' => 'template-three',
+        'profile_image' => 'images/template-three-profile.jpg',
         'content' => [
             'full_name' => 'Mia Williams',
             'professional_title' => 'Research Software Engineer',
@@ -270,7 +270,138 @@ test('modern mint preview renders profile and every supported dynamic section', 
         ->assertSee('Innovation Award')
         ->assertSee('English')
         ->assertSee('Healthcare Technology')
-        ->assertSee('/storage/images/temp-two-profile.jpg', false);
+        ->assertSee('/storage/images/template-three-profile.jpg', false);
+});
+
+test('teal impact template is registered and available in the template slider', function (): void {
+    $user = User::factory()->create();
+
+    $this->actingAs($user)
+        ->get(route('dashboard'))
+        ->assertOk()
+        ->assertSee('Teal Impact')
+        ->assertSee('data-template-card="template-four"', false)
+        ->assertSee('data-template-slider-track', false);
+
+    $this->actingAs($user)
+        ->get(route('resume.templates.show', 'template-four'))
+        ->assertOk()
+        ->assertSee('resume-template-four')
+        ->assertSee($user->name)
+        ->assertSee('Full-Stack Development');
+
+    $response = $this->actingAs($user)
+        ->postJson(route('resume.template.select'), [
+            'template_slug' => 'template-four',
+        ])
+        ->assertCreated()
+        ->assertJsonPath('template_slug', 'template-four');
+
+    $resume = Resume::query()->findOrFail($response->json('resume_id'));
+
+    expect($resume->template_slug)->toBe('template-four');
+
+    $this->actingAs($user)
+        ->get($response->json('builder_url'))
+        ->assertOk()
+        ->assertSee('Teal Impact');
+});
+
+test('teal impact preview renders profile and all dynamic resume sections', function (): void {
+    Storage::fake('public');
+    $user = User::factory()->create();
+    Storage::disk('public')->put('images/template-four-profile.jpg', 'profile');
+
+    $resume = Resume::query()->create([
+        'user_id' => $user->id,
+        'template_slug' => 'template-four',
+        'profile_image' => 'images/template-four-profile.jpg',
+        'content' => [
+            'full_name' => 'Violet Rodriguez',
+            'professional_title' => 'Senior Full-Stack Engineer',
+            'email' => 'violet@example.com',
+            'phone' => '+1 234 555 1234',
+            'location' => 'San Jose, California',
+            'website' => 'https://violet.example.com',
+            'linkedin' => 'https://linkedin.com/in/violet',
+            'github' => '',
+            'summary' => 'Builds scalable cloud products and mentors high-performing engineering teams.',
+        ],
+    ]);
+
+    app(ResumeBuilderService::class)->load($resume);
+
+    $items = [
+        'skills' => ['name' => 'TypeScript', 'level' => 'Expert'],
+        'education' => [
+            'degree' => 'MSc Computer Science',
+            'institution' => 'Stanford University',
+            'location' => 'Stanford',
+            'start_date' => '2014-01',
+            'end_date' => '2016-01',
+        ],
+        'experience' => [
+            'title' => 'Senior Full-Stack Developer',
+            'company' => 'Tech Innovations Inc',
+            'location' => 'San Jose',
+            'start_date' => '2021-01',
+            'current' => true,
+            'description' => "Led cloud platform development.\nMentored junior developers.",
+        ],
+        'projects' => [
+            'name' => 'ChatEngine',
+            'role' => 'Open-source Contributor',
+            'tech_stack' => 'WebSockets, TypeScript',
+            'url' => 'https://github.com/example/chat-engine',
+            'description' => 'Expanded real-time browser support.',
+        ],
+        'courses' => ['name' => 'Advanced React and Redux', 'provider' => 'Example Academy', 'date' => '2025'],
+        'awards' => [
+            'title' => 'Mentorship Excellence Award',
+            'organization' => 'Engineering Guild',
+            'date' => '2026',
+            'description' => 'Recognized for engineering mentorship.',
+        ],
+        'languages' => ['name' => 'English', 'proficiency' => 'Fluent'],
+    ];
+
+    foreach ($items as $type => $data) {
+        $resume->sections()
+            ->where('type', $type)
+            ->firstOrFail()
+            ->items()
+            ->create(['sort_order' => 0, 'data' => $data]);
+    }
+
+    $custom = $resume->sections()->create([
+        'section_key' => 'community',
+        'type' => 'custom',
+        'title' => 'Community',
+        'sort_order' => 20,
+        'is_custom' => true,
+        'is_visible' => true,
+    ]);
+    $custom->items()->create([
+        'sort_order' => 0,
+        'data' => [
+            'title' => 'Open Source Mentor',
+            'content' => 'Supports new contributors in the developer community.',
+        ],
+    ]);
+
+    $this->actingAs($user)
+        ->get(route('resume.preview', $resume))
+        ->assertOk()
+        ->assertSeeInOrder(['Violet Rodriguez', 'Senior Full-Stack Engineer', 'Summary', 'Experience', 'Education'])
+        ->assertSee('TypeScript')
+        ->assertSee('Stanford University')
+        ->assertSee('Tech Innovations Inc')
+        ->assertSee('ChatEngine')
+        ->assertSee('Advanced React and Redux')
+        ->assertSee('Mentorship Excellence Award')
+        ->assertSee('English')
+        ->assertSee('Open Source Mentor')
+        ->assertSee('/storage/images/template-four-profile.jpg', false);
 });
 
 test('a user can select a resume template with ajax', function (): void {

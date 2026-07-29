@@ -1,6 +1,6 @@
-<section class="temp-one-section temp-one-side-section">
+<section class="template-two-section template-two-side-section">
     <h3>Skills</h3>
-    <h4 class="temp-one-side-label">Technical Skills:</h4>
+    <h4 class="template-two-side-label">Technical Skills:</h4>
     <ul>
         @foreach ($data['skills'] as $skill)
             <li>{{ $skill }}</li>
@@ -8,7 +8,7 @@
     </ul>
 </section>
 
-<section class="temp-one-section temp-one-side-section">
+<section class="template-two-section template-two-side-section">
     <h3>Languages</h3>
     <ul>
         @foreach ($data['languages'] as $language)
@@ -17,10 +17,10 @@
     </ul>
 </section>
 
-<section class="temp-one-section temp-one-side-section">
+<section class="template-two-section template-two-side-section">
     <h3>Education</h3>
     @foreach (array_slice($data['education'], 0, 2) as $education)
-        <article class="temp-one-side-entry">
+        <article class="template-two-side-entry">
             <h4>{{ $education['school'] }}</h4>
             <p>{{ $education['degree'] }}</p>
             <p>{{ $education['location'] }}</p>
@@ -29,7 +29,7 @@
     @endforeach
 </section>
 
-<section class="temp-one-section temp-one-side-section">
+<section class="template-two-section template-two-side-section">
     <h3>Other</h3>
     <ul>
         <li><strong>{{ $data['course']['name'] }}</strong><span>{{ $data['course']['provider'] }}</span></li>

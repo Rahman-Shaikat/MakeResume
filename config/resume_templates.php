@@ -62,7 +62,7 @@ $catalog = [
     ],
 ];
 
-$catalog['temp-1'] = [
+$catalog['template-two'] = [
     'name' => 'Classic Blue Sidebar',
     'description' => 'A refined engineering resume with a spacious experience column and structured blue sidebar.',
     'sample' => array_replace($catalog['template-one']['sample'], [
@@ -73,7 +73,7 @@ $catalog['temp-1'] = [
     ]),
 ];
 
-$catalog['temp-2'] = [
+$catalog['template-three'] = [
     'name' => 'Modern Mint Professional',
     'description' => 'A confident two-column resume with mint highlights, icon-led sections, and detailed experience.',
     'sample' => array_replace($catalog['template-one']['sample'], [
@@ -145,6 +145,106 @@ $catalog['temp-2'] = [
         'interest' => [
             'title' => 'Healthcare Technology',
             'description' => 'Passionate about creating software solutions that significantly improve healthcare delivery.',
+        ],
+    ]),
+];
+
+$catalog['template-four'] = [
+    'name' => 'Teal Impact',
+    'description' => 'A bold full-height teal sidebar paired with a spacious, achievement-focused professional layout.',
+    'sample' => array_replace($catalog['template-one']['sample'], [
+        'title' => 'Sr. Software Engineer | Full-Stack Development | Cloud Solutions',
+        'phone' => '+1 (234) 555-1234',
+        'location' => 'San Jose, California',
+        'linkedin' => 'https://linkedin.com/in/your-profile',
+        'github' => '',
+        'summary' => 'With over 3 years of professional experience, I am driven to leverage my expertise in full-stack development, front-end technologies, and cloud solutions to create product innovation. My career highlight includes leading a project that boosted user engagement by 20%.',
+        'skills' => ['HTML', 'CSS', 'JavaScript', 'React', 'TypeScript', 'Java', 'AWS', 'Docker'],
+        'experience' => [
+            [
+                'role' => 'Senior Full-Stack Developer',
+                'company' => 'Tech Innovations Inc',
+                'dates' => '01/2021 - Present',
+                'location' => 'San Jose, CA',
+                'url' => '',
+                'intro' => '',
+                'highlights' => [
+                    'Spearheaded development of a feature-rich analytics platform, improving customer insights.',
+                    'Orchestrated a seamless migration of key applications to AWS, reducing hosting costs.',
+                    'Championed CI/CD processes using Jenkins and Docker for consistent production updates.',
+                    'Directed and supported junior developers while improving code quality and maintainability.',
+                ],
+            ],
+            [
+                'role' => 'Software Engineer II',
+                'company' => 'CodeCrafters International',
+                'dates' => '09/2018 - 12/2020',
+                'location' => 'Mountain View, CA',
+                'url' => '',
+                'intro' => '',
+                'highlights' => [
+                    'Developed an e-commerce application using React and TypeScript.',
+                    'Enhanced authentication and security by implementing OAuth and JWT.',
+                    'Optimized database queries and mentored junior developers in test-driven development.',
+                ],
+            ],
+            [
+                'role' => 'Software Developer',
+                'company' => 'NextGen Solutions',
+                'dates' => '06/2016 - 08/2018',
+                'location' => 'Palo Alto, CA',
+                'url' => '',
+                'intro' => '',
+                'highlights' => [
+                    'Implemented cloud-based SaaS features for enterprise customers.',
+                    'Reduced application load time and introduced a company-wide code review practice.',
+                ],
+            ],
+        ],
+        'education' => [
+            [
+                'degree' => "Master's in Computer Science",
+                'school' => 'Stanford University',
+                'year' => '01/2014 - 01/2016',
+                'location' => 'Stanford, CA',
+            ],
+            [
+                'degree' => "Bachelor's in Software Engineering",
+                'school' => 'San Jose State University',
+                'year' => '01/2010 - 01/2014',
+                'location' => 'San Jose, CA',
+            ],
+        ],
+        'projects' => [
+            [
+                'name' => 'Open Source Contribution to ChatEngine',
+                'url' => 'https://github.com/ChatEngine',
+                'description' => 'Enhanced real-time chat capabilities by integrating WebSockets for broader browser support.',
+            ],
+            [
+                'name' => 'Development of MiniCRM System',
+                'url' => 'https://github.com/MiniCRM',
+                'description' => 'Built a lightweight CRM platform for small businesses using Node.js and MongoDB.',
+            ],
+        ],
+        'awards' => [
+            [
+                'title' => 'Lead Project to Boost Engagement',
+                'description' => 'Led a key project that resulted in a 20% increase in user engagement.',
+            ],
+            [
+                'title' => 'Recognized for Optimizing Costs',
+                'description' => 'Drove a cloud migration initiative that cut hosting expenses.',
+            ],
+            [
+                'title' => 'Mentorship Excellence Award',
+                'description' => 'Recognized for mentoring junior staff and boosting team performance.',
+            ],
+        ],
+        'course' => [
+            'name' => 'Advanced React and Redux',
+            'provider' => 'Udemy',
+            'description' => 'Detailed study of React, Redux, and React Router for scalable web applications.',
         ],
     ]),
 ];

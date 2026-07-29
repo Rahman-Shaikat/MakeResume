@@ -6,12 +6,12 @@
     @continue(! in_array($section->type, $sidebarTypes, true))
     @continue($section->items->isEmpty())
 
-    <section class="temp-one-section temp-one-side-section temp-one-section-{{ $section->type }}">
+    <section class="template-two-section template-two-side-section template-two-section-{{ $section->type }}">
         <h3>{{ $section->title }}</h3>
 
         @if ($section->type === 'skills')
             @foreach ($section->items->groupBy(fn ($item) => $item->data['category'] ?? 'Skills') as $category => $skills)
-                @if ($category !== 'Skills') <h4 class="temp-one-side-label">{{ $category }}:</h4> @endif
+                @if ($category !== 'Skills') <h4 class="template-two-side-label">{{ $category }}:</h4> @endif
                 <ul>
                     @foreach ($skills as $item)
                         <li>
@@ -23,7 +23,7 @@
             @endforeach
         @elseif ($section->type === 'education')
             @foreach ($section->items as $item)
-                <article class="temp-one-side-entry">
+                <article class="template-two-side-entry">
                     <h4>{{ $item->data['institution'] ?? '' }}</h4>
                     <p>{{ $item->data['degree'] ?? '' }}</p>
                     @if (filled($item->data['location'] ?? null)) <p>{{ $item->data['location'] }}</p> @endif
