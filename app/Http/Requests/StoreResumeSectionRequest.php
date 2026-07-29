@@ -1,0 +1,25 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Http\Requests;
+
+use Illuminate\Foundation\Http\FormRequest;
+
+final class StoreResumeSectionRequest extends FormRequest
+{
+    public function authorize(): bool
+    {
+        return $this->user()?->resume !== null;
+    }
+
+    /**
+     * @return array<string, array<int, string>>
+     */
+    public function rules(): array
+    {
+        return [
+            'title' => ['required', 'string', 'max:100'],
+        ];
+    }
+}

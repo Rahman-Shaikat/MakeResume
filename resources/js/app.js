@@ -1,5 +1,6 @@
 import * as bootstrap from 'bootstrap';
 import $ from 'jquery';
+import './builder';
 
 window.bootstrap = bootstrap;
 window.$ = window.jQuery = $;

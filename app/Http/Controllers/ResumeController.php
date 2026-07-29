@@ -5,9 +5,10 @@ declare(strict_types=1);
 namespace App\Http\Controllers;
 
 use App\Http\Requests\ProfileImageRequest;
-use App\Http\Requests\ResumeBuilderRequest;
+use App\Http\Resources\ResumeBuilderResource;
 use App\Models\Resume;
 use App\Models\User;
+use App\Services\ResumeBuilderService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -17,6 +18,10 @@ use Illuminate\View\View;
 
 final class ResumeController extends Controller
 {
+    public function __construct(
+        private readonly ResumeBuilderService $builderService,
+    ) {}
+
     public function selectTemplate(Request $request): JsonResponse|RedirectResponse
     {
         $validated = $request->validate([
@@ -40,7 +45,7 @@ final class ResumeController extends Controller
         return back()->with('status', 'Template selected successfully.');
     }
 
-    public function uploadProfileImage(ProfileImageRequest $request): RedirectResponse
+    public function uploadProfileImage(ProfileImageRequest $request): JsonResponse|RedirectResponse
     {
         $user = $request->user();
         $resume = Resume::query()->firstOrCreate(
@@ -58,6 +63,13 @@ final class ResumeController extends Controller
 
         $resume->update(['profile_image' => $path]);
 
+        if ($request->expectsJson()) {
+            return response()->json([
+                'message' => 'Profile photo updated successfully.',
+                'profile_image_url' => Storage::disk('public')->url($path),
+            ]);
+        }
+
         return back()->with('status', 'Profile photo updated successfully.');
     }
 
@@ -70,22 +82,16 @@ final class ResumeController extends Controller
                 ->with('status', 'Select a resume template before continuing.');
         }
 
+        $resume = $this->builderService->load($user->resume);
+        $payload = (new ResumeBuilderResource($resume))->resolve();
+        $payload['content'] = $this->contentFor($user, $resume);
+
         return view('resumes.builder', [
             'user' => $user,
-            'resume' => $user->resume,
-            'template' => config("resume_templates.catalog.{$user->resume->template_slug}"),
-            'content' => $this->contentFor($user, $user->resume),
+            'resume' => $resume,
+            'template' => config("resume_templates.catalog.{$resume->template_slug}"),
+            'builderPayload' => $payload,
         ]);
-    }
-
-    public function updateBuilder(ResumeBuilderRequest $request): RedirectResponse
-    {
-        $request->user()->resume->update([
-            'content' => $request->validated(),
-        ]);
-
-        return redirect()->route('resume.builder')
-            ->with('status', 'Personal details saved successfully.');
     }
 
     public function showTemplate(Request $request, string $template): View
@@ -94,11 +100,14 @@ final class ResumeController extends Controller
 
         $user = $request->user()->load('resume');
 
+        $resume = $user->resume ? $this->builderService->load($user->resume) : null;
+
         return view("resumes.templates.{$template}", [
             'user' => $user,
-            'resume' => $user->resume,
+            'resume' => $resume,
+            'sections' => $resume?->sections ?? collect(),
             'data' => config("resume_templates.catalog.{$template}.sample"),
-            'content' => $this->contentFor($user, $user->resume),
+            'content' => $this->contentFor($user, $resume),
             'embedded' => $request->boolean('embed'),
         ]);
     }
@@ -116,6 +125,7 @@ final class ResumeController extends Controller
             'email' => $user->email,
             'phone' => $sample['phone'],
             'location' => $sample['location'],
+            'website' => '',
             'linkedin' => $sample['linkedin'],
             'github' => $sample['github'],
             'summary' => $sample['summary'],

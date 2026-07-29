@@ -39,6 +39,9 @@
                         @if ($content['github'])
                             <a href="{{ $content['github'] }}" target="_blank"><b>↗</b>{{ $content['github'] }}</a>
                         @endif
+                        @if ($content['website'])
+                            <a href="{{ $content['website'] }}" target="_blank" rel="noopener"><b>↗</b>{{ $content['website'] }}</a>
+                        @endif
                         <span class="contact-wide"><b>●</b>{{ $content['location'] }}</span>
                     </div>
                 </div>
@@ -51,6 +54,9 @@
                 </div>
             </header>
 
+            @if ($resume)
+                @include('resumes.partials.dynamic-sections')
+            @else
             <div class="resume-columns">
                 <div class="resume-main-column">
                     <section class="resume-section">
@@ -132,6 +138,7 @@
                     </section>
                 </aside>
             </div>
+            @endif
         </article>
     </main>
 </body>

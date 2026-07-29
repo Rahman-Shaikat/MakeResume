@@ -79,8 +79,9 @@ test('a user with a selected template can open the resume builder', function ():
     $this->actingAs($user)
         ->get(route('resume.builder'))
         ->assertOk()
-        ->assertSee('Personal details')
-        ->assertSeeText('Save & continue');
+        ->assertSee('Personal Details')
+        ->assertSeeText('Resume content')
+        ->assertSeeText('Add custom section');
 });
 
 test('personal details can be saved from the resume builder', function (): void {
@@ -96,14 +97,16 @@ test('personal details can be saved from the resume builder', function (): void 
         'email' => 'alex@example.com',
         'phone' => '+880 1700 000000',
         'location' => 'Dhaka, Bangladesh',
+        'website' => 'https://alex.example.com',
         'linkedin' => 'https://linkedin.com/in/alex',
         'github' => 'https://github.com/alex',
         'summary' => 'Laravel engineer focused on reliable products and maintainable application architecture.',
     ];
 
     $this->actingAs($user)
-        ->put(route('resume.builder.update'), $details)
-        ->assertRedirect(route('resume.builder'));
+        ->patchJson(route('resume.builder.content.update'), $details)
+        ->assertOk()
+        ->assertJsonPath('content.full_name', 'Alex Morgan');
 
     expect($resume->fresh()->content)->toMatchArray($details);
 
@@ -142,6 +145,23 @@ test('a user profile image is stored under public images', function (): void {
         ->toStartWith('images/')
         ->toEndWith('.jpg');
 
+    Storage::disk('public')->assertExists($resume->profile_image);
+});
+
+test('profile image upload returns its public URL for the live preview', function (): void {
+    Storage::fake('public');
+    $user = User::factory()->create();
+
+    $this->actingAs($user)
+        ->postJson(route('resume.profile-image.store'), [
+            'profile_image' => UploadedFile::fake()->image('profile.webp', 600, 600)->size(500),
+        ])
+        ->assertOk()
+        ->assertJsonPath('message', 'Profile photo updated successfully.')
+        ->assertJsonStructure(['profile_image_url']);
+
+    $resume = Resume::query()->whereBelongsTo($user)->firstOrFail();
+    expect($resume->profile_image)->toStartWith('images/');
     Storage::disk('public')->assertExists($resume->profile_image);
 });
 

@@ -10,8 +10,8 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
-#[Fillable(['user_id', 'template_slug', 'profile_image', 'content'])]
-final class Resume extends Model
+#[Fillable(['resume_id', 'section_key', 'type', 'title', 'sort_order', 'is_custom', 'is_visible'])]
+final class ResumeSection extends Model
 {
     use HasFactory;
 
@@ -21,17 +21,19 @@ final class Resume extends Model
     protected function casts(): array
     {
         return [
-            'content' => 'array',
+            'sort_order' => 'integer',
+            'is_custom' => 'boolean',
+            'is_visible' => 'boolean',
         ];
     }
 
-    public function user(): BelongsTo
+    public function resume(): BelongsTo
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(Resume::class);
     }
 
-    public function sections(): HasMany
+    public function items(): HasMany
     {
-        return $this->hasMany(ResumeSection::class);
+        return $this->hasMany(ResumeSectionItem::class);
     }
 }

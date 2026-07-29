@@ -6,7 +6,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-final class ResumeBuilderRequest extends FormRequest
+final class UpdateResumeContentRequest extends FormRequest
 {
     public function authorize(): bool
     {
@@ -22,11 +22,12 @@ final class ResumeBuilderRequest extends FormRequest
             'full_name' => ['required', 'string', 'max:100'],
             'professional_title' => ['required', 'string', 'max:120'],
             'email' => ['required', 'email', 'max:255'],
-            'phone' => ['required', 'string', 'max:40'],
-            'location' => ['required', 'string', 'max:160'],
+            'phone' => ['nullable', 'string', 'max:40'],
+            'location' => ['nullable', 'string', 'max:160'],
+            'website' => ['nullable', 'url:http,https', 'max:255'],
             'linkedin' => ['nullable', 'url:http,https', 'max:255'],
             'github' => ['nullable', 'url:http,https', 'max:255'],
-            'summary' => ['required', 'string', 'max:600'],
+            'summary' => ['nullable', 'string', 'max:1000'],
         ];
     }
 }
