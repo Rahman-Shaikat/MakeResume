@@ -26,6 +26,66 @@ const fitEmbeddedTemplatePreview = () => {
 requestAnimationFrame(fitEmbeddedTemplatePreview);
 window.addEventListener('resize', fitEmbeddedTemplatePreview);
 
+document.querySelectorAll('[data-template-slider]').forEach((slider) => {
+    const track = slider.querySelector('[data-template-slider-track]');
+    const previousButton = slider.querySelector('[data-template-slider-previous]');
+    const nextButton = slider.querySelector('[data-template-slider-next]');
+
+    if (!track) {
+        return;
+    }
+
+    const updateNavigation = () => {
+        const maximumScroll = Math.max(0, track.scrollWidth - track.clientWidth);
+
+        if (previousButton) {
+            previousButton.disabled = track.scrollLeft <= 1;
+        }
+
+        if (nextButton) {
+            nextButton.disabled = track.scrollLeft >= maximumScroll - 1;
+        }
+    };
+
+    const moveSlider = (direction) => {
+        const card = track.querySelector('[data-template-card]');
+
+        if (!card) {
+            return;
+        }
+
+        const gap = Number.parseFloat(getComputedStyle(track).columnGap) || 0;
+        track.scrollBy({
+            left: direction * (card.getBoundingClientRect().width + gap),
+            behavior: 'smooth',
+        });
+    };
+
+    previousButton?.addEventListener('click', () => moveSlider(-1));
+    nextButton?.addEventListener('click', () => moveSlider(1));
+
+    track.addEventListener('keydown', (event) => {
+        if (event.key !== 'ArrowLeft' && event.key !== 'ArrowRight') {
+            return;
+        }
+
+        event.preventDefault();
+        moveSlider(event.key === 'ArrowRight' ? 1 : -1);
+    });
+
+    let navigationFrame;
+    track.addEventListener('scroll', () => {
+        cancelAnimationFrame(navigationFrame);
+        navigationFrame = requestAnimationFrame(updateNavigation);
+    }, { passive: true });
+
+    if ('ResizeObserver' in window) {
+        new ResizeObserver(updateNavigation).observe(track);
+    }
+
+    requestAnimationFrame(updateNavigation);
+});
+
 const showToast = (message) => {
     const toastElement = document.querySelector('[data-app-toast]');
 

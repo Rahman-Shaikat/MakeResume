@@ -101,53 +101,84 @@
 
     <div class="row g-4" id="resume-templates">
         <div class="col-xl-8">
-            <section class="panel-card">
+            <section class="panel-card" data-template-slider>
                 <div class="panel-heading">
                     <div>
                         <span class="section-kicker">Create new</span>
                         <h2>Choose a resume template</h2>
                         <p>Each selection creates a separate resume in your workspace.</p>
                     </div>
-                    <span class="template-count">{{ count($templates) }} template</span>
-                </div>
-
-                <div class="template-grid">
-                    @foreach ($templates as $slug => $template)
-                        <article class="template-card" data-template-card="{{ $slug }}">
-                            <div class="template-preview">
-                                <iframe
-                                    src="{{ route('resume.templates.show', ['template' => $slug, 'embed' => 1]) }}"
-                                    title="{{ $template['name'] }} preview"
-                                    loading="lazy"
-                                    tabindex="-1"
-                                ></iframe>
-                                <div class="template-preview-actions">
-                                    <a href="{{ route('resume.templates.show', $slug) }}" target="_blank" class="btn btn-light btn-sm">
-                                        <svg viewBox="0 0 24 24"><path d="M2.5 12s3.5-6 9.5-6 9.5 6 9.5 6-3.5 6-9.5 6-9.5-6-9.5-6Z"/><circle cx="12" cy="12" r="2.5"/></svg>
-                                        Full preview
-                                    </a>
-                                </div>
-                                <span class="selected-badge">
-                                    <svg viewBox="0 0 24 24"><path d="m5 12 4 4L19 6"/></svg>
-                                    Created
-                                </span>
-                            </div>
-                            <div class="template-details">
-                                <div>
-                                    <h3>{{ $template['name'] }}</h3>
-                                    <p>{{ $template['description'] }}</p>
-                                </div>
+                    <div class="template-heading-actions">
+                        <span class="template-count">{{ count($templates) }} {{ Str::plural('template', count($templates)) }}</span>
+                        @if (count($templates) > 1)
+                            <div class="template-slider-controls" role="group" aria-label="Resume template navigation">
                                 <button
                                     type="button"
-                                    class="btn btn-primary select-template-button js-select-template"
-                                    data-template="{{ $slug }}"
-                                    data-url="{{ route('resume.template.select') }}"
+                                    data-template-slider-previous
+                                    aria-label="Show previous templates"
+                                    aria-controls="resume-template-slider"
+                                    disabled
                                 >
-                                    Create resume
+                                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg>
+                                </button>
+                                <button
+                                    type="button"
+                                    data-template-slider-next
+                                    aria-label="Show next templates"
+                                    aria-controls="resume-template-slider"
+                                >
+                                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>
                                 </button>
                             </div>
-                        </article>
-                    @endforeach
+                        @endif
+                    </div>
+                </div>
+
+                <div class="template-slider">
+                    <div
+                        class="template-grid"
+                        id="resume-template-slider"
+                        data-template-slider-track
+                        tabindex="0"
+                        aria-label="Resume templates"
+                    >
+                        @foreach ($templates as $slug => $template)
+                            <article class="template-card" data-template-card="{{ $slug }}">
+                                <div class="template-preview">
+                                    <iframe
+                                        src="{{ route('resume.templates.show', ['template' => $slug, 'embed' => 1]) }}"
+                                        title="{{ $template['name'] }} preview"
+                                        loading="lazy"
+                                        tabindex="-1"
+                                    ></iframe>
+                                    <div class="template-preview-actions">
+                                        <a href="{{ route('resume.templates.show', $slug) }}" target="_blank" class="btn btn-light btn-sm">
+                                            <svg viewBox="0 0 24 24"><path d="M2.5 12s3.5-6 9.5-6 9.5 6 9.5 6-3.5 6-9.5 6-9.5-6-9.5-6Z"/><circle cx="12" cy="12" r="2.5"/></svg>
+                                            Full preview
+                                        </a>
+                                    </div>
+                                    <span class="selected-badge">
+                                        <svg viewBox="0 0 24 24"><path d="m5 12 4 4L19 6"/></svg>
+                                        Created
+                                    </span>
+                                </div>
+                                <div class="template-details">
+                                    <div>
+                                        <h3>{{ $template['name'] }}</h3>
+                                        <p>{{ $template['description'] }}</p>
+                                    </div>
+                                    <button
+                                        type="button"
+                                        class="btn btn-primary select-template-button js-select-template"
+                                        data-template="{{ $slug }}"
+                                        data-url="{{ route('resume.template.select') }}"
+                                    >
+                                        Create resume
+                                    </button>
+                                </div>
+                            </article>
+                        @endforeach
+                    </div>
                 </div>
 
                 <div class="template-next-bar d-none" data-template-next>

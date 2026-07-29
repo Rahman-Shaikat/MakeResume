@@ -73,4 +73,80 @@ $catalog['temp-1'] = [
     ]),
 ];
 
+$catalog['temp-2'] = [
+    'name' => 'Modern Mint Professional',
+    'description' => 'A confident two-column resume with mint highlights, icon-led sections, and detailed experience.',
+    'sample' => array_replace($catalog['template-one']['sample'], [
+        'title' => 'Research Software Engineer · Healthcare Software Advocate',
+        'phone' => '+1 (234) 555-1234',
+        'location' => 'Fort Worth, Texas',
+        'linkedin' => 'https://linkedin.com/in/your-profile',
+        'github' => '',
+        'summary' => 'With 10 years of experience in software development, specializing in healthcare data applications, I have a proven track record of improving patient management systems and reducing operational costs. Proficient in Python and Java, I combine practical engineering leadership with a dedication to advancing healthcare software technology.',
+        'skills' => ['Python', 'Java', 'Machine Learning', 'Cloud Computing', 'Data Visualization', 'C++'],
+        'experience' => [
+            [
+                'role' => 'Senior Software Engineer',
+                'company' => 'HealthTech Solutions',
+                'dates' => '02/2025 - Present',
+                'location' => 'Dallas, Texas',
+                'url' => '',
+                'intro' => '',
+                'highlights' => [
+                    'Led development of a patient management system that reduced administrative workload by 25% using Python and AWS.',
+                    'Collaborated with data scientists to integrate machine learning models, improving diagnostic accuracy.',
+                    'Optimized cloud-based data processing workflows and mentored engineers through complex releases.',
+                ],
+            ],
+            [
+                'role' => 'Software Engineer',
+                'company' => 'Medico Systems',
+                'dates' => '06/2021 - 01/2025',
+                'location' => 'Remote + Austin, Texas',
+                'url' => '',
+                'intro' => '',
+                'highlights' => [
+                    'Developed scalable healthcare applications using Java and Python, reducing infrastructure costs.',
+                    'Collaborated with global teams to improve data security and project delivery.',
+                    'Enhanced the existing codebase with efficient algorithms and dependable automated tests.',
+                ],
+            ],
+            [
+                'role' => 'Software Developer',
+                'company' => 'TechMed Solutions',
+                'dates' => '07/2016 - 05/2021',
+                'location' => 'Austin, Texas',
+                'url' => '',
+                'intro' => '',
+                'highlights' => [
+                    'Implemented C++ data models for healthcare applications and visualization tools.',
+                    'Streamlined deployment processes while improving delivery quality and stakeholder satisfaction.',
+                ],
+            ],
+        ],
+        'education' => [
+            [
+                'degree' => 'Bachelor of Science in Computer Science',
+                'school' => 'The University of Texas at Austin',
+                'year' => '01/2012 - 01/2016',
+                'location' => 'Austin, Texas',
+            ],
+        ],
+        'awards' => [
+            [
+                'title' => 'Innovative Software Development Award',
+                'description' => 'Recognized for developing a system that improved hospital operational efficiency.',
+            ],
+            [
+                'title' => 'Top Performer in Software Engineering',
+                'description' => 'Recognized for exceptional contributions to a complex healthcare platform.',
+            ],
+        ],
+        'interest' => [
+            'title' => 'Healthcare Technology',
+            'description' => 'Passionate about creating software solutions that significantly improve healthcare delivery.',
+        ],
+    ]),
+];
+
 return ['catalog' => $catalog];

@@ -23,7 +23,11 @@ test('an authenticated user can view the dashboard and template', function (): v
         ->get(route('dashboard'))
         ->assertOk()
         ->assertSee('Choose a resume template')
-        ->assertSee('Professional Cyan');
+        ->assertSee('Professional Cyan')
+        ->assertSee('data-template-slider', false)
+        ->assertSee('data-template-slider-track', false)
+        ->assertSee('aria-label="Show previous templates"', false)
+        ->assertSee('aria-label="Show next templates"', false);
 
     $this->actingAs($user)
         ->get(route('resume.templates.show', 'template-one'))
@@ -137,6 +141,136 @@ test('classic blue sidebar preview renders saved content and ordered dynamic sec
         ->assertSee('Selected Publications')
         ->assertSee('Reliable Delivery')
         ->assertSee('/storage/images/temp-one-profile.jpg', false);
+});
+
+test('modern mint professional template is registered and available for selection', function (): void {
+    $user = User::factory()->create();
+
+    $this->actingAs($user)
+        ->get(route('dashboard'))
+        ->assertOk()
+        ->assertSee('Modern Mint Professional')
+        ->assertSee('data-template-card="temp-2"', false);
+
+    $this->actingAs($user)
+        ->get(route('resume.templates.show', 'temp-2'))
+        ->assertOk()
+        ->assertSee('resume-temp-two')
+        ->assertSee($user->name)
+        ->assertSee('Research Software Engineer');
+
+    $response = $this->actingAs($user)
+        ->postJson(route('resume.template.select'), [
+            'template_slug' => 'temp-2',
+        ])
+        ->assertCreated()
+        ->assertJsonPath('template_slug', 'temp-2');
+
+    $resume = Resume::query()->findOrFail($response->json('resume_id'));
+
+    expect($resume->template_slug)->toBe('temp-2');
+
+    $this->actingAs($user)
+        ->get($response->json('builder_url'))
+        ->assertOk()
+        ->assertSee('Modern Mint Professional');
+});
+
+test('modern mint preview renders profile and every supported dynamic section', function (): void {
+    Storage::fake('public');
+    $user = User::factory()->create();
+    Storage::disk('public')->put('images/temp-two-profile.jpg', 'profile');
+
+    $resume = Resume::query()->create([
+        'user_id' => $user->id,
+        'template_slug' => 'temp-2',
+        'profile_image' => 'images/temp-two-profile.jpg',
+        'content' => [
+            'full_name' => 'Mia Williams',
+            'professional_title' => 'Research Software Engineer',
+            'email' => 'mia@example.com',
+            'phone' => '+1 234 555 1234',
+            'location' => 'Fort Worth, Texas',
+            'website' => 'https://mia.example.com',
+            'linkedin' => 'https://linkedin.com/in/mia',
+            'github' => '',
+            'summary' => 'Builds reliable healthcare software and high-performing engineering teams.',
+        ],
+    ]);
+
+    app(ResumeBuilderService::class)->load($resume);
+
+    $items = [
+        'skills' => ['name' => 'Machine Learning', 'level' => 'Expert'],
+        'education' => [
+            'degree' => 'BSc Computer Science',
+            'institution' => 'University of Texas',
+            'location' => 'Austin',
+            'start_date' => '2012-01',
+            'end_date' => '2016-01',
+        ],
+        'experience' => [
+            'title' => 'Senior Software Engineer',
+            'company' => 'HealthTech Solutions',
+            'location' => 'Dallas',
+            'start_date' => '2025-02',
+            'current' => true,
+            'description' => "Improved patient management workflows.\nMentored the engineering team.",
+        ],
+        'projects' => [
+            'name' => 'Patient Analytics Platform',
+            'role' => 'Technical Lead',
+            'tech_stack' => 'Laravel, Python',
+            'url' => 'https://patient.example.com',
+            'description' => 'Delivered secure healthcare analytics.',
+        ],
+        'courses' => ['name' => 'Healthcare Data Engineering', 'provider' => 'Example Academy', 'date' => '2025'],
+        'awards' => [
+            'title' => 'Innovation Award',
+            'organization' => 'HealthTech Guild',
+            'date' => '2026',
+            'description' => 'Recognized for dependable patient software.',
+        ],
+        'languages' => ['name' => 'English', 'proficiency' => 'Fluent'],
+    ];
+
+    foreach ($items as $type => $data) {
+        $resume->sections()
+            ->where('type', $type)
+            ->firstOrFail()
+            ->items()
+            ->create(['sort_order' => 0, 'data' => $data]);
+    }
+
+    $custom = $resume->sections()->create([
+        'section_key' => 'interests',
+        'type' => 'custom',
+        'title' => 'Interests',
+        'sort_order' => 20,
+        'is_custom' => true,
+        'is_visible' => true,
+    ]);
+    $custom->items()->create([
+        'sort_order' => 0,
+        'data' => [
+            'title' => 'Healthcare Technology',
+            'content' => 'Creates software that improves healthcare delivery.',
+        ],
+    ]);
+
+    $this->actingAs($user)
+        ->get(route('resume.preview', $resume))
+        ->assertOk()
+        ->assertSeeInOrder(['Mia Williams', 'Research Software Engineer', 'Summary', 'Experience'])
+        ->assertSee('Machine Learning')
+        ->assertSee('University of Texas')
+        ->assertSee('HealthTech Solutions')
+        ->assertSee('Patient Analytics Platform')
+        ->assertSee('Healthcare Data Engineering')
+        ->assertSee('Innovation Award')
+        ->assertSee('English')
+        ->assertSee('Healthcare Technology')
+        ->assertSee('/storage/images/temp-two-profile.jpg', false);
 });
 
 test('a user can select a resume template with ajax', function (): void {
