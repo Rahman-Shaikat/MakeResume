@@ -39,8 +39,13 @@
     </nav>
 
     @if (session('status'))
-        <div class="container-xl pt-3">
-            <div class="alert alert-success alert-dismissible fade show app-alert" role="alert">
+        <div class="container-xl app-alert-container">
+            <div
+                class="alert alert-success alert-dismissible fade show app-alert"
+                role="alert"
+                data-auto-dismiss-alert
+                data-dismiss-after="5000"
+            >
                 {{ session('status') }}
                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>

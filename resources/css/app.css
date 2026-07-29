@@ -563,6 +563,11 @@ svg {
     width: 17px;
 }
 
+.app-alert-container {
+    padding-top: 16px;
+    padding-bottom: 16px;
+}
+
 .app-alert {
     margin-bottom: 0;
     border: 1px solid #caeadf;

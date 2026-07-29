@@ -97,6 +97,16 @@ const showToast = (message) => {
     bootstrap.Toast.getOrCreateInstance(toastElement, { delay: 2800 }).show();
 };
 
+document.querySelectorAll('[data-auto-dismiss-alert]').forEach((alertElement) => {
+    const dismissAfter = Number.parseInt(alertElement.dataset.dismissAfter, 10) || 5000;
+
+    window.setTimeout(() => {
+        if (alertElement.isConnected) {
+            bootstrap.Alert.getOrCreateInstance(alertElement).close();
+        }
+    }, dismissAfter);
+});
+
 $(document).on('click', '[data-password-toggle]', function () {
     const input = document.querySelector($(this).data('password-toggle'));
 
