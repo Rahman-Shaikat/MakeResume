@@ -20,7 +20,9 @@
                                     <td>
                                         <table role="presentation" cellspacing="0" cellpadding="0" border="0">
                                             <tr>
-                                                <td style="width:38px;height:38px;border-radius:10px;background:#246bfd;color:#ffffff;text-align:center;font-size:15px;font-weight:800;line-height:38px;">RS</td>
+                                                <td style="width:38px;height:38px;">
+                                                    <img src="{{ asset('assets/common/media/logo.png') }}" width="38" height="38" alt="Resume Studio" style="display:block;width:38px;height:38px;border:0;">
+                                                </td>
                                                 <td style="padding-left:11px;color:#ffffff;font-size:19px;font-weight:800;letter-spacing:-.4px;">Resume<span style="color:#66dceb;">Studio</span></td>
                                             </tr>
                                         </table>

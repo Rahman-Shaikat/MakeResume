@@ -108,6 +108,7 @@ test('the verification email uses the professional resume studio template', func
         ])
         ->and($html)
         ->toContain('Resume<span style="color:#66dceb;">Studio</span>')
+        ->toContain('assets/common/media/logo.png')
         ->toContain('Verify email address')
         ->toContain('taylor@example.com')
         ->toContain('signature=');

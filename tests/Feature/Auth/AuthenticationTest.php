@@ -12,7 +12,9 @@ uses(RefreshDatabase::class);
 test('registration screen is available to guests', function (): void {
     $this->get(route('register'))
         ->assertOk()
-        ->assertSee('Create your account');
+        ->assertSee('Create your account')
+        ->assertSee('assets/common/media/logo.png')
+        ->assertSee('assets/common/media/favicon.png');
 });
 
 test('a guest can register and receives a verification email', function (): void {

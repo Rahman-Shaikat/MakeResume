@@ -5,15 +5,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta name="theme-color" content="#ffffff">
+    <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('assets/common/media/favicon.png') }}">
     <title>{{ $title ?? 'Dashboard' }} - Resume Studio</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 <body class="app-page">
     <nav class="navbar navbar-expand-lg app-navbar sticky-top">
         <div class="container-fluid px-3 px-lg-4">
-            <a href="{{ route('dashboard') }}" class="brand">
+            <a href="{{ route('dashboard') }}" class="navbar-brand brand app-navbar-brand m-0" aria-label="Resume Studio dashboard">
                 <span class="brand-mark">
-                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 3.5h7.5L19 8v12.5H7z"/><path d="M14.5 3.5V8H19M10 12h6M10 15.5h6"/></svg>
+                    <img src="{{ asset('assets/common/media/logo.png') }}" width="42" height="42" alt="" aria-hidden="true">
                 </span>
                 Resume<span>Studio</span>
             </a>
