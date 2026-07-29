@@ -7,6 +7,25 @@ window.$ = window.jQuery = $;
 
 const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content;
 
+const fitEmbeddedTemplatePreview = () => {
+    const canvas = document.querySelector('.is-embedded:not(.is-builder-embedded) .resume-canvas');
+    const resumePage = canvas?.firstElementChild;
+
+    if (!canvas || !resumePage) {
+        return;
+    }
+
+    const viewportWidth = document.documentElement.clientWidth;
+    const pageWidth = resumePage.offsetWidth;
+
+    if (viewportWidth > 0 && pageWidth > 0) {
+        canvas.style.setProperty('--embedded-preview-scale', String(viewportWidth / pageWidth));
+    }
+};
+
+requestAnimationFrame(fitEmbeddedTemplatePreview);
+window.addEventListener('resize', fitEmbeddedTemplatePreview);
+
 const showToast = (message) => {
     const toastElement = document.querySelector('[data-app-toast]');
 

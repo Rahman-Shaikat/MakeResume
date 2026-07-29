@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use App\Models\Resume;
 use App\Models\User;
+use App\Services\ResumeBuilderService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
@@ -29,6 +30,113 @@ test('an authenticated user can view the dashboard and template', function (): v
         ->assertOk()
         ->assertSee(strtoupper($user->name))
         ->assertSee('Laravel Web Application Developer');
+});
+
+test('classic blue sidebar template is registered and available for selection', function (): void {
+    $user = User::factory()->create();
+
+    $this->actingAs($user)
+        ->get(route('dashboard'))
+        ->assertOk()
+        ->assertSee('Classic Blue Sidebar')
+        ->assertSee('data-template-card="temp-1"', false);
+
+    $this->actingAs($user)
+        ->get(route('resume.templates.show', 'temp-1'))
+        ->assertOk()
+        ->assertSee('resume-temp-one')
+        ->assertSee($user->name)
+        ->assertSee('Software Engineer');
+
+    $response = $this->actingAs($user)
+        ->postJson(route('resume.template.select'), [
+            'template_slug' => 'temp-1',
+        ])
+        ->assertCreated()
+        ->assertJsonPath('template_slug', 'temp-1');
+
+    $resume = Resume::query()->findOrFail($response->json('resume_id'));
+
+    expect($resume->template_slug)->toBe('temp-1');
+
+    $this->actingAs($user)
+        ->get($response->json('builder_url'))
+        ->assertOk()
+        ->assertSee('Classic Blue Sidebar');
+});
+
+test('classic blue sidebar preview renders saved content and ordered dynamic sections', function (): void {
+    Storage::fake('public');
+    $user = User::factory()->create();
+    Storage::disk('public')->put('images/temp-one-profile.jpg', 'profile');
+
+    $resume = Resume::query()->create([
+        'user_id' => $user->id,
+        'template_slug' => 'temp-1',
+        'profile_image' => 'images/temp-one-profile.jpg',
+        'content' => [
+            'full_name' => 'Taylor Morgan',
+            'professional_title' => 'Principal Engineer',
+            'email' => 'taylor@example.com',
+            'phone' => '+44 117 555 0101',
+            'location' => 'Bristol, United Kingdom',
+            'website' => 'https://taylor.example.com',
+            'linkedin' => '',
+            'github' => '',
+            'summary' => 'Builds dependable software systems and supportive engineering teams.',
+        ],
+    ]);
+
+    app(ResumeBuilderService::class)->load($resume);
+
+    $resume->sections()->where('type', 'experience')->firstOrFail()->items()->create([
+        'sort_order' => 0,
+        'data' => [
+            'title' => 'Principal Engineer',
+            'company' => 'Northstar Systems',
+            'location' => 'Bristol',
+            'start_date' => '2022-03',
+            'current' => true,
+            'description' => "Led platform modernization.\nImproved release reliability.",
+        ],
+    ]);
+    $resume->sections()->where('type', 'skills')->firstOrFail()->items()->create([
+        'sort_order' => 0,
+        'data' => ['name' => 'Laravel', 'level' => 'Expert', 'category' => 'Technical Skills'],
+    ]);
+    $resume->sections()->where('type', 'education')->firstOrFail()->items()->create([
+        'sort_order' => 0,
+        'data' => [
+            'degree' => 'BSc Computer Science',
+            'institution' => 'Bristol University',
+            'start_date' => '2014-09',
+            'end_date' => '2018-06',
+        ],
+    ]);
+
+    $custom = $resume->sections()->create([
+        'section_key' => 'publications',
+        'type' => 'custom',
+        'title' => 'Selected Publications',
+        'sort_order' => 20,
+        'is_custom' => true,
+        'is_visible' => true,
+    ]);
+    $custom->items()->create([
+        'sort_order' => 0,
+        'data' => ['title' => 'Reliable Delivery', 'content' => 'A practical guide to resilient releases.'],
+    ]);
+
+    $this->actingAs($user)
+        ->get(route('resume.preview', $resume))
+        ->assertOk()
+        ->assertSeeInOrder(['Taylor Morgan', 'Principal Engineer', 'Professional Summary', 'Experience', 'Northstar Systems'])
+        ->assertSee('Led platform modernization.')
+        ->assertSee('Laravel')
+        ->assertSee('Bristol University')
+        ->assertSee('Selected Publications')
+        ->assertSee('Reliable Delivery')
+        ->assertSee('/storage/images/temp-one-profile.jpg', false);
 });
 
 test('a user can select a resume template with ajax', function (): void {

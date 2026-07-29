@@ -82,7 +82,7 @@ final class ResumeController extends Controller
         $user = $request->user();
         $resume = $this->builderService->load($resume);
         $payload = (new ResumeBuilderResource($resume))->resolve();
-        $payload['content'] = $this->contentFor($user, $resume);
+        $payload['content'] = $this->contentFor($user, $resume, $resume->template_slug);
 
         return view('resumes.builder', [
             'user' => $user,
@@ -103,7 +103,7 @@ final class ResumeController extends Controller
             'resume' => null,
             'sections' => collect(),
             'data' => config("resume_templates.catalog.{$template}.sample"),
-            'content' => $this->contentFor($user, null),
+            'content' => $this->contentFor($user, null, $template),
             'embedded' => $request->boolean('embed'),
         ]);
     }
@@ -121,7 +121,7 @@ final class ResumeController extends Controller
             'resume' => $resume,
             'sections' => $resume->sections,
             'data' => config("resume_templates.catalog.{$template}.sample"),
-            'content' => $this->contentFor($request->user(), $resume),
+            'content' => $this->contentFor($request->user(), $resume, $template),
             'embedded' => $request->boolean('embed'),
         ]);
     }
@@ -129,9 +129,12 @@ final class ResumeController extends Controller
     /**
      * @return array<string, string>
      */
-    private function contentFor(User $user, ?Resume $resume): array
-    {
-        $sample = config('resume_templates.catalog.template-one.sample');
+    private function contentFor(
+        User $user,
+        ?Resume $resume,
+        string $templateSlug,
+    ): array {
+        $sample = config("resume_templates.catalog.{$templateSlug}.sample");
 
         return array_replace([
             'full_name' => $user->name,

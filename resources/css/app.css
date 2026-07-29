@@ -1970,6 +1970,303 @@ svg {
     background: #3b3b3b;
 }
 
+/* Classic Blue Sidebar (temp-1) */
+.resume-temp-one {
+    width: 210mm;
+    min-height: 297mm;
+    padding: 10mm 7mm 11mm 13mm;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 55mm;
+    gap: 6mm;
+    color: #666b70;
+    background: #fff;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 8.25pt;
+    line-height: 1.34;
+    box-shadow: 0 18px 48px rgba(22, 32, 50, .15);
+}
+
+.temp-one-primary {
+    min-width: 0;
+    padding-top: 5mm;
+}
+
+.temp-one-identity {
+    min-height: 29mm;
+    margin-bottom: 7mm;
+}
+
+.temp-one-identity.has-photo {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 22mm;
+    align-items: start;
+    gap: 5mm;
+}
+
+.temp-one-identity h1 {
+    margin: 0 0 1.2mm;
+    color: #075a9e;
+    font-size: 24pt;
+    font-weight: 700;
+    line-height: .98;
+    letter-spacing: -.25pt;
+    text-transform: uppercase;
+}
+
+.temp-one-identity h2 {
+    margin: 0;
+    color: #6c7278;
+    font-size: 12.5pt;
+    font-weight: 400;
+    line-height: 1.15;
+}
+
+.temp-one-photo {
+    width: 22mm;
+    height: 22mm;
+    overflow: hidden;
+    border: .65mm solid #075a9e;
+    border-radius: 50%;
+    background: #e8f4fd;
+}
+
+.temp-one-photo img {
+    width: 100%;
+    height: 100%;
+    display: block;
+    object-fit: cover;
+}
+
+.temp-one-sidebar {
+    min-width: 0;
+    min-height: 276mm;
+    padding: 8mm 5mm;
+    color: #4e565d;
+    background: #e8f4fd;
+}
+
+.temp-one-section {
+    margin: 0 0 7mm;
+    break-inside: avoid;
+}
+
+.temp-one-section:last-child {
+    margin-bottom: 0;
+}
+
+.temp-one-section h3 {
+    margin: 0 0 4mm;
+    padding: 0 0 1.7mm;
+    border-bottom: .28mm solid #9da9b3;
+    color: #075a9e;
+    font-size: 10.5pt;
+    font-weight: 700;
+    line-height: 1;
+    letter-spacing: .25pt;
+    text-transform: uppercase;
+}
+
+.temp-one-section h4,
+.temp-one-section p {
+    margin-top: 0;
+}
+
+.temp-one-main-section {
+    margin-bottom: 7.5mm;
+}
+
+.temp-one-main-section h3 {
+    margin-bottom: 5mm;
+}
+
+.temp-one-summary {
+    margin-bottom: 0;
+    line-height: 1.45;
+}
+
+.temp-one-experience {
+    margin-bottom: 6mm;
+    break-inside: avoid;
+}
+
+.temp-one-experience:last-child {
+    margin-bottom: 0;
+}
+
+.temp-one-employer {
+    margin: 0 0 .7mm;
+    color: #41484e;
+    font-size: 9.2pt;
+}
+
+.temp-one-employer strong {
+    font-weight: 700;
+}
+
+.temp-one-company-note {
+    margin: 0 0 2.3mm;
+    color: #798087;
+    font-size: 7.6pt;
+    font-style: italic;
+}
+
+.temp-one-role-row,
+.temp-one-project-heading {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 4mm;
+}
+
+.temp-one-role-row {
+    margin-bottom: 2mm;
+}
+
+.temp-one-role-row h4,
+.temp-one-project h4,
+.temp-one-custom h4 {
+    margin: 0;
+    color: #555c62;
+    font-size: 9pt;
+    font-weight: 700;
+}
+
+.temp-one-role-row time {
+    flex: 0 0 auto;
+    color: #616970;
+    font-size: 7.7pt;
+    font-weight: 700;
+}
+
+.temp-one-achievements {
+    margin: 0;
+    padding-left: 4.8mm;
+}
+
+.temp-one-achievements li {
+    margin-bottom: 1.25mm;
+    padding-left: .7mm;
+}
+
+.temp-one-achievements li:last-child {
+    margin-bottom: 0;
+}
+
+.temp-one-achievements li::marker {
+    color: #8c73d2;
+    font-size: 1.15em;
+}
+
+.temp-one-project,
+.temp-one-custom {
+    margin-bottom: 4.5mm;
+    break-inside: avoid;
+}
+
+.temp-one-project:last-child,
+.temp-one-custom:last-child {
+    margin-bottom: 0;
+}
+
+.temp-one-project-heading {
+    margin-bottom: .8mm;
+}
+
+.temp-one-project-heading span {
+    color: #737b82;
+    font-size: 7.5pt;
+    font-style: italic;
+}
+
+.temp-one-project a {
+    display: inline-block;
+    margin-bottom: 1mm;
+    color: #075a9e;
+    font-size: 7.7pt;
+    overflow-wrap: anywhere;
+    text-decoration: none;
+}
+
+.temp-one-project p,
+.temp-one-custom p {
+    margin-bottom: 0;
+}
+
+.temp-one-tech {
+    margin: 0 0 .8mm !important;
+    color: #737b82;
+    font-size: 7.5pt;
+    font-style: italic;
+}
+
+.temp-one-side-section {
+    margin-bottom: 8mm;
+}
+
+.temp-one-sidebar ul {
+    margin: 0;
+    padding-left: 4.2mm;
+}
+
+.temp-one-sidebar li {
+    margin-bottom: 1.2mm;
+    padding-left: .4mm;
+}
+
+.temp-one-sidebar li::marker {
+    color: #8c73d2;
+}
+
+.temp-one-contact ul {
+    padding-left: 0;
+    list-style: none;
+}
+
+.temp-one-contact li {
+    margin-bottom: 1.9mm;
+    padding-left: 0;
+    overflow-wrap: anywhere;
+}
+
+.temp-one-side-label {
+    margin: 0 0 1.5mm;
+    color: #50575d;
+    font-size: 8.25pt;
+    font-style: italic;
+    font-weight: 700;
+}
+
+.temp-one-side-entry {
+    margin-bottom: 4.5mm;
+    break-inside: avoid;
+}
+
+.temp-one-side-entry:last-child {
+    margin-bottom: 0;
+}
+
+.temp-one-side-entry h4 {
+    margin: 0 0 .8mm;
+    color: #075a9e;
+    font-size: 8.5pt;
+    font-weight: 700;
+}
+
+.temp-one-side-entry p {
+    margin-bottom: .6mm;
+}
+
+.temp-one-side-entry time,
+.temp-one-sidebar small {
+    display: block;
+    color: #777f85;
+    font-size: 7.4pt;
+}
+
+.temp-one-sidebar li > span {
+    display: block;
+}
+
 .is-embedded {
     width: 100%;
     height: 100vh;
@@ -1981,11 +2278,12 @@ svg {
     width: 210mm;
     padding: 0;
     justify-content: flex-start;
-    transform: scale(.455);
+    transform: scale(var(--embedded-preview-scale, .455));
     transform-origin: top left;
 }
 
-.is-embedded .resume-template-one {
+.is-embedded .resume-template-one,
+.is-embedded .resume-temp-one {
     flex: 0 0 auto;
     margin: 0;
     transform: none;
@@ -2860,7 +3158,8 @@ svg {
         justify-content: flex-start;
     }
 
-    .resume-template-one {
+    .resume-template-one,
+    .resume-temp-one {
         flex: 0 0 210mm;
         transform: scale(.62);
         transform-origin: top left;
@@ -2948,7 +3247,8 @@ svg {
         overflow: visible !important;
     }
 
-    .resume-template-one {
+    .resume-template-one,
+    .resume-temp-one {
         width: 210mm;
         height: 297mm;
         flex: none;
@@ -2958,6 +3258,10 @@ svg {
         box-shadow: none;
         print-color-adjust: exact;
         -webkit-print-color-adjust: exact;
+    }
+
+    .resume-temp-one {
+        break-after: page;
     }
 }
 
