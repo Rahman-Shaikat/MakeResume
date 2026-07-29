@@ -404,6 +404,269 @@ test('teal impact preview renders profile and all dynamic resume sections', func
         ->assertSee('/storage/images/template-four-profile.jpg', false);
 });
 
+test('structured indigo template is registered and available in the template slider', function (): void {
+    $user = User::factory()->create();
+
+    $this->actingAs($user)
+        ->get(route('dashboard'))
+        ->assertOk()
+        ->assertSee('Structured Indigo')
+        ->assertSee('data-template-card="template-five"', false)
+        ->assertSee('data-template-slider-track', false);
+
+    $this->actingAs($user)
+        ->get(route('resume.templates.show', 'template-five'))
+        ->assertOk()
+        ->assertSee('resume-template-five')
+        ->assertSee($user->name)
+        ->assertSee('Senior Software Engineer');
+
+    $response = $this->actingAs($user)
+        ->postJson(route('resume.template.select'), [
+            'template_slug' => 'template-five',
+        ])
+        ->assertCreated()
+        ->assertJsonPath('template_slug', 'template-five');
+
+    $resume = Resume::query()->findOrFail($response->json('resume_id'));
+
+    expect($resume->template_slug)->toBe('template-five');
+
+    $this->actingAs($user)
+        ->get($response->json('builder_url'))
+        ->assertOk()
+        ->assertSee('Structured Indigo');
+});
+
+test('structured indigo preview renders profile and all dynamic resume sections', function (): void {
+    Storage::fake('public');
+    $user = User::factory()->create();
+    Storage::disk('public')->put('images/template-five-profile.jpg', 'profile');
+
+    $resume = Resume::query()->create([
+        'user_id' => $user->id,
+        'template_slug' => 'template-five',
+        'profile_image' => 'images/template-five-profile.jpg',
+        'content' => [
+            'full_name' => 'Christa Scott',
+            'professional_title' => 'Principal Software Engineer',
+            'email' => 'christa@example.com',
+            'phone' => '+1 202 555 0147',
+            'location' => 'Chicago, Illinois',
+            'website' => 'https://christa.example.com',
+            'linkedin' => 'https://linkedin.com/in/christa',
+            'github' => '',
+            'summary' => 'Designs reliable software platforms and leads cross-functional engineering teams.',
+        ],
+    ]);
+
+    app(ResumeBuilderService::class)->load($resume);
+
+    $items = [
+        'skills' => ['name' => 'React', 'level' => 'Expert'],
+        'education' => [
+            'degree' => 'MSc Software Engineering',
+            'institution' => 'Northwestern University',
+            'location' => 'Evanston, Illinois',
+            'start_date' => '2011-08',
+            'end_date' => '2013-05',
+        ],
+        'experience' => [
+            'title' => 'Principal Software Engineer',
+            'company' => 'Market Systems Group',
+            'location' => 'Chicago',
+            'start_date' => '2020-04',
+            'current' => true,
+            'description' => "Led a platform modernization initiative.\nImproved engineering delivery standards.",
+        ],
+        'projects' => [
+            'name' => 'Retail Loan Assistant',
+            'role' => 'Technical Lead',
+            'tech_stack' => 'React, TypeScript, Node.js',
+            'url' => 'https://example.com/retail-loan-assistant',
+            'description' => 'Built a streamlined loan application platform.',
+        ],
+        'courses' => ['name' => 'Cloud Architecture', 'provider' => 'Example Academy', 'date' => '2025'],
+        'awards' => [
+            'title' => 'Engineering Leadership Award',
+            'organization' => 'Software Guild',
+            'date' => '2026',
+            'description' => 'Recognized for technical leadership.',
+        ],
+        'languages' => ['name' => 'English', 'proficiency' => 'Fluent'],
+    ];
+
+    foreach ($items as $type => $data) {
+        $resume->sections()
+            ->where('type', $type)
+            ->firstOrFail()
+            ->items()
+            ->create(['sort_order' => 0, 'data' => $data]);
+    }
+
+    $custom = $resume->sections()->create([
+        'section_key' => 'leadership',
+        'type' => 'custom',
+        'title' => 'Leadership',
+        'sort_order' => 20,
+        'is_custom' => true,
+        'is_visible' => true,
+    ]);
+    $custom->items()->create([
+        'sort_order' => 0,
+        'data' => [
+            'title' => 'Engineering Mentor',
+            'content' => 'Mentors emerging technical leaders.',
+        ],
+    ]);
+
+    $this->actingAs($user)
+        ->get(route('resume.preview', $resume))
+        ->assertOk()
+        ->assertSee('Christa Scott')
+        ->assertSee('Principal Software Engineer')
+        ->assertSee('React')
+        ->assertSee('Northwestern University')
+        ->assertSee('Market Systems Group')
+        ->assertSee('Retail Loan Assistant')
+        ->assertSee('Cloud Architecture')
+        ->assertSee('Engineering Leadership Award')
+        ->assertSee('English')
+        ->assertSee('Engineering Mentor')
+        ->assertSee('/storage/images/template-five-profile.jpg', false);
+});
+
+test('indigo profile sidebar template is registered and available in the template slider', function (): void {
+    $user = User::factory()->create();
+
+    $this->actingAs($user)
+        ->get(route('dashboard'))
+        ->assertOk()
+        ->assertSee('Indigo Profile Sidebar')
+        ->assertSee('data-template-card="template-six"', false)
+        ->assertSee('data-template-slider-track', false);
+
+    $this->actingAs($user)
+        ->get(route('resume.templates.show', 'template-six'))
+        ->assertOk()
+        ->assertSee('resume-template-six')
+        ->assertSee($user->name)
+        ->assertSee('Senior Software Engineer');
+
+    $response = $this->actingAs($user)
+        ->postJson(route('resume.template.select'), [
+            'template_slug' => 'template-six',
+        ])
+        ->assertCreated()
+        ->assertJsonPath('template_slug', 'template-six');
+
+    $resume = Resume::query()->findOrFail($response->json('resume_id'));
+
+    expect($resume->template_slug)->toBe('template-six');
+
+    $this->actingAs($user)
+        ->get($response->json('builder_url'))
+        ->assertOk()
+        ->assertSee('Indigo Profile Sidebar');
+});
+
+test('indigo profile sidebar preview renders profile and all dynamic resume sections', function (): void {
+    Storage::fake('public');
+    $user = User::factory()->create();
+    Storage::disk('public')->put('images/template-six-profile.jpg', 'profile');
+
+    $resume = Resume::query()->create([
+        'user_id' => $user->id,
+        'template_slug' => 'template-six',
+        'profile_image' => 'images/template-six-profile.jpg',
+        'content' => [
+            'full_name' => 'Justin Tim',
+            'professional_title' => 'Senior Software Engineer',
+            'email' => 'justin@example.com',
+            'phone' => '+1 202 555 0120',
+            'location' => 'Chicago, Illinois',
+            'website' => 'https://justin.example.com',
+            'linkedin' => 'https://linkedin.com/in/justin',
+            'github' => '',
+            'summary' => 'Builds dependable mobile and web products for international customers.',
+        ],
+    ]);
+
+    app(ResumeBuilderService::class)->load($resume);
+
+    $items = [
+        'skills' => ['name' => 'JavaScript', 'level' => 'Expert'],
+        'education' => [
+            'degree' => 'Masters in Computer Science',
+            'institution' => 'San Jose State University',
+            'location' => 'San Jose, California',
+            'start_date' => '2005-02',
+            'end_date' => '2007-02',
+        ],
+        'experience' => [
+            'title' => 'Senior Software Engineer',
+            'company' => 'Infosys Technologies',
+            'location' => 'Chicago',
+            'start_date' => '2017-06',
+            'current' => true,
+            'description' => "Led mobile platform development.\nImproved release reliability.",
+        ],
+        'projects' => [
+            'name' => 'Digitalis',
+            'role' => 'Technical Lead',
+            'tech_stack' => 'Android, Java, MySQL',
+            'url' => 'https://example.com/digitalis',
+            'description' => 'Developed a customer loyalty platform.',
+        ],
+        'courses' => ['name' => 'Mobile Architecture', 'provider' => 'Example Academy', 'date' => '2025'],
+        'awards' => [
+            'title' => 'Mobile Engineering Award',
+            'organization' => 'Technology Guild',
+            'date' => '2026',
+            'description' => 'Recognized for mobile product delivery.',
+        ],
+        'languages' => ['name' => 'French', 'proficiency' => 'Fluent'],
+    ];
+
+    foreach ($items as $type => $data) {
+        $resume->sections()
+            ->where('type', $type)
+            ->firstOrFail()
+            ->items()
+            ->create(['sort_order' => 0, 'data' => $data]);
+    }
+
+    $custom = $resume->sections()->create([
+        'section_key' => 'community',
+        'type' => 'custom',
+        'title' => 'Community',
+        'sort_order' => 20,
+        'is_custom' => true,
+        'is_visible' => true,
+    ]);
+    $custom->items()->create([
+        'sort_order' => 0,
+        'data' => [
+            'title' => 'Developer Community Mentor',
+            'content' => 'Supports engineers entering mobile application development.',
+        ],
+    ]);
+
+    $this->actingAs($user)
+        ->get(route('resume.preview', $resume))
+        ->assertOk()
+        ->assertSee('Justin Tim')
+        ->assertSee('JavaScript')
+        ->assertSee('San Jose State University')
+        ->assertSee('Infosys Technologies')
+        ->assertSee('Digitalis')
+        ->assertSee('Mobile Architecture')
+        ->assertSee('Mobile Engineering Award')
+        ->assertSee('French')
+        ->assertSee('Developer Community Mentor')
+        ->assertSee('/storage/images/template-six-profile.jpg', false);
+});
+
 test('a user can select a resume template with ajax', function (): void {
     $user = User::factory()->create();
 

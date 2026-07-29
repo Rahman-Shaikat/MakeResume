@@ -249,4 +249,165 @@ $catalog['template-four'] = [
     ]),
 ];
 
+$catalog['template-five'] = [
+    'name' => 'Structured Indigo',
+    'description' => 'A polished photo-led resume with indigo accents, skill bars, and a structured two-column layout.',
+    'sample' => array_replace($catalog['template-one']['sample'], [
+        'title' => 'Senior Software Engineer',
+        'phone' => '202-555-0120',
+        'location' => 'Chicago, Illinois, US',
+        'linkedin' => 'https://linkedin.com/in/your-profile',
+        'github' => '',
+        'summary' => 'Highly skilled Senior Software Engineer with 8+ years of experience developing and implementing innovative software solutions. Extensive proficiency in Java, Python, and C++, with strong expertise across the full software development life cycle. Proven record of successful project delivery, teamwork, communication, and leadership.',
+        'skills' => ['React', 'HTML/CSS', 'JavaScript', 'Node.js', 'C#'],
+        'experience' => [
+            [
+                'role' => 'Senior Software Engineer',
+                'company' => 'Market Simplified India Ltd',
+                'dates' => '04/2014 - Present',
+                'location' => 'Chennai, India',
+                'url' => '',
+                'intro' => '',
+                'highlights' => [
+                    'Led and supervised a team of software engineers in the development of complex software systems.',
+                    'Architected reliable, high-performance applications and collaborated with stakeholders on requirements.',
+                    'Maintained software quality through documentation, code reviews, and constructive feedback.',
+                    'Partnered with QA teams to execute test plans and keep delivery quality aligned with expectations.',
+                ],
+            ],
+            [
+                'role' => 'Software Developer',
+                'company' => 'Precise Software Services',
+                'dates' => '10/2011 - 11/2013',
+                'location' => 'Coimbatore, India',
+                'url' => '',
+                'intro' => '',
+                'highlights' => [
+                    'Developed customer-facing applications and supported dependable production releases.',
+                ],
+            ],
+        ],
+        'education' => [
+            [
+                'degree' => 'MCA',
+                'school' => 'San Jose State University',
+                'year' => '08/2008 - 05/2011',
+                'location' => '',
+            ],
+            [
+                'degree' => 'Bachelors of Computers',
+                'school' => 'Northeastern University',
+                'year' => '04/2004 - 04/2007',
+                'location' => '',
+            ],
+        ],
+        'projects' => [
+            [
+                'name' => 'Retail Loan Assistant',
+                'role' => 'Team Lead',
+                'dates' => '05/2018 - Present',
+                'tech_stack' => 'React, HTML, CSS, JavaScript, Material UI',
+                'url' => '',
+                'description' => '',
+            ],
+            [
+                'name' => 'NSE Web Application',
+                'role' => 'Web Developer',
+                'dates' => '10/2017 - 04/2018',
+                'tech_stack' => 'JavaScript, CSS, HTML, Ruby on Rails, MySQL',
+                'url' => '',
+                'description' => '',
+            ],
+            [
+                'name' => 'Kotak Securities',
+                'role' => 'Front End Mobile App Developer',
+                'dates' => '01/2017 - 09/2017',
+                'tech_stack' => 'C#, XAML, Blend',
+                'url' => '',
+                'description' => '',
+            ],
+        ],
+    ]),
+];
+
+$catalog['template-six'] = [
+    'name' => 'Indigo Profile Sidebar',
+    'description' => 'A confident photo-led resume with a full-height indigo sidebar, visual skill bars, and language ratings.',
+    'sample' => array_replace($catalog['template-one']['sample'], [
+        'title' => 'Senior Software Engineer',
+        'phone' => '202-555-0120',
+        'location' => 'Chicago, Illinois, US',
+        'linkedin' => 'https://linkedin.com/in/your-profile',
+        'github' => '',
+        'summary' => 'Senior software engineer with a strong foundation in workplace processes, professional responsibility, and modern application development. A collaborative and enthusiastic team member committed to dependable delivery, continuous learning, and creating effective software experiences.',
+        'skills' => ['HTML/CSS', 'Responsive Design', '.NET', 'Java', 'JavaScript', 'MySQL', 'Oracle'],
+        'experience' => [
+            [
+                'role' => 'Senior Software Engineer',
+                'company' => 'Infosys Technologies',
+                'dates' => 'Jun 2017 - Present',
+                'location' => '',
+                'url' => '',
+                'intro' => '',
+                'highlights' => [],
+            ],
+            [
+                'role' => 'Software Engineer',
+                'company' => 'Route Mobility Solutions',
+                'dates' => 'Jun 2016 - May 2017',
+                'location' => '',
+                'url' => '',
+                'intro' => '',
+                'highlights' => [],
+            ],
+        ],
+        'projects' => [
+            [
+                'name' => 'Digitalis',
+                'role' => 'Senior Software Engineer',
+                'dates' => '',
+                'tech_stack' => '',
+                'url' => '',
+                'description' => 'Developed an Android loyalty application for a major airline, including virtual membership cards, enrolment, direct customer messaging, points earning, and flight reservations.',
+            ],
+            [
+                'name' => 'The Body Shop Malaysia',
+                'role' => 'Senior Software Engineer',
+                'dates' => '',
+                'tech_stack' => 'Android, PHP, JSON, Google Maps, Push Notifications',
+                'url' => '',
+                'description' => 'Built an official mobile shopping application that connects customers with product details, offers, store locations, loyalty rewards, referrals, and customer support.',
+            ],
+            [
+                'name' => 'Airline Services Platform',
+                'role' => 'Software Engineer',
+                'dates' => '',
+                'tech_stack' => 'Java, .NET, MySQL',
+                'url' => '',
+                'description' => 'Delivered dependable service integrations for customer-facing airline workflows.',
+            ],
+        ],
+        'education' => [
+            [
+                'degree' => 'Masters in Computer Science',
+                'school' => 'San Jose State University',
+                'year' => 'Feb 2007',
+                'location' => '',
+            ],
+            [
+                'degree' => 'Bachelors of Computers',
+                'school' => 'Northeastern University',
+                'year' => 'Jul 2005',
+                'location' => '',
+            ],
+        ],
+        'languages' => [
+            ['name' => 'English', 'level' => 'Native', 'percent' => 100],
+            ['name' => 'French', 'level' => 'Fluent', 'percent' => 80],
+            ['name' => 'Arabic', 'level' => 'Proficient', 'percent' => 60],
+            ['name' => 'German', 'level' => 'Proficient', 'percent' => 60],
+        ],
+    ]),
+];
+
 return ['catalog' => $catalog];
