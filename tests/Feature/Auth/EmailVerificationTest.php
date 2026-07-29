@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use App\Models\Resume;
 use App\Models\User;
 use App\Notifications\VerifyEmailNotification;
 use Illuminate\Auth\Events\Verified;
@@ -29,9 +30,13 @@ test('unverified users are directed to the themed verification notice', function
 
 test('unverified users cannot use resume endpoints', function (): void {
     $user = User::factory()->unverified()->create();
+    $resume = Resume::query()->create([
+        'user_id' => $user->id,
+        'template_slug' => 'template-one',
+    ]);
 
     $this->actingAs($user)
-        ->getJson(route('resume.builder'))
+        ->getJson(route('resume.builder', $resume))
         ->assertForbidden()
         ->assertJsonPath('message', 'Your email address is not verified.');
 });

@@ -11,11 +11,14 @@ final class DashboardController extends Controller
 {
     public function __invoke(Request $request): View
     {
-        $user = $request->user()->load('resume');
+        $user = $request->user();
+        $resumes = $user->resumes()
+            ->latest('updated_at')
+            ->get();
 
         return view('dashboard.index', [
             'user' => $user,
-            'resume' => $user->resume,
+            'resumes' => $resumes,
             'templates' => config('resume_templates.catalog'),
         ]);
     }

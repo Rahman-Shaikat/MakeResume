@@ -11,7 +11,7 @@ use Illuminate\Contracts\Auth\MustVerifyEmail as MustVerifyEmailContract;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
@@ -27,9 +27,9 @@ class User extends Authenticatable implements MustVerifyEmailContract
         $this->notify(new VerifyEmailNotification);
     }
 
-    public function resume(): HasOne
+    public function resumes(): HasMany
     {
-        return $this->hasOne(Resume::class);
+        return $this->hasMany(Resume::class);
     }
 
     /**

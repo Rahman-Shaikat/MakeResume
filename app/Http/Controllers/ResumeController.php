@@ -12,6 +12,7 @@ use App\Services\ResumeBuilderService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Illuminate\View\View;
@@ -28,30 +29,32 @@ final class ResumeController extends Controller
             'template_slug' => ['required', 'string', 'in:'.implode(',', array_keys(config('resume_templates.catalog')))],
         ]);
 
-        $resume = Resume::query()->updateOrCreate(
-            ['user_id' => $request->user()->id],
-            ['template_slug' => $validated['template_slug']],
-        );
+        $resume = $request->user()->resumes()->create([
+            'template_slug' => $validated['template_slug'],
+            'content' => [
+                'full_name' => $request->user()->name,
+                'email' => $request->user()->email,
+            ],
+        ]);
 
         if ($request->expectsJson()) {
             return response()->json([
-                'message' => 'Template selected successfully.',
+                'message' => 'Your new resume is ready to customize.',
+                'resume_id' => $resume->id,
                 'template_slug' => $resume->template_slug,
-                'preview_url' => route('resume.templates.show', $resume->template_slug),
-                'builder_url' => route('resume.builder'),
-            ]);
+                'preview_url' => route('resume.preview', $resume),
+                'builder_url' => route('resume.builder', $resume),
+            ], 201);
         }
 
-        return back()->with('status', 'Template selected successfully.');
+        return redirect()->route('resume.builder', $resume);
     }
 
-    public function uploadProfileImage(ProfileImageRequest $request): JsonResponse|RedirectResponse
-    {
-        $user = $request->user();
-        $resume = Resume::query()->firstOrCreate(
-            ['user_id' => $user->id],
-            ['template_slug' => 'template-one'],
-        );
+    public function uploadProfileImage(
+        ProfileImageRequest $request,
+        Resume $resume,
+    ): JsonResponse|RedirectResponse {
+        Gate::authorize('update', $resume);
 
         $file = $request->file('profile_image');
         $filename = Str::uuid().'.'.$file->extension();
@@ -73,16 +76,11 @@ final class ResumeController extends Controller
         return back()->with('status', 'Profile photo updated successfully.');
     }
 
-    public function builder(Request $request): View|RedirectResponse
+    public function builder(Request $request, Resume $resume): View
     {
-        $user = $request->user()->load('resume');
-
-        if (! $user->resume) {
-            return redirect()->route('dashboard')
-                ->with('status', 'Select a resume template before continuing.');
-        }
-
-        $resume = $this->builderService->load($user->resume);
+        Gate::authorize('update', $resume);
+        $user = $request->user();
+        $resume = $this->builderService->load($resume);
         $payload = (new ResumeBuilderResource($resume))->resolve();
         $payload['content'] = $this->contentFor($user, $resume);
 
@@ -98,16 +96,32 @@ final class ResumeController extends Controller
     {
         abort_unless(array_key_exists($template, config('resume_templates.catalog')), 404);
 
-        $user = $request->user()->load('resume');
-
-        $resume = $user->resume ? $this->builderService->load($user->resume) : null;
+        $user = $request->user();
 
         return view("resumes.templates.{$template}", [
             'user' => $user,
-            'resume' => $resume,
-            'sections' => $resume?->sections ?? collect(),
+            'resume' => null,
+            'sections' => collect(),
             'data' => config("resume_templates.catalog.{$template}.sample"),
-            'content' => $this->contentFor($user, $resume),
+            'content' => $this->contentFor($user, null),
+            'embedded' => $request->boolean('embed'),
+        ]);
+    }
+
+    public function showResume(Request $request, Resume $resume): View
+    {
+        Gate::authorize('view', $resume);
+        $resume = $this->builderService->load($resume);
+        $template = $resume->template_slug;
+
+        abort_unless(array_key_exists($template, config('resume_templates.catalog')), 404);
+
+        return view("resumes.templates.{$template}", [
+            'user' => $request->user(),
+            'resume' => $resume,
+            'sections' => $resume->sections,
+            'data' => config("resume_templates.catalog.{$template}.sample"),
+            'content' => $this->contentFor($request->user(), $resume),
             'embedded' => $request->boolean('embed'),
         ]);
     }

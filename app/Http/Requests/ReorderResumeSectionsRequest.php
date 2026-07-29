@@ -10,7 +10,7 @@ final class ReorderResumeSectionsRequest extends FormRequest
 {
     public function authorize(): bool
     {
-        return $this->user()?->resume !== null;
+        return $this->user() !== null;
     }
 
     /**

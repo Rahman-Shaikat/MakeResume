@@ -21,7 +21,7 @@ test('an authenticated user can view the dashboard and template', function (): v
     $this->actingAs($user)
         ->get(route('dashboard'))
         ->assertOk()
-        ->assertSee('Choose your resume template')
+        ->assertSee('Choose a resume template')
         ->assertSee('Professional Cyan');
 
     $this->actingAs($user)
@@ -34,50 +34,63 @@ test('an authenticated user can view the dashboard and template', function (): v
 test('a user can select a resume template with ajax', function (): void {
     $user = User::factory()->create();
 
-    $this->actingAs($user)
+    $firstResponse = $this->actingAs($user)
         ->postJson(route('resume.template.select'), [
             'template_slug' => 'template-one',
         ])
-        ->assertOk()
-        ->assertJsonPath('template_slug', 'template-one');
+        ->assertCreated()
+        ->assertJsonPath('template_slug', 'template-one')
+        ->assertJsonStructure(['resume_id', 'builder_url', 'preview_url']);
 
-    $this->assertDatabaseHas('resumes', [
-        'user_id' => $user->id,
-        'template_slug' => 'template-one',
-    ]);
+    $secondResponse = $this->actingAs($user)
+        ->postJson(route('resume.template.select'), [
+            'template_slug' => 'template-one',
+        ])
+        ->assertCreated();
+
+    expect($user->resumes()->count())->toBe(2)
+        ->and($firstResponse->json('resume_id'))->not->toBe($secondResponse->json('resume_id'));
 });
 
-test('the next button is shown after a template has been selected', function (): void {
+test('the dashboard lists previously saved resumes with edit links', function (): void {
     $user = User::factory()->create();
-    Resume::query()->create([
+    $first = Resume::query()->create([
         'user_id' => $user->id,
         'template_slug' => 'template-one',
+        'content' => ['professional_title' => 'Backend Engineer'],
+    ]);
+    $second = Resume::query()->create([
+        'user_id' => $user->id,
+        'template_slug' => 'template-one',
+        'content' => ['professional_title' => 'Platform Engineer'],
+    ]);
+    $otherUser = User::factory()->create();
+    Resume::query()->create([
+        'user_id' => $otherUser->id,
+        'template_slug' => 'template-one',
+        'content' => ['professional_title' => 'Private Other Resume'],
     ]);
 
     $this->actingAs($user)
         ->get(route('dashboard'))
         ->assertOk()
-        ->assertSee('Template selected')
-        ->assertSee(route('resume.builder'));
-});
-
-test('the builder requires a selected template', function (): void {
-    $user = User::factory()->create();
-
-    $this->actingAs($user)
-        ->get(route('resume.builder'))
-        ->assertRedirect(route('dashboard'));
+        ->assertSee('Previously saved resumes')
+        ->assertSee('Backend Engineer')
+        ->assertSee('Platform Engineer')
+        ->assertDontSee('Private Other Resume')
+        ->assertSee(route('resume.builder', $first))
+        ->assertSee(route('resume.builder', $second));
 });
 
 test('a user with a selected template can open the resume builder', function (): void {
     $user = User::factory()->create();
-    Resume::query()->create([
+    $resume = Resume::query()->create([
         'user_id' => $user->id,
         'template_slug' => 'template-one',
     ]);
 
     $this->actingAs($user)
-        ->get(route('resume.builder'))
+        ->get(route('resume.builder', $resume))
         ->assertOk()
         ->assertSee('Personal Details')
         ->assertSeeText('Resume content')
@@ -104,17 +117,74 @@ test('personal details can be saved from the resume builder', function (): void 
     ];
 
     $this->actingAs($user)
-        ->patchJson(route('resume.builder.content.update'), $details)
+        ->patchJson(route('resume.builder.content.update', $resume), $details)
         ->assertOk()
         ->assertJsonPath('content.full_name', 'Alex Morgan');
 
     expect($resume->fresh()->content)->toMatchArray($details);
 
     $this->actingAs($user)
-        ->get(route('resume.templates.show', 'template-one'))
+        ->get(route('resume.preview', $resume))
         ->assertOk()
         ->assertSee('ALEX MORGAN')
         ->assertSee('Senior Laravel Developer');
+});
+
+test('editing a selected resume does not change another saved resume', function (): void {
+    $user = User::factory()->create();
+    $first = Resume::query()->create([
+        'user_id' => $user->id,
+        'template_slug' => 'template-one',
+        'content' => ['full_name' => 'First Resume'],
+    ]);
+    $second = Resume::query()->create([
+        'user_id' => $user->id,
+        'template_slug' => 'template-one',
+        'content' => ['full_name' => 'Second Resume'],
+    ]);
+
+    $this->actingAs($user)
+        ->patchJson(route('resume.builder.content.update', $first), [
+            'full_name' => 'Updated First Resume',
+            'professional_title' => 'Engineer',
+            'email' => $user->email,
+            'phone' => '',
+            'location' => '',
+            'website' => '',
+            'linkedin' => '',
+            'github' => '',
+            'summary' => '',
+        ])
+        ->assertOk();
+
+    expect($first->fresh()->content['full_name'])->toBe('Updated First Resume')
+        ->and($second->fresh()->content['full_name'])->toBe('Second Resume');
+});
+
+test('users cannot open or modify another users resume', function (): void {
+    Storage::fake('public');
+    $owner = User::factory()->create();
+    $intruder = User::factory()->create();
+    $resume = Resume::query()->create([
+        'user_id' => $owner->id,
+        'template_slug' => 'template-one',
+    ]);
+
+    $this->actingAs($intruder)
+        ->get(route('resume.builder', $resume))
+        ->assertForbidden();
+
+    $this->actingAs($intruder)
+        ->get(route('resume.preview', $resume))
+        ->assertForbidden();
+
+    $this->actingAs($intruder)
+        ->postJson(route('resume.profile-image.store', $resume), [
+            'profile_image' => UploadedFile::fake()->image('intruder.jpg', 600, 600),
+        ])
+        ->assertForbidden();
+
+    expect($resume->fresh()->profile_image)->toBeNull();
 });
 
 test('unknown resume templates are rejected', function (): void {
@@ -132,14 +202,18 @@ test('unknown resume templates are rejected', function (): void {
 test('a user profile image is stored under public images', function (): void {
     Storage::fake('public');
     $user = User::factory()->create();
+    $resume = Resume::query()->create([
+        'user_id' => $user->id,
+        'template_slug' => 'template-one',
+    ]);
 
     $this->actingAs($user)
-        ->post(route('resume.profile-image.store'), [
+        ->post(route('resume.profile-image.store', $resume), [
             'profile_image' => UploadedFile::fake()->image('profile.jpg', 600, 600)->size(500),
         ])
         ->assertRedirect();
 
-    $resume = Resume::query()->whereBelongsTo($user)->firstOrFail();
+    $resume->refresh();
 
     expect($resume->profile_image)
         ->toStartWith('images/')
@@ -151,16 +225,20 @@ test('a user profile image is stored under public images', function (): void {
 test('profile image upload returns its public URL for the live preview', function (): void {
     Storage::fake('public');
     $user = User::factory()->create();
+    $resume = Resume::query()->create([
+        'user_id' => $user->id,
+        'template_slug' => 'template-one',
+    ]);
 
     $this->actingAs($user)
-        ->postJson(route('resume.profile-image.store'), [
+        ->postJson(route('resume.profile-image.store', $resume), [
             'profile_image' => UploadedFile::fake()->image('profile.webp', 600, 600)->size(500),
         ])
         ->assertOk()
         ->assertJsonPath('message', 'Profile photo updated successfully.')
         ->assertJsonStructure(['profile_image_url']);
 
-    $resume = Resume::query()->whereBelongsTo($user)->firstOrFail();
+    $resume->refresh();
     expect($resume->profile_image)->toStartWith('images/');
     Storage::disk('public')->assertExists($resume->profile_image);
 });
@@ -169,29 +247,33 @@ test('replacing a profile image removes the previous upload', function (): void 
     Storage::fake('public');
     $user = User::factory()->create();
     Storage::disk('public')->put('images/old-profile.jpg', 'old image');
-    Resume::query()->create([
+    $resume = Resume::query()->create([
         'user_id' => $user->id,
         'template_slug' => 'template-one',
         'profile_image' => 'images/old-profile.jpg',
     ]);
 
     $this->actingAs($user)
-        ->post(route('resume.profile-image.store'), [
+        ->post(route('resume.profile-image.store', $resume), [
             'profile_image' => UploadedFile::fake()->image('new-profile.png', 600, 600),
         ])
         ->assertRedirect();
 
     Storage::disk('public')->assertMissing('images/old-profile.jpg');
-    Storage::disk('public')->assertExists($user->resume()->firstOrFail()->profile_image);
+    Storage::disk('public')->assertExists($resume->fresh()->profile_image);
 });
 
 test('profile image validation rejects unsupported files', function (): void {
     Storage::fake('public');
     $user = User::factory()->create();
+    $resume = Resume::query()->create([
+        'user_id' => $user->id,
+        'template_slug' => 'template-one',
+    ]);
 
     $this->actingAs($user)
         ->from(route('dashboard'))
-        ->post(route('resume.profile-image.store'), [
+        ->post(route('resume.profile-image.store', $resume), [
             'profile_image' => UploadedFile::fake()->create('profile.svg', 20, 'image/svg+xml'),
         ])
         ->assertRedirect(route('dashboard'))

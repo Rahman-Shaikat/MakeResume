@@ -23,8 +23,8 @@ final class ResumeBuilderResource extends JsonResource
                 : null,
             'content' => $this->content ?? [],
             'sections' => ResumeSectionResource::collection($this->whenLoaded('sections')),
-            'preview_url' => route('resume.templates.show', [
-                'template' => $this->template_slug,
+            'preview_url' => route('resume.preview', [
+                'resume' => $this->id,
                 'embed' => 1,
                 'builder' => 1,
             ]),

@@ -58,7 +58,7 @@ $(document).on('click', '.js-select-template', function () {
     const template = button.dataset.template;
 
     button.disabled = true;
-    button.textContent = 'Selecting…';
+    button.textContent = 'Creating…';
 
     $.ajax({
         url: button.dataset.url,
@@ -80,18 +80,20 @@ $(document).on('click', '.js-select-template', function () {
                 cardButton.classList.toggle('btn-success', isSelected);
                 cardButton.classList.toggle('btn-primary', !isSelected);
                 cardButton.disabled = isSelected;
-                cardButton.textContent = isSelected ? 'Selected' : 'Use template';
+                cardButton.textContent = isSelected ? 'Created' : 'Create resume';
             });
 
             const nextBar = document.querySelector('[data-template-next]');
             nextBar?.classList.remove('d-none');
+            const builderLink = nextBar?.querySelector('[data-builder-link]');
+            if (builderLink) builderLink.href = response.builder_url;
 
             showToast(response.message);
         })
         .fail((xhr) => {
             button.disabled = false;
-            button.textContent = 'Use template';
-            showToast(xhr.responseJSON?.message ?? 'Could not select the template. Please try again.');
+            button.textContent = 'Create resume';
+            showToast(xhr.responseJSON?.message ?? 'Could not create the resume. Please try again.');
         });
 });
 

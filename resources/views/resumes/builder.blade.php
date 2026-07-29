@@ -4,10 +4,10 @@
 <div
     class="dynamic-builder"
     data-builder-root
-    data-content-url="{{ route('resume.builder.content.update') }}"
-    data-sections-url="{{ route('resume.builder.sections.store') }}"
-    data-reorder-url="{{ route('resume.builder.sections.reorder') }}"
-    data-profile-url="{{ route('resume.profile-image.store') }}"
+    data-content-url="{{ route('resume.builder.content.update', $resume) }}"
+    data-sections-url="{{ route('resume.builder.sections.store', $resume) }}"
+    data-reorder-url="{{ route('resume.builder.sections.reorder', $resume) }}"
+    data-profile-url="{{ route('resume.profile-image.store', $resume) }}"
 >
     <header class="builder-header">
         <div class="container-fluid px-3 px-lg-4">
@@ -23,7 +23,7 @@
                 </div>
                 <div class="builder-header-actions">
                     <x-builder.save-status />
-                    <a href="{{ route('resume.templates.show', $resume->template_slug) }}" target="_blank" class="btn btn-outline-secondary builder-preview-button">
+                    <a href="{{ route('resume.preview', $resume) }}" target="_blank" class="btn btn-outline-secondary builder-preview-button">
                         <svg viewBox="0 0 24 24"><path d="M2.5 12s3.5-6 9.5-6 9.5 6 9.5 6-3.5 6-9.5 6-9.5-6-9.5-6Z"/><circle cx="12" cy="12" r="2.5"/></svg>
                         Full preview
                     </a>

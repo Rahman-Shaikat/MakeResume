@@ -2,8 +2,10 @@
 
 namespace App\Providers;
 
+use App\Models\Resume;
 use App\Models\ResumeSection;
 use App\Models\ResumeSectionItem;
+use App\Policies\ResumePolicy;
 use App\Policies\ResumeSectionItemPolicy;
 use App\Policies\ResumeSectionPolicy;
 use Illuminate\Support\Facades\Gate;
@@ -24,6 +26,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        Gate::policy(Resume::class, ResumePolicy::class);
         Gate::policy(ResumeSection::class, ResumeSectionPolicy::class);
         Gate::policy(ResumeSectionItem::class, ResumeSectionItemPolicy::class);
     }

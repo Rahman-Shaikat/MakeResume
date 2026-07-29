@@ -36,31 +36,36 @@ Route::middleware('auth')->group(function (): void {
     Route::middleware('verified')->group(function (): void {
         Route::get('/dashboard', DashboardController::class)->name('dashboard');
 
-        Route::post('/resume/template', [ResumeController::class, 'selectTemplate'])
+        Route::post('/resumes', [ResumeController::class, 'selectTemplate'])
             ->name('resume.template.select');
-        Route::post('/resume/profile-image', [ResumeController::class, 'uploadProfileImage'])
-            ->name('resume.profile-image.store');
-        Route::get('/resume/builder', [ResumeController::class, 'builder'])
-            ->name('resume.builder');
-        Route::patch('/resume/builder/content', [ResumeBuilderController::class, 'updateContent'])
-            ->name('resume.builder.content.update');
-        Route::post('/resume/builder/sections/reorder', [ResumeBuilderController::class, 'reorderSections'])
-            ->name('resume.builder.sections.reorder');
-        Route::post('/resume/builder/sections', [ResumeBuilderController::class, 'storeSection'])
-            ->name('resume.builder.sections.store');
-        Route::patch('/resume/builder/sections/{resumeSection}', [ResumeBuilderController::class, 'updateSection'])
-            ->name('resume.builder.sections.update');
-        Route::delete('/resume/builder/sections/{resumeSection}', [ResumeBuilderController::class, 'destroySection'])
-            ->name('resume.builder.sections.destroy');
-        Route::post('/resume/builder/sections/{resumeSection}/items/reorder', [ResumeBuilderController::class, 'reorderItems'])
-            ->name('resume.builder.items.reorder');
-        Route::post('/resume/builder/sections/{resumeSection}/items', [ResumeBuilderController::class, 'storeItem'])
-            ->name('resume.builder.items.store');
-        Route::patch('/resume/builder/sections/{resumeSection}/items/{resumeSectionItem}', [ResumeBuilderController::class, 'updateItem'])
-            ->name('resume.builder.items.update');
-        Route::delete('/resume/builder/sections/{resumeSection}/items/{resumeSectionItem}', [ResumeBuilderController::class, 'destroyItem'])
-            ->name('resume.builder.items.destroy');
         Route::get('/resume/templates/{template}', [ResumeController::class, 'showTemplate'])
             ->name('resume.templates.show');
+
+        Route::prefix('/resumes/{resume}')->group(function (): void {
+            Route::get('/preview', [ResumeController::class, 'showResume'])
+                ->name('resume.preview');
+            Route::post('/profile-image', [ResumeController::class, 'uploadProfileImage'])
+                ->name('resume.profile-image.store');
+            Route::get('/builder', [ResumeController::class, 'builder'])
+                ->name('resume.builder');
+            Route::patch('/builder/content', [ResumeBuilderController::class, 'updateContent'])
+                ->name('resume.builder.content.update');
+            Route::post('/builder/sections/reorder', [ResumeBuilderController::class, 'reorderSections'])
+                ->name('resume.builder.sections.reorder');
+            Route::post('/builder/sections', [ResumeBuilderController::class, 'storeSection'])
+                ->name('resume.builder.sections.store');
+            Route::patch('/builder/sections/{resumeSection}', [ResumeBuilderController::class, 'updateSection'])
+                ->name('resume.builder.sections.update');
+            Route::delete('/builder/sections/{resumeSection}', [ResumeBuilderController::class, 'destroySection'])
+                ->name('resume.builder.sections.destroy');
+            Route::post('/builder/sections/{resumeSection}/items/reorder', [ResumeBuilderController::class, 'reorderItems'])
+                ->name('resume.builder.items.reorder');
+            Route::post('/builder/sections/{resumeSection}/items', [ResumeBuilderController::class, 'storeItem'])
+                ->name('resume.builder.items.store');
+            Route::patch('/builder/sections/{resumeSection}/items/{resumeSectionItem}', [ResumeBuilderController::class, 'updateItem'])
+                ->name('resume.builder.items.update');
+            Route::delete('/builder/sections/{resumeSection}/items/{resumeSectionItem}', [ResumeBuilderController::class, 'destroyItem'])
+                ->name('resume.builder.items.destroy');
+        });
     });
 });
