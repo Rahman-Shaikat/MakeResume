@@ -796,7 +796,9 @@ test('a user with a selected template can open the resume builder', function ():
         ->assertOk()
         ->assertSee('Personal Details')
         ->assertSeeText('Resume content')
-        ->assertSeeText('Add custom section');
+        ->assertSeeText('Add custom section')
+        ->assertSee('data-profile-url="'.route('resume.profile-image.store', $resume).'"', false)
+        ->assertSee('data-profile-remove-url="'.route('resume.profile-image.destroy', $resume).'"', false);
 });
 
 test('personal details can be saved from the resume builder', function (): void {
@@ -963,6 +965,50 @@ test('replacing a profile image removes the previous upload', function (): void 
 
     Storage::disk('public')->assertMissing('images/old-profile.jpg');
     Storage::disk('public')->assertExists($resume->fresh()->profile_image);
+});
+
+test('a user can remove a profile image from any resume template', function (): void {
+    Storage::fake('public');
+    $user = User::factory()->create();
+    Storage::disk('public')->put('images/removable-profile.jpg', 'profile');
+    $resume = Resume::query()->create([
+        'user_id' => $user->id,
+        'template_slug' => 'template-six',
+        'profile_image' => 'images/removable-profile.jpg',
+    ]);
+
+    $this->actingAs($user)
+        ->deleteJson(route('resume.profile-image.destroy', $resume))
+        ->assertOk()
+        ->assertJsonPath('message', 'Profile photo removed successfully.')
+        ->assertJsonPath('profile_image_url', null);
+
+    expect($resume->fresh()->profile_image)->toBeNull();
+    Storage::disk('public')->assertMissing('images/removable-profile.jpg');
+
+    $this->actingAs($user)
+        ->get(route('resume.preview', $resume))
+        ->assertOk()
+        ->assertDontSee('/storage/images/removable-profile.jpg', false);
+});
+
+test('a user cannot remove another users resume profile image', function (): void {
+    Storage::fake('public');
+    $owner = User::factory()->create();
+    $otherUser = User::factory()->create();
+    Storage::disk('public')->put('images/private-profile.jpg', 'profile');
+    $resume = Resume::query()->create([
+        'user_id' => $owner->id,
+        'template_slug' => 'template-two',
+        'profile_image' => 'images/private-profile.jpg',
+    ]);
+
+    $this->actingAs($otherUser)
+        ->deleteJson(route('resume.profile-image.destroy', $resume))
+        ->assertForbidden();
+
+    expect($resume->fresh()->profile_image)->toBe('images/private-profile.jpg');
+    Storage::disk('public')->assertExists('images/private-profile.jpg');
 });
 
 test('profile image validation rejects unsupported files', function (): void {

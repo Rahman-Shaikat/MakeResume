@@ -76,6 +76,28 @@ final class ResumeController extends Controller
         return back()->with('status', 'Profile photo updated successfully.');
     }
 
+    public function removeProfileImage(Request $request, Resume $resume): JsonResponse|RedirectResponse
+    {
+        Gate::authorize('update', $resume);
+
+        $profileImage = $resume->profile_image;
+
+        if ($profileImage && Str::startsWith($profileImage, 'images/')) {
+            Storage::disk('public')->delete($profileImage);
+        }
+
+        $resume->update(['profile_image' => null]);
+
+        if ($request->expectsJson()) {
+            return response()->json([
+                'message' => 'Profile photo removed successfully.',
+                'profile_image_url' => null,
+            ]);
+        }
+
+        return back()->with('status', 'Profile photo removed successfully.');
+    }
+
     public function destroy(Resume $resume): RedirectResponse
     {
         Gate::authorize('delete', $resume);

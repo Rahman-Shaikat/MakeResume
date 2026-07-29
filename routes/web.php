@@ -48,6 +48,8 @@ Route::middleware('auth')->group(function (): void {
                 ->name('resume.preview');
             Route::post('/profile-image', [ResumeController::class, 'uploadProfileImage'])
                 ->name('resume.profile-image.store');
+            Route::delete('/profile-image', [ResumeController::class, 'removeProfileImage'])
+                ->name('resume.profile-image.destroy');
             Route::get('/builder', [ResumeController::class, 'builder'])
                 ->name('resume.builder');
             Route::patch('/builder/content', [ResumeBuilderController::class, 'updateContent'])

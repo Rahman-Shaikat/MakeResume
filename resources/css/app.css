@@ -4070,11 +4070,33 @@ svg {
 }
 
 .builder-image-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
     cursor: pointer;
 }
 
 .builder-image-button svg {
     width: 15px;
+    height: 15px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.8;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+.builder-image-remove-button {
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    justify-content: center;
+}
+
+.builder-profile-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 7px;
 }
 
 .builder-profile-row p {

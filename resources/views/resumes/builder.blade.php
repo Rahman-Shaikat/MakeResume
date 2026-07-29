@@ -8,6 +8,7 @@
     data-sections-url="{{ route('resume.builder.sections.store', $resume) }}"
     data-reorder-url="{{ route('resume.builder.sections.reorder', $resume) }}"
     data-profile-url="{{ route('resume.profile-image.store', $resume) }}"
+    data-profile-remove-url="{{ route('resume.profile-image.destroy', $resume) }}"
 >
     <header class="builder-header">
         <div class="container-fluid px-3 px-lg-4">

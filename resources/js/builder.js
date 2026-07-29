@@ -167,16 +167,31 @@ if (root) {
         const avatar = payload.profile_image_url
             ? `<img src="${escapeHtml(payload.profile_image_url)}" alt="Profile photo">`
             : `<span>${escapeHtml(initials)}</span>`;
+        const imageButtonLabel = payload.profile_image_url ? 'Change photo' : 'Add photo';
+        const removeButton = payload.profile_image_url
+            ? `<button
+                    type="button"
+                    class="btn btn-outline-danger btn-sm builder-image-button builder-image-remove-button"
+                    data-remove-builder-image
+                    aria-label="Remove profile photo"
+                    title="Remove profile photo"
+                >
+                    <svg viewBox="0 0 24 24"><path d="M4 7h16M9 7V4h6v3M7 7l1 13h8l1-13M10 11v5M14 11v5"/></svg>
+                </button>`
+            : '';
 
         return `
             <div class="builder-profile-row">
                 <div class="builder-profile-image" data-builder-profile>${avatar}</div>
                 <div>
-                    <label class="btn btn-outline-primary btn-sm builder-image-button">
-                        <svg viewBox="0 0 24 24"><path d="M12 16V4m0 0L8 8m4-4 4 4M5 14v6h14v-6"/></svg>
-                        Change photo
-                        <input type="file" class="visually-hidden" accept=".jpg,.jpeg,.png,.webp" data-builder-image-input>
-                    </label>
+                    <div class="builder-profile-actions">
+                        <label class="btn btn-outline-primary btn-sm builder-image-button">
+                            <svg viewBox="0 0 24 24"><path d="M12 16V4m0 0L8 8m4-4 4 4M5 14v6h14v-6"/></svg>
+                            ${imageButtonLabel}
+                            <input type="file" class="visually-hidden" accept=".jpg,.jpeg,.png,.webp" data-builder-image-input>
+                        </label>
+                        ${removeButton}
+                    </div>
                     <p>JPG, PNG, or WebP. Maximum 2 MB.</p>
                 </div>
             </div>
@@ -393,6 +408,23 @@ if (root) {
     });
 
     sectionList.addEventListener('click', (event) => {
+        const removeProfileImage = event.target.closest('[data-remove-builder-image]');
+        if (removeProfileImage) {
+            if (!window.confirm('Remove the profile photo from this resume?')) return;
+
+            markSaving();
+            request({
+                url: root.dataset.profileRemoveUrl,
+                method: 'DELETE',
+            }).done((response) => {
+                payload.profile_image_url = null;
+                renderSections();
+                markSaved(response.message);
+                refreshPreview();
+            }).fail(showError);
+            return;
+        }
+
         const toggle = event.target.closest('[data-toggle-section]');
         if (toggle) {
             const body = toggle.closest('[data-section-id]').querySelector('.dynamic-section-body');
@@ -490,6 +522,7 @@ if (root) {
                 formData: true,
             }).done((response) => {
                 payload.profile_image_url = response.profile_image_url;
+                renderSections();
                 markSaved('Profile photo saved');
                 refreshPreview();
                 URL.revokeObjectURL(localUrl);
