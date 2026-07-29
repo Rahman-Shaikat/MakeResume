@@ -27,7 +27,7 @@ final class RegisteredUserController extends Controller
         Auth::login($user);
         $request->session()->regenerate();
 
-        return redirect()->route('dashboard')
-            ->with('status', 'Your account is ready. Choose a template to begin.');
+        return redirect()->route('verification.notice')
+            ->with('status', 'verification-link-sent');
     }
 }
