@@ -178,6 +178,15 @@ $(document).on('click', '.js-select-template', function () {
 
 $(document).on('click', '[data-print-resume]', () => window.print());
 
+$(document).on('submit', '[data-delete-resume-form]', function (event) {
+    const resumeTitle = this.dataset.resumeTitle || 'this resume';
+    const confirmed = window.confirm(`Delete "${resumeTitle}"? This action cannot be undone.`);
+
+    if (!confirmed) {
+        event.preventDefault();
+    }
+});
+
 $(document).on('input', '[data-summary-input]', function () {
     document.querySelector('[data-summary-count]').textContent = this.value.length;
 });

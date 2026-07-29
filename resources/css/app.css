@@ -727,6 +727,7 @@ svg {
 .saved-resume-card {
     min-width: 0;
     padding: 13px;
+    position: relative;
     display: grid;
     grid-template-columns: 122px minmax(0, 1fr);
     gap: 16px;
@@ -740,6 +741,50 @@ svg {
     border-color: #b9cbea;
     transform: translateY(-2px);
     box-shadow: 0 12px 30px rgba(24, 39, 75, .085);
+}
+
+.saved-resume-delete-form {
+    position: absolute;
+    top: 9px;
+    right: 9px;
+    z-index: 2;
+}
+
+.saved-resume-delete-button {
+    width: 30px;
+    height: 30px;
+    padding: 0;
+    display: grid;
+    place-items: center;
+    border: 1px solid #e5d7da;
+    border-radius: 50%;
+    color: #a44a56;
+    background: rgba(255, 255, 255, .96);
+    box-shadow: 0 4px 12px rgba(91, 31, 42, .08);
+    transition: color .18s ease, background .18s ease, border-color .18s ease, transform .18s ease;
+}
+
+.saved-resume-delete-button:hover,
+.saved-resume-delete-button:focus-visible {
+    border-color: #d85868;
+    color: #fff;
+    background: #d85868;
+    transform: translateY(-1px);
+}
+
+.saved-resume-delete-button:focus-visible {
+    outline: 3px solid rgba(216, 88, 104, .2);
+    outline-offset: 2px;
+}
+
+.saved-resume-delete-button svg {
+    width: 15px;
+    height: 15px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.8;
+    stroke-linecap: round;
+    stroke-linejoin: round;
 }
 
 .saved-resume-paper {
@@ -851,7 +896,12 @@ svg {
     gap: 14px;
 }
 
+.saved-resume-copy {
+    padding-right: 31px;
+}
+
 .saved-resume-copy > span {
+    display: block;
     color: var(--app-primary);
     font-size: 8px;
     font-weight: 800;

@@ -715,7 +715,60 @@ test('the dashboard lists previously saved resumes with edit links', function ()
         ->assertSee('Platform Engineer')
         ->assertDontSee('Private Other Resume')
         ->assertSee(route('resume.builder', $first))
-        ->assertSee(route('resume.builder', $second));
+        ->assertSee(route('resume.builder', $second))
+        ->assertSee(route('resume.destroy', $first))
+        ->assertSee('data-delete-resume-form', false)
+        ->assertSee('aria-label="Delete Backend Engineer"', false);
+});
+
+test('a user can delete their saved resume and its uploaded profile image', function (): void {
+    Storage::fake('public');
+    $user = User::factory()->create();
+    Storage::disk('public')->put('images/resume-to-delete.jpg', 'profile');
+
+    $resume = Resume::query()->create([
+        'user_id' => $user->id,
+        'template_slug' => 'template-one',
+        'profile_image' => 'images/resume-to-delete.jpg',
+        'content' => ['professional_title' => 'Temporary Resume'],
+    ]);
+
+    $resume = app(ResumeBuilderService::class)->load($resume);
+    $section = $resume->sections->firstWhere('type', 'experience');
+    $item = $section->items()->create([
+        'sort_order' => 0,
+        'data' => ['title' => 'Temporary Position'],
+    ]);
+
+    $this->actingAs($user)
+        ->delete(route('resume.destroy', $resume))
+        ->assertRedirect(route('dashboard'))
+        ->assertSessionHas('status', 'Resume deleted successfully.');
+
+    $this->assertDatabaseMissing('resumes', ['id' => $resume->id]);
+    $this->assertDatabaseMissing('resume_sections', ['resume_id' => $resume->id]);
+    $this->assertDatabaseMissing('resume_section_items', ['id' => $item->id]);
+    Storage::disk('public')->assertMissing('images/resume-to-delete.jpg');
+});
+
+test('a user cannot delete another users saved resume', function (): void {
+    Storage::fake('public');
+    $owner = User::factory()->create();
+    $otherUser = User::factory()->create();
+    Storage::disk('public')->put('images/private-resume.jpg', 'profile');
+
+    $resume = Resume::query()->create([
+        'user_id' => $owner->id,
+        'template_slug' => 'template-one',
+        'profile_image' => 'images/private-resume.jpg',
+    ]);
+
+    $this->actingAs($otherUser)
+        ->delete(route('resume.destroy', $resume))
+        ->assertForbidden();
+
+    $this->assertDatabaseHas('resumes', ['id' => $resume->id]);
+    Storage::disk('public')->assertExists('images/private-resume.jpg');
 });
 
 test('a user with a selected template can open the resume builder', function (): void {

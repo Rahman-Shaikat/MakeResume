@@ -38,6 +38,8 @@ Route::middleware('auth')->group(function (): void {
 
         Route::post('/resumes', [ResumeController::class, 'selectTemplate'])
             ->name('resume.template.select');
+        Route::delete('/resumes/{resume}', [ResumeController::class, 'destroy'])
+            ->name('resume.destroy');
         Route::get('/resume/templates/{template}', [ResumeController::class, 'showTemplate'])
             ->name('resume.templates.show');
 

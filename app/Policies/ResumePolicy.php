@@ -18,4 +18,9 @@ final class ResumePolicy
     {
         return $this->view($user, $resume);
     }
+
+    public function delete(User $user, Resume $resume): bool
+    {
+        return $this->view($user, $resume);
+    }
 }

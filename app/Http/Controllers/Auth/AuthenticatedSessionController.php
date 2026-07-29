@@ -33,6 +33,6 @@ final class AuthenticatedSessionController extends Controller
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
-        return redirect()->route('login')->with('status', 'You have been signed out securely.');
+        return redirect()->route('login')->with('status', 'You have been signed out successfully.');
     }
 }

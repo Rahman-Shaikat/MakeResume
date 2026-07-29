@@ -56,6 +56,27 @@
                         $resumeOwner = $resumeContent['full_name'] ?? $user->name;
                     @endphp
                     <article class="saved-resume-card">
+                        <form
+                            method="POST"
+                            action="{{ route('resume.destroy', $resume) }}"
+                            class="saved-resume-delete-form"
+                            data-delete-resume-form
+                            data-resume-title="{{ $resumeTitle }}"
+                        >
+                            @csrf
+                            @method('DELETE')
+                            <button
+                                type="submit"
+                                class="saved-resume-delete-button"
+                                aria-label="Delete {{ $resumeTitle }}"
+                                title="Delete resume"
+                            >
+                                <svg viewBox="0 0 24 24" aria-hidden="true">
+                                    <path d="M4 7h16M9 7V4h6v3M7 7l1 13h8l1-13M10 11v5M14 11v5"/>
+                                </svg>
+                            </button>
+                        </form>
+
                         <div class="saved-resume-paper" aria-hidden="true">
                             <div class="saved-paper-header">
                                 <div>

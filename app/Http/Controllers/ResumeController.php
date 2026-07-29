@@ -76,6 +76,23 @@ final class ResumeController extends Controller
         return back()->with('status', 'Profile photo updated successfully.');
     }
 
+    public function destroy(Resume $resume): RedirectResponse
+    {
+        Gate::authorize('delete', $resume);
+
+        $profileImage = $resume->profile_image;
+
+        $resume->delete();
+
+        if ($profileImage && Str::startsWith($profileImage, 'images/')) {
+            Storage::disk('public')->delete($profileImage);
+        }
+
+        return redirect()
+            ->route('dashboard')
+            ->with('status', 'Resume deleted successfully.');
+    }
+
     public function builder(Request $request, Resume $resume): View
     {
         Gate::authorize('update', $resume);
