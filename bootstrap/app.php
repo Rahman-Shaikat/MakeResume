@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Middleware\AdminMiddleware;
+use App\Http\Middleware\CheckPermission;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
@@ -12,8 +14,21 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
-        $middleware->redirectGuestsTo(fn () => route('login'));
-        $middleware->redirectUsersTo(fn () => route('dashboard'));
+        $middleware->alias([
+            'admin' => AdminMiddleware::class,
+            'check-permission' => CheckPermission::class,
+        ]);
+
+        $middleware->redirectGuestsTo(
+            fn (Request $request) => $request->is('admin/*')
+                ? route('admin.loginpage')
+                : route('login'),
+        );
+        $middleware->redirectUsersTo(
+            fn (Request $request) => $request->is('admin/*')
+                ? route('admin.dashboard')
+                : route('dashboard'),
+        );
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         $exceptions->shouldRenderJsonWhen(

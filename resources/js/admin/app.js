@@ -1,0 +1,128 @@
+import * as bootstrap from 'bootstrap';
+
+window.bootstrap = bootstrap;
+
+const body = document.body;
+const sidebar = document.querySelector('[data-admin-sidebar]');
+const topbar = document.querySelector('[data-admin-topbar]');
+const content = document.querySelector('[data-admin-content]');
+const overlay = document.querySelector('[data-admin-overlay]');
+const collapseButton = document.querySelector('[data-admin-sidebar-collapse]');
+const openButton = document.querySelector('[data-admin-sidebar-open]');
+
+const closeMobileSidebar = () => {
+    sidebar?.classList.remove('is-mobile-open');
+    overlay?.classList.remove('is-visible');
+    body.classList.remove('admin-navigation-open');
+    openButton?.setAttribute('aria-expanded', 'false');
+};
+
+collapseButton?.addEventListener('click', () => {
+    const collapsed = sidebar?.classList.toggle('is-collapsed') ?? false;
+
+    topbar?.classList.toggle('is-expanded', collapsed);
+    content?.classList.toggle('is-expanded', collapsed);
+    collapseButton.setAttribute('aria-expanded', String(!collapsed));
+    collapseButton.setAttribute('aria-label', collapsed ? 'Expand sidebar' : 'Collapse sidebar');
+});
+
+openButton?.addEventListener('click', () => {
+    sidebar?.classList.add('is-mobile-open');
+    overlay?.classList.add('is-visible');
+    body.classList.add('admin-navigation-open');
+    openButton.setAttribute('aria-expanded', 'true');
+});
+
+overlay?.addEventListener('click', closeMobileSidebar);
+
+document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape') {
+        closeMobileSidebar();
+    }
+});
+
+window.addEventListener('resize', () => {
+    if (window.innerWidth >= 992) {
+        closeMobileSidebar();
+    }
+});
+
+document.querySelectorAll('[data-confirm]').forEach((form) => {
+    form.addEventListener('submit', (event) => {
+        if (! window.confirm(form.dataset.confirm)) {
+            event.preventDefault();
+        }
+    });
+});
+
+document.querySelectorAll('[data-permission-parent]').forEach((parent) => {
+    parent.addEventListener('change', () => {
+        document
+            .querySelectorAll(`[data-permission-child="${parent.dataset.permissionParent}"]`)
+            .forEach((child) => {
+                child.checked = parent.checked;
+            });
+    });
+});
+
+document.querySelectorAll('[data-permission-child]').forEach((child) => {
+    child.addEventListener('change', () => {
+        if (! child.checked) {
+            return;
+        }
+
+        const parent = document.querySelector(
+            `[data-permission-parent="${child.dataset.permissionChild}"]`,
+        );
+
+        if (parent) {
+            parent.checked = true;
+        }
+    });
+});
+
+const permissionGroupSelect = document.querySelector('[data-permission-group-select]');
+const permissionParentSelect = document.querySelector('[data-permission-parent-select]');
+
+const filterPermissionParents = () => {
+    if (! permissionGroupSelect || ! permissionParentSelect) {
+        return;
+    }
+
+    const groupId = permissionGroupSelect.value;
+
+    permissionParentSelect
+        .querySelectorAll('option[data-permission-group]')
+        .forEach((option) => {
+            option.disabled = option.dataset.permissionGroup !== groupId;
+        });
+
+    if (permissionParentSelect.selectedOptions[0]?.disabled) {
+        permissionParentSelect.value = '0';
+    }
+};
+
+permissionGroupSelect?.addEventListener('change', filterPermissionParents);
+filterPermissionParents();
+
+const categoryName = document.querySelector('[data-category-name]');
+const categorySlug = document.querySelector('[data-category-slug]');
+
+if (categoryName && categorySlug) {
+    let categorySlugIsManual = categorySlug.value.trim() !== '';
+    const slugifyCategoryName = () => categoryName.value
+        .toLowerCase()
+        .trim()
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/^-+|-+$/g, '');
+
+    categoryName.addEventListener('input', () => {
+        if (! categorySlugIsManual) {
+            categorySlug.value = slugifyCategoryName();
+        }
+    });
+
+    categorySlug.addEventListener('input', () => {
+        categorySlugIsManual = categorySlug.value.trim() !== '';
+    });
+}

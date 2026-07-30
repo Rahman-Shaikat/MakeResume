@@ -30,6 +30,8 @@ ready for A4 printing or PDF export.
 ## Features
 
 - Secure registration, login, logout, and signed email verification.
+- Separate administrator authentication with role-based permissions.
+- Ordered job-category and subcategory management for organizing resume templates.
 - Verified-user middleware protecting the dashboard and resume workspace.
 - Six selectable, professionally designed resume templates.
 - Responsive template slider with embedded live previews.
@@ -140,6 +142,22 @@ php artisan storage:link
 
 The storage link is required for profile images. Uploaded files are saved to
 `storage/app/public/images` and served through `/storage/images`.
+
+## Administrator access
+
+Resume Studio has a separate administrator guard, login, roles, and exact
+route-level permissions. Seed the initial RBAC records after migrating:
+
+```bash
+php artisan db:seed
+```
+
+The administration login uses the named route `admin.loginpage`; run
+`php artisan route:list --name=admin.loginpage` to inspect its configured URL.
+Local development defaults are `admin@example.com` and `password`; override
+`ADMIN_EMAIL` and `ADMIN_PASSWORD` in `.env` before seeding any shared or
+deployed environment. Administrator profile images are stored on the public
+disk under `admin-users/`.
 
 ## Email Verification
 
