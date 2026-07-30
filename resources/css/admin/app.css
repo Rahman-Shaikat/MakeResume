@@ -1,4 +1,5 @@
 @import 'bootstrap/dist/css/bootstrap.min.css';
+@import 'select2/dist/css/select2.min.css';
 
 :root {
     --admin-primary: #e66239;
@@ -147,6 +148,26 @@ body.admin-body {
     font-weight: 600;
 }
 
+.admin-topbar-actions > li {
+    flex: 0 0 auto;
+}
+
+.admin-topbar-action {
+    min-height: 36px;
+    padding-inline: 11px;
+    color: #505050;
+    white-space: nowrap;
+}
+
+.admin-topbar-action .admin-icon {
+    width: 16px;
+    height: 16px;
+}
+
+.admin-topbar-action span {
+    font-size: .64rem;
+}
+
 .admin-notification-dot {
     position: absolute;
     top: 7px;
@@ -200,19 +221,48 @@ body.admin-body {
     font-size: .68rem;
 }
 
+.admin-dropdown-heading form {
+    margin: 0;
+}
+
+.admin-notification-caught-up {
+    margin: 0 !important;
+    color: var(--admin-success) !important;
+    font-size: .65rem !important;
+    font-weight: 500;
+}
+
+.admin-notification-form {
+    margin: 0;
+}
+
 .admin-notification-item {
+    width: 100%;
     min-height: 74px;
     padding: 13px 18px;
     display: grid;
     grid-template-columns: 36px minmax(0, 1fr) 7px;
     align-items: center;
     gap: 11px;
+    border: 0;
     border-bottom: 1px solid #f0f0f0;
+    color: inherit;
+    background: #fff;
+    font-family: inherit;
+    text-align: left;
 }
 
 .admin-notification-item:hover {
     color: inherit !important;
     background: #fafafa;
+}
+
+.admin-notification-item.is-unread {
+    background: #fffaf8;
+}
+
+.admin-notification-item.is-unread:hover {
+    background: #fff6f2;
 }
 
 .admin-notification-item strong,
@@ -234,11 +284,46 @@ body.admin-body {
     white-space: nowrap;
 }
 
+.admin-notification-item time {
+    margin-top: 4px;
+    display: block;
+    color: #9a9a9a;
+    font-size: .55rem;
+}
+
 .admin-notification-item > i {
     width: 6px;
     height: 6px;
     border-radius: 50%;
     background: var(--admin-primary);
+}
+
+.admin-notification-empty {
+    padding: 30px 20px;
+    display: grid;
+    justify-items: center;
+    color: var(--admin-muted);
+    text-align: center;
+}
+
+.admin-notification-empty .admin-icon {
+    width: 25px;
+    height: 25px;
+    margin-bottom: 10px;
+    color: #a5a5a5;
+}
+
+.admin-notification-empty strong {
+    color: var(--admin-text);
+    font-size: .72rem;
+    font-weight: 600;
+}
+
+.admin-notification-empty span {
+    max-width: 250px;
+    margin-top: 4px;
+    font-size: .59rem;
+    line-height: 1.5;
 }
 
 .admin-dropdown-footer {
@@ -1415,6 +1500,15 @@ body.admin-body {
     body.admin-navigation-open {
         overflow: hidden;
     }
+
+    .admin-topbar-action {
+        width: 36px;
+        padding: 0;
+    }
+
+    .admin-topbar-action span {
+        display: none;
+    }
 }
 
 @media (max-width: 767.98px) {
@@ -1674,6 +1768,156 @@ button.admin-profile-signout {
     font-size: .59rem;
 }
 
+.admin-required-mark {
+    margin-left: 2px;
+    color: var(--admin-danger);
+}
+
+.admin-field-error {
+    margin-top: 5px;
+    display: block;
+    color: var(--admin-danger);
+    font-size: .58rem;
+    font-weight: 500;
+}
+
+.admin-current-file {
+    margin: -2px 0 7px;
+    display: inline-flex;
+    color: var(--admin-primary) !important;
+    font-size: .6rem;
+    font-weight: 500;
+}
+
+.admin-radio-fieldset {
+    min-width: 0;
+    margin: 0;
+    padding: 0;
+    border: 0;
+}
+
+.admin-radio-fieldset legend.form-label {
+    width: auto;
+    float: none;
+}
+
+.admin-radio-group {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 9px;
+}
+
+.admin-radio-option {
+    min-width: 0;
+    min-height: 58px;
+    padding: 10px 12px;
+    display: flex;
+    align-items: flex-start;
+    gap: 9px;
+    border: 1px solid #dedede;
+    border-radius: 8px;
+    background: #fff;
+    cursor: pointer;
+    transition: border-color .18s ease, box-shadow .18s ease, background .18s ease;
+}
+
+.admin-radio-option:hover {
+    border-color: #c9c9c9;
+    background: #fdfdfd;
+}
+
+.admin-radio-option:has(input:checked) {
+    border-color: var(--admin-primary);
+    background: var(--admin-primary-soft);
+    box-shadow: 0 0 0 1px rgba(230, 98, 57, .08);
+}
+
+.admin-radio-option input {
+    width: 15px;
+    height: 15px;
+    margin: 2px 0 0;
+    flex: 0 0 auto;
+    accent-color: var(--admin-primary);
+}
+
+.admin-radio-option span,
+.admin-radio-option strong,
+.admin-radio-option small {
+    display: block;
+}
+
+.admin-radio-option span {
+    min-width: 0;
+}
+
+.admin-radio-option strong {
+    font-size: .67rem;
+    font-weight: 600;
+}
+
+.admin-radio-option small {
+    margin-top: 3px;
+    color: var(--admin-muted);
+    font-size: .55rem;
+    line-height: 1.35;
+}
+
+.admin-radio-option:has(input:focus-visible) {
+    outline: 0;
+    box-shadow: 0 0 0 .2rem rgba(230, 98, 57, .14);
+}
+
+.admin-form .select2-container {
+    display: block;
+}
+
+.admin-form .select2-container .select2-selection--single {
+    height: 42px;
+    border-color: #dedede;
+    border-radius: 7px;
+}
+
+.admin-form .select2-container--default .select2-selection--single .select2-selection__rendered {
+    padding-right: 36px;
+    padding-left: 12px;
+    color: var(--admin-text);
+    font-size: .74rem;
+    line-height: 40px;
+}
+
+.admin-form .select2-container--default .select2-selection--single .select2-selection__arrow {
+    width: 34px;
+    height: 40px;
+}
+
+.admin-form .select2-container--default.select2-container--focus .select2-selection--single,
+.admin-form .select2-container--default.select2-container--open .select2-selection--single {
+    border-color: rgba(230, 98, 57, .7);
+    box-shadow: 0 0 0 .2rem rgba(230, 98, 57, .1);
+}
+
+.admin-form .js-category-parent-select.is-invalid + .select2-container .select2-selection--single {
+    border-color: var(--bs-form-invalid-border-color);
+}
+
+.select2-dropdown {
+    overflow: hidden;
+    border-color: #dedede;
+    border-radius: 7px;
+    font-size: .7rem;
+}
+
+.select2-container--default .select2-search--dropdown .select2-search__field {
+    min-height: 36px;
+    border-color: #dedede;
+    border-radius: 6px;
+    outline: 0;
+}
+
+.select2-container--default .select2-results__option--highlighted.select2-results__option--selectable {
+    background: var(--admin-primary);
+}
+
 .admin-permission-groups {
     display: grid;
     gap: 20px;
@@ -1886,6 +2130,92 @@ button.admin-profile-signout {
     background: #fff3c9;
 }
 
+.admin-sort-toolbar {
+    min-height: 45px;
+    padding: 10px 18px;
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    border-top: 1px solid #f1f1f1;
+    border-bottom: 1px solid var(--admin-border);
+    color: var(--admin-muted);
+    background: #fdfdfd;
+}
+
+.admin-sort-toolbar p {
+    margin: 0;
+    font-size: .61rem;
+}
+
+.admin-sort-toolbar p[data-state='saving'] {
+    color: var(--admin-info);
+}
+
+.admin-sort-toolbar p[data-state='success'] {
+    color: var(--admin-success);
+}
+
+.admin-sort-toolbar p[data-state='error'] {
+    color: var(--admin-danger);
+}
+
+.admin-sort-grip {
+    color: #a8a8a8;
+    font-weight: 700;
+    letter-spacing: -3px;
+}
+
+.admin-order-column {
+    width: 62px;
+    text-align: center;
+}
+
+.admin-category-drag-handle {
+    width: 30px;
+    height: 30px;
+    padding: 0;
+    display: inline-grid;
+    place-items: center;
+    border: 1px solid transparent;
+    border-radius: 6px;
+    color: #9b9b9b;
+    background: transparent;
+    cursor: grab;
+    font-size: 1rem;
+    font-weight: 700;
+    letter-spacing: -4px;
+    line-height: 1;
+}
+
+.admin-category-drag-handle:hover,
+.admin-category-drag-handle:focus-visible {
+    border-color: #e2e2e2;
+    color: var(--admin-primary);
+    background: var(--admin-primary-soft);
+    outline: 0;
+}
+
+.admin-category-drag-handle:active {
+    cursor: grabbing;
+}
+
+.admin-category-drag-placeholder {
+    color: #c9c9c9;
+}
+
+.admin-category-table tr.is-sorting-chosen > td {
+    background: #fff9f7;
+}
+
+.admin-category-table tr.is-sorting-ghost > td {
+    background: var(--admin-primary-soft);
+    opacity: .55;
+}
+
+.admin-category-table tr.is-sorting-drag {
+    box-shadow: 0 9px 24px rgba(34, 34, 34, .12);
+}
+
 .admin-pagination {
     min-height: 56px;
     padding: 10px 18px;
@@ -1991,6 +2321,10 @@ button.admin-profile-signout {
 
     .admin-form-span {
         grid-column: auto;
+    }
+
+    .admin-radio-group {
+        grid-template-columns: 1fr;
     }
 }
 

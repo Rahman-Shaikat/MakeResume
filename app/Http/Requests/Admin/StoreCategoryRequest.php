@@ -37,7 +37,6 @@ class StoreCategoryRequest extends FormRequest
             ],
             'short_desc' => ['nullable', 'string', 'max:2000'],
             'status' => ['required', Rule::in([1, 2])],
-            'position' => ['required', 'integer', 'min:0', 'max:4294967295'],
             'is_featured' => ['required', Rule::in([1, 2])],
         ];
     }
@@ -50,7 +49,6 @@ class StoreCategoryRequest extends FormRequest
             'slug' => Str::slug($slugSource !== '' ? $slugSource : (string) $this->input('name')),
             'parent_id' => $this->input('parent_id', 0),
             'status' => $this->input('status', 1),
-            'position' => $this->input('position', 0),
             'is_featured' => $this->input('is_featured', 2),
         ]);
     }

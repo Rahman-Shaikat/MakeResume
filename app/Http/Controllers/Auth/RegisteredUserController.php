@@ -6,10 +6,8 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\RegisterRequest;
-use App\Models\User;
-use Illuminate\Auth\Events\Registered;
+use App\Services\Frontend\UserRegistrationService;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
 
 final class RegisteredUserController extends Controller
@@ -19,12 +17,11 @@ final class RegisteredUserController extends Controller
         return view('auth.register');
     }
 
-    public function store(RegisterRequest $request): RedirectResponse
-    {
-        $user = User::create($request->validated());
-
-        event(new Registered($user));
-        Auth::login($user);
+    public function store(
+        RegisterRequest $request,
+        UserRegistrationService $service,
+    ): RedirectResponse {
+        $service->register($request->validated());
         $request->session()->regenerate();
 
         return redirect()->route('verification.notice')

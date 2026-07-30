@@ -243,13 +243,15 @@ npm run build
 
 ```text
 app/
-|-- Http/Controllers/       Authentication, dashboard, resume, and builder flows
-|-- Http/Requests/          Registration, builder, and upload validation
+|-- Http/Controllers/       Thin HTTP coordinators for admin, auth, and resume flows
+|-- Http/Requests/          Admin CRUD, registration, builder, and upload validation
 |-- Http/Resources/         Resume builder JSON representation
 |-- Models/                 User, Resume, ResumeSection, and ResumeSectionItem
 |-- Notifications/          Branded email verification notification
 |-- Policies/               Resume ownership authorization
-\-- Services/               Resume section initialization and loading
+|-- Services/Admin/         Injected admin CRUD and authentication workflows
+|-- Services/Frontend/      Dashboard and resume-page workflows
+\-- Services/               Shared resume-builder domain workflows
 
 config/
 \-- resume_templates.php    Template catalog and sample content
@@ -257,6 +259,7 @@ config/
 resources/
 |-- css/app.css             Application, builder, and resume template styles
 |-- js/                     Slider, selection, autosave, and reordering behavior
+|-- views/components/admin/ Reusable admin form fields and permission-aware actions
 \-- views/                  Blade layouts, emails, dashboard, builder, and resumes
 
 public/
@@ -265,6 +268,11 @@ public/
 tests/
 \-- Feature/                Authentication, verification, and resume workflows
 ```
+
+Admin controllers delegate queries and mutations to injected services under
+`App\Services\Admin`. Validation stays in Form Requests, while reusable fields
+such as inputs, selects, Select2 controls, radios, checkboxes, file inputs, and
+inline errors live under `resources/views/components/admin/forms`.
 
 ## Adding Another Resume Template
 

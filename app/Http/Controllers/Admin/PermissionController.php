@@ -8,119 +8,53 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\StorePermissionRequest;
 use App\Http\Requests\Admin\UpdatePermissionRequest;
 use App\Models\Permission;
-use App\Models\PermissionGroup;
-use Illuminate\Database\Eloquent\Collection;
+use App\Services\Admin\PermissionCrudService;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
 
-class PermissionController extends Controller
+final class PermissionController extends Controller
 {
-    public function index(): View
+    public function index(PermissionCrudService $service): View
     {
-        $permissionGroups = PermissionGroup::query()
-            ->with([
-                'parentPermissions' => fn ($query) => $query
-                    ->where('type', 1)
-                    ->where('status', 1)
-                    ->withCount('roles')
-                    ->with(['children' => fn ($query) => $query
-                        ->where('type', 1)
-                        ->where('status', 1)
-                        ->withCount('roles')
-                        ->orderBy('id')])
-                    ->orderBy('id'),
-            ])
-            ->where('type', 1)
-            ->where('status', 1)
-            ->orderBy('id')
-            ->get();
-
-        return view('admin.permissions.index', compact('permissionGroups'));
+        return view('admin.permissions.index', $service->indexData());
     }
 
-    public function create(): View
+    public function create(PermissionCrudService $service): View
     {
-        return view('admin.permissions.create', [
-            'groups' => $this->groups(),
-            'parentPermissions' => $this->parentPermissions(),
-        ]);
+        return view('admin.permissions.create', $service->createData());
     }
 
-    public function store(StorePermissionRequest $request): RedirectResponse
+    public function store(
+        StorePermissionRequest $request,
+        PermissionCrudService $service,
+    ): RedirectResponse {
+        $result = $service->store($request->validated());
+
+        return to_route('admin.permissions.edit', $result['model'])
+            ->with('success', $result['message']);
+    }
+
+    public function edit(Permission $permission, PermissionCrudService $service): View
     {
-        $permission = Permission::query()->create(
-            $request->validated() + ['status' => 1],
-        );
+        return view('admin.permissions.edit', $service->editData($permission));
+    }
+
+    public function update(
+        UpdatePermissionRequest $request,
+        Permission $permission,
+        PermissionCrudService $service,
+    ): RedirectResponse {
+        $result = $service->update($permission, $request->validated());
 
         return to_route('admin.permissions.edit', $permission)
-            ->with('success', 'Permission created successfully.');
+            ->with('success', $result['message']);
     }
 
-    public function edit(Permission $permission): View
+    public function destroy(Permission $permission, PermissionCrudService $service): RedirectResponse
     {
-        abort_unless($permission->type === 1 && $permission->status === 1, 404);
-
-        return view('admin.permissions.edit', [
-            'permission' => $permission,
-            'groups' => $this->groups(),
-            'parentPermissions' => $this->parentPermissions($permission),
-        ]);
-    }
-
-    public function update(UpdatePermissionRequest $request, Permission $permission): RedirectResponse
-    {
-        abort_unless($permission->type === 1 && $permission->status === 1, 404);
-
-        $permission->update($request->validated());
-
-        return to_route('admin.permissions.edit', $permission)
-            ->with('success', 'Permission updated successfully. Its route key was preserved.');
-    }
-
-    public function destroy(Permission $permission): RedirectResponse
-    {
-        abort_unless($permission->type === 1 && $permission->status === 1, 404);
-
-        DB::transaction(function () use ($permission): void {
-            $permissions = Permission::query()
-                ->whereKey($permission->id)
-                ->when($permission->parent_id === 0, fn ($query) => $query
-                    ->orWhere('parent_id', $permission->id))
-                ->lockForUpdate()
-                ->get();
-
-            foreach ($permissions as $item) {
-                $item->roles()->detach();
-                $item->update(['status' => 2]);
-            }
-        });
+        $result = $service->delete($permission);
 
         return to_route('admin.permissions.index')
-            ->with('success', 'Permission deactivated successfully.');
-    }
-
-    /** @return Collection<int, PermissionGroup> */
-    private function groups(): Collection
-    {
-        return PermissionGroup::query()
-            ->where('type', 1)
-            ->where('status', 1)
-            ->orderBy('name')
-            ->get();
-    }
-
-    /** @return Collection<int, Permission> */
-    private function parentPermissions(?Permission $exclude = null): Collection
-    {
-        return Permission::query()
-            ->with('group')
-            ->where('parent_id', 0)
-            ->where('type', 1)
-            ->where('status', 1)
-            ->when($exclude, fn ($query) => $query->where('id', '!=', $exclude->id))
-            ->orderBy('group_id')
-            ->orderBy('name')
-            ->get();
+            ->with('success', $result['message']);
     }
 }

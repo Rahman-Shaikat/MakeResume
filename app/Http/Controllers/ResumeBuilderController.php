@@ -17,14 +17,12 @@ use App\Models\ResumeSection;
 use App\Models\ResumeSectionItem;
 use App\Services\ResumeBuilderService;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
-use Illuminate\Support\Str;
 
 final class ResumeBuilderController extends Controller
 {
     public function __construct(
-        private readonly ResumeBuilderService $builderService,
+        private readonly ResumeBuilderService $service,
     ) {}
 
     public function updateContent(
@@ -32,13 +30,11 @@ final class ResumeBuilderController extends Controller
         Resume $resume,
     ): JsonResponse {
         Gate::authorize('update', $resume);
-        $resume->update([
-            'content' => array_replace($resume->content ?? [], $request->validated()),
-        ]);
+        $resume = $this->service->updateContent($resume, $request->validated());
 
         return response()->json([
             'message' => 'Resume details saved.',
-            'content' => $resume->fresh()->content,
+            'content' => $resume->content,
         ]);
     }
 
@@ -47,16 +43,7 @@ final class ResumeBuilderController extends Controller
         Resume $resume,
     ): JsonResponse {
         Gate::authorize('update', $resume);
-        $resume = $this->builderService->load($resume);
-        $section = $resume->sections()->create([
-            'section_key' => (string) Str::uuid(),
-            'type' => 'custom',
-            'title' => $request->validated('title'),
-            'sort_order' => ((int) $resume->sections->max('sort_order')) + 1,
-            'is_custom' => true,
-            'is_visible' => true,
-        ]);
-        $section->setRelation('items', collect());
+        $section = $this->service->storeSection($resume, $request->validated('title'));
 
         return response()->json([
             'message' => 'Custom section added.',
@@ -71,32 +58,19 @@ final class ResumeBuilderController extends Controller
     ): JsonResponse {
         Gate::authorize('update', $resume);
         Gate::authorize('update', $resumeSection);
-        $this->ensureSectionBelongsToResume($resume, $resumeSection);
-        $validated = $request->validated();
-
-        $resumeSection->update([
-            ...($resumeSection->is_custom && array_key_exists('title', $validated)
-                ? ['title' => $validated['title']]
-                : []),
-            ...(array_key_exists('is_visible', $validated)
-                ? ['is_visible' => $validated['is_visible']]
-                : []),
-        ]);
+        $section = $this->service->updateSection($resume, $resumeSection, $request->validated());
 
         return response()->json([
             'message' => 'Section updated.',
-            'section' => (new ResumeSectionResource($resumeSection->load('items')))->resolve(),
+            'section' => (new ResumeSectionResource($section))->resolve(),
         ]);
     }
 
-    public function destroySection(
-        Resume $resume,
-        ResumeSection $resumeSection,
-    ): JsonResponse {
+    public function destroySection(Resume $resume, ResumeSection $resumeSection): JsonResponse
+    {
         Gate::authorize('update', $resume);
         Gate::authorize('delete', $resumeSection);
-        $this->ensureSectionBelongsToResume($resume, $resumeSection);
-        $resumeSection->delete();
+        $this->service->deleteSection($resume, $resumeSection);
 
         return response()->json(['message' => 'Custom section deleted.']);
     }
@@ -106,18 +80,7 @@ final class ResumeBuilderController extends Controller
         Resume $resume,
     ): JsonResponse {
         Gate::authorize('update', $resume);
-        $resume = $this->builderService->load($resume);
-        $requestedIds = collect($request->validated('section_ids'))->map(fn ($id) => (int) $id);
-        $ownedIds = $resume->sections->pluck('id');
-
-        abort_unless($requestedIds->sort()->values()->all() === $ownedIds->sort()->values()->all(), 422);
-
-        DB::transaction(function () use ($requestedIds, $resume): void {
-            $sections = $resume->sections->keyBy('id');
-            $requestedIds->each(function (int $id, int $index) use ($sections): void {
-                $sections->get($id)->update(['sort_order' => $index]);
-            });
-        });
+        $this->service->reorderSections($resume, $request->validated('section_ids'));
 
         return response()->json(['message' => 'Section order saved.']);
     }
@@ -129,11 +92,7 @@ final class ResumeBuilderController extends Controller
     ): JsonResponse {
         Gate::authorize('update', $resume);
         Gate::authorize('update', $resumeSection);
-        $this->ensureSectionBelongsToResume($resume, $resumeSection);
-        $item = $resumeSection->items()->create([
-            'data' => $request->validated('data'),
-            'sort_order' => ((int) $resumeSection->items()->max('sort_order')) + 1,
-        ]);
+        $item = $this->service->storeItem($resume, $resumeSection, $request->validated('data'));
 
         return response()->json([
             'message' => 'Entry added.',
@@ -150,14 +109,16 @@ final class ResumeBuilderController extends Controller
         Gate::authorize('update', $resume);
         Gate::authorize('update', $resumeSection);
         Gate::authorize('update', $resumeSectionItem);
-        $this->ensureSectionBelongsToResume($resume, $resumeSection);
-        abort_unless($resumeSectionItem->resume_section_id === $resumeSection->id, 404);
-
-        $resumeSectionItem->update(['data' => $request->validated('data')]);
+        $item = $this->service->updateItem(
+            $resume,
+            $resumeSection,
+            $resumeSectionItem,
+            $request->validated('data'),
+        );
 
         return response()->json([
             'message' => 'Entry saved.',
-            'item' => (new ResumeSectionItemResource($resumeSectionItem))->resolve(),
+            'item' => (new ResumeSectionItemResource($item))->resolve(),
         ]);
     }
 
@@ -169,10 +130,7 @@ final class ResumeBuilderController extends Controller
         Gate::authorize('update', $resume);
         Gate::authorize('update', $resumeSection);
         Gate::authorize('delete', $resumeSectionItem);
-        $this->ensureSectionBelongsToResume($resume, $resumeSection);
-        abort_unless($resumeSectionItem->resume_section_id === $resumeSection->id, 404);
-
-        $resumeSectionItem->delete();
+        $this->service->deleteItem($resume, $resumeSection, $resumeSectionItem);
 
         return response()->json(['message' => 'Entry removed.']);
     }
@@ -184,28 +142,8 @@ final class ResumeBuilderController extends Controller
     ): JsonResponse {
         Gate::authorize('update', $resume);
         Gate::authorize('update', $resumeSection);
-        $this->ensureSectionBelongsToResume($resume, $resumeSection);
-        $requestedIds = collect($request->validated('item_ids'))->map(fn ($id) => (int) $id);
-        $items = $resumeSection->items()->get()->keyBy('id');
-
-        abort_unless(
-            $requestedIds->sort()->values()->all() === $items->keys()->sort()->values()->all(),
-            422,
-        );
-
-        DB::transaction(function () use ($requestedIds, $items): void {
-            $requestedIds->each(function (int $id, int $index) use ($items): void {
-                $items->get($id)->update(['sort_order' => $index]);
-            });
-        });
+        $this->service->reorderItems($resume, $resumeSection, $request->validated('item_ids'));
 
         return response()->json(['message' => 'Entry order saved.']);
-    }
-
-    private function ensureSectionBelongsToResume(
-        Resume $resume,
-        ResumeSection $resumeSection,
-    ): void {
-        abort_unless($resumeSection->resume_id === $resume->id, 404);
     }
 }

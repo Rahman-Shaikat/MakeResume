@@ -1,6 +1,11 @@
 import * as bootstrap from 'bootstrap';
+import $ from 'jquery';
+import select2 from 'select2';
+import Sortable from 'sortablejs';
 
 window.bootstrap = bootstrap;
+window.$ = window.jQuery = $;
+select2($);
 
 const body = document.body;
 const sidebar = document.querySelector('[data-admin-sidebar]');
@@ -124,5 +129,98 @@ if (categoryName && categorySlug) {
 
     categorySlug.addEventListener('input', () => {
         categorySlugIsManual = categorySlug.value.trim() !== '';
+    });
+}
+
+$('.js-category-parent-select').each(function () {
+    $(this).select2({
+        width: '100%',
+        minimumResultsForSearch: 0,
+        placeholder: this.dataset.placeholder,
+    });
+});
+
+const categorySortableBody = document.querySelector('[data-category-sortable]');
+
+if (categorySortableBody) {
+    const sortStatus = document.querySelector('[data-category-sort-status]');
+    const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content;
+    let previousOrder = [];
+
+    const setSortStatus = (message, state = '') => {
+        if (! sortStatus) {
+            return;
+        }
+
+        sortStatus.textContent = message;
+        sortStatus.dataset.state = state;
+    };
+
+    const updateDisplayedPositions = () => {
+        categorySortableBody
+            .querySelectorAll('tr[data-category-id]')
+            .forEach((row, position) => {
+                const positionCell = row.querySelector('[data-category-position]');
+
+                if (positionCell) {
+                    positionCell.textContent = String(position);
+                }
+            });
+    };
+
+    const categorySortable = new Sortable(categorySortableBody, {
+        animation: 160,
+        dataIdAttr: 'data-category-id',
+        handle: '[data-sort-handle]',
+        ghostClass: 'is-sorting-ghost',
+        chosenClass: 'is-sorting-chosen',
+        dragClass: 'is-sorting-drag',
+        onStart: () => {
+            previousOrder = categorySortable.toArray();
+            setSortStatus('Move the category to its new display position.');
+        },
+        onEnd: async (event) => {
+            if (event.oldIndex === event.newIndex) {
+                setSortStatus('Drag rows by the handle to change their display order.');
+
+                return;
+            }
+
+            const categoryIds = categorySortable.toArray().map(Number);
+
+            categorySortable.option('disabled', true);
+            setSortStatus('Saving the new category order…', 'saving');
+
+            try {
+                const response = await fetch(categorySortableBody.dataset.sortUrl, {
+                    method: 'PATCH',
+                    credentials: 'same-origin',
+                    headers: {
+                        Accept: 'application/json',
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': csrfToken,
+                    },
+                    body: JSON.stringify({ category_ids: categoryIds }),
+                });
+                const result = await response.json().catch(() => ({}));
+
+                if (! response.ok) {
+                    throw new Error(
+                        result.errors?.category_ids?.[0]
+                        ?? result.message
+                        ?? 'The category order could not be saved.',
+                    );
+                }
+
+                updateDisplayedPositions();
+                setSortStatus(result.message ?? 'Category order updated successfully.', 'success');
+            } catch (error) {
+                categorySortable.sort(previousOrder);
+                updateDisplayedPositions();
+                setSortStatus(error.message ?? 'The category order could not be saved.', 'error');
+            } finally {
+                categorySortable.option('disabled', false);
+            }
+        },
     });
 }

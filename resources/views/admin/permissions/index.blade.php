@@ -25,16 +25,17 @@
                 <h2>{{ $group->name }}</h2>
             </div>
             <div class="admin-table-actions">
-                @if (auth('admin')->user()->hasPermission('permissions-update'))
-                    <a class="btn btn-sm btn-light" href="{{ route('admin.permission-groups.edit', $group) }}">Edit group</a>
-                @endif
-                @if (auth('admin')->user()->hasPermission('permissions-delete'))
-                    <form action="{{ route('admin.permission-groups.destroy', $group) }}" method="POST" data-confirm="Deactivate this permission group?">
-                        @csrf
-                        @method('DELETE')
-                        <button class="btn btn-sm btn-outline-danger" type="submit">Deactivate group</button>
-                    </form>
-                @endif
+                <x-admin.actions.edit
+                    :url="route('admin.permission-groups.edit', $group)"
+                    permission="permissions-update"
+                    label="Edit group"
+                />
+                <x-admin.actions.delete
+                    :url="route('admin.permission-groups.destroy', $group)"
+                    permission="permissions-delete"
+                    label="Deactivate group"
+                    confirm="Deactivate this permission group?"
+                />
             </div>
         </div>
         @if ($group->parentPermissions->isEmpty())
@@ -54,16 +55,15 @@
                                 <td><span class="admin-badge is-super">Parent</span></td>
                                 <td>
                                     <div class="admin-table-actions">
-                                        @if (auth('admin')->user()->hasPermission('permissions-update'))
-                                            <a class="btn btn-sm btn-light" href="{{ route('admin.permissions.edit', $permission) }}">Edit</a>
-                                        @endif
-                                        @if (auth('admin')->user()->hasPermission('permissions-delete'))
-                                            <form action="{{ route('admin.permissions.destroy', $permission) }}" method="POST" data-confirm="Deactivate this parent permission and all of its child permissions?">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button class="btn btn-sm btn-outline-danger" type="submit">Deactivate</button>
-                                            </form>
-                                        @endif
+                                        <x-admin.actions.edit
+                                            :url="route('admin.permissions.edit', $permission)"
+                                            permission="permissions-update"
+                                        />
+                                        <x-admin.actions.delete
+                                            :url="route('admin.permissions.destroy', $permission)"
+                                            permission="permissions-delete"
+                                            confirm="Deactivate this parent permission and all of its child permissions?"
+                                        />
                                     </div>
                                 </td>
                             </tr>
@@ -75,16 +75,15 @@
                                     <td><span class="admin-badge">Child</span></td>
                                     <td>
                                         <div class="admin-table-actions">
-                                            @if (auth('admin')->user()->hasPermission('permissions-update'))
-                                                <a class="btn btn-sm btn-light" href="{{ route('admin.permissions.edit', $child) }}">Edit</a>
-                                            @endif
-                                            @if (auth('admin')->user()->hasPermission('permissions-delete'))
-                                                <form action="{{ route('admin.permissions.destroy', $child) }}" method="POST" data-confirm="Deactivate this child permission?">
-                                                    @csrf
-                                                    @method('DELETE')
-                                                    <button class="btn btn-sm btn-outline-danger" type="submit">Deactivate</button>
-                                                </form>
-                                            @endif
+                                            <x-admin.actions.edit
+                                                :url="route('admin.permissions.edit', $child)"
+                                                permission="permissions-update"
+                                            />
+                                            <x-admin.actions.delete
+                                                :url="route('admin.permissions.destroy', $child)"
+                                                permission="permissions-delete"
+                                                confirm="Deactivate this child permission?"
+                                            />
                                         </div>
                                     </td>
                                 </tr>

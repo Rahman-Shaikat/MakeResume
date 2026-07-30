@@ -32,15 +32,16 @@
                         <td><span class="admin-badge {{ $role->status === 1 ? 'is-active' : 'is-inactive' }}">{{ $role->status === 1 ? 'Active' : 'Inactive' }}</span></td>
                         <td>
                             <div class="admin-table-actions">
-                                @if (auth('admin')->user()->hasPermission('roles-update'))
-                                    <a class="btn btn-sm btn-light" href="{{ route('admin.roles.edit', $role) }}">Edit</a>
-                                @endif
-                                @if ($role->status === 1 && auth('admin')->user()->hasPermission('roles-delete'))
-                                    <form action="{{ route('admin.roles.destroy', $role) }}" method="POST" data-confirm="Deactivate this role?">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button class="btn btn-sm btn-outline-danger" type="submit">Deactivate</button>
-                                    </form>
+                                <x-admin.actions.edit
+                                    :url="route('admin.roles.edit', $role)"
+                                    permission="roles-update"
+                                />
+                                @if ($role->status === 1)
+                                    <x-admin.actions.delete
+                                        :url="route('admin.roles.destroy', $role)"
+                                        permission="roles-delete"
+                                        confirm="Deactivate this role?"
+                                    />
                                 @endif
                             </div>
                         </td>

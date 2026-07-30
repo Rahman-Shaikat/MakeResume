@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Admin\AdminDashboardController;
 use App\Http\Controllers\Admin\AdminLoginController;
+use App\Http\Controllers\Admin\AdminNotificationController;
 use App\Http\Controllers\Admin\AdminUserController;
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\PermissionController;
@@ -19,6 +20,10 @@ Route::prefix('admin')->name('admin.')->group(function (): void {
     Route::middleware('admin')->group(function (): void {
         Route::post('/logout', [AdminLoginController::class, 'adminLogout'])->name('logout');
         Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('dashboard');
+        Route::post('/notifications/read-all', [AdminNotificationController::class, 'markAllRead'])
+            ->name('notifications.read-all');
+        Route::post('/notifications/{notification}/open', [AdminNotificationController::class, 'open'])
+            ->name('notifications.open');
 
         Route::get('/categories', [CategoryController::class, 'index'])
             ->middleware('check-permission:categories')
@@ -29,6 +34,9 @@ Route::prefix('admin')->name('admin.')->group(function (): void {
         Route::post('/categories', [CategoryController::class, 'store'])
             ->middleware('check-permission:categories-create')
             ->name('categories.store');
+        Route::patch('/categories/reorder', [CategoryController::class, 'reorder'])
+            ->middleware('check-permission:categories-update')
+            ->name('categories.reorder');
         Route::get('/categories/{category}/edit', [CategoryController::class, 'edit'])
             ->middleware('check-permission:categories-update')
             ->name('categories.edit');

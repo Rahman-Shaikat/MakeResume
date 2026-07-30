@@ -27,45 +27,97 @@
         </div>
     </div>
 
-    <ul class="list-unstyled d-flex align-items-center mb-0 gap-2">
+    <ul class="list-unstyled d-flex align-items-center mb-0 gap-2 admin-topbar-actions">
+        <li>
+            <a
+                href="{{ route('clear-cache') }}"
+                class="btn btn-light admin-topbar-action"
+                data-admin-clear-cache
+                aria-label="Clear application cache"
+                title="Clear application cache"
+            >
+                @include('admin.components.icon', ['name' => 'refresh'])
+                <span>Clear cache</span>
+            </a>
+        </li>
+
+        <li>
+            <a
+                href="{{ route('home') }}"
+                class="btn btn-light admin-topbar-action"
+                data-admin-view-website
+                aria-label="Open frontend website"
+                title="Open frontend website"
+                target="_blank"
+            >
+                @include('admin.components.icon', ['name' => 'external'])
+                <span>View website</span>
+            </a>
+        </li>
+
         <li class="dropdown">
             <button
                 type="button"
                 class="btn btn-light admin-icon-button rounded-circle position-relative"
                 data-bs-toggle="dropdown"
                 aria-expanded="false"
-                aria-label="Notifications"
+                aria-label="Notifications, {{ $adminUnreadNotificationCount }} unread"
             >
                 @include('admin.components.icon', ['name' => 'bell'])
-                <span class="admin-notification-dot"><span class="visually-hidden">3 unread notifications</span></span>
+                @if ($adminUnreadNotificationCount > 0)
+                    <span class="admin-notification-dot">
+                        <span class="visually-hidden">{{ $adminUnreadNotificationCount }} unread notifications</span>
+                    </span>
+                @endif
             </button>
 
             <div class="dropdown-menu dropdown-menu-end admin-notification-menu p-0">
                 <div class="admin-dropdown-heading">
                     <div>
                         <strong>Notifications</strong>
-                        <span>3 unread updates</span>
+                        <span>
+                            {{ $adminUnreadNotificationCount }}
+                            {{ \Illuminate\Support\Str::plural('unread update', $adminUnreadNotificationCount) }}
+                        </span>
                     </div>
-                    <button type="button">Mark all read</button>
+                    @if ($adminUnreadNotificationCount > 0)
+                        <form action="{{ route('admin.notifications.read-all') }}" method="POST">
+                            @csrf
+                            <button type="submit">Mark all read</button>
+                        </form>
+                    @else
+                        <span class="admin-notification-caught-up">All caught up</span>
+                    @endif
                 </div>
                 <div class="admin-notification-list">
-                    <a href="#" class="admin-notification-item">
-                        <span class="admin-event-icon is-success">@include('admin.components.icon', ['name' => 'user-plus'])</span>
-                        <span><strong>New user registered</strong><small>Nadia joined 8 minutes ago</small></span>
-                        <i></i>
-                    </a>
-                    <a href="#" class="admin-notification-item">
-                        <span class="admin-event-icon is-primary">@include('admin.components.icon', ['name' => 'document'])</span>
-                        <span><strong>Resume milestone reached</strong><small>25,000 resumes have been created</small></span>
-                        <i></i>
-                    </a>
-                    <a href="#" class="admin-notification-item">
-                        <span class="admin-event-icon is-warning">@include('admin.components.icon', ['name' => 'alert'])</span>
-                        <span><strong>Support request</strong><small>A new template issue was reported</small></span>
-                        <i></i>
-                    </a>
+                    @forelse ($adminNotifications as $notification)
+                        <form action="{{ route('admin.notifications.open', $notification->id) }}" method="POST" class="admin-notification-form">
+                            @csrf
+                            <button type="submit" class="admin-notification-item {{ $notification->read_at ? '' : 'is-unread' }}">
+                                <span class="admin-event-icon is-{{ data_get($notification->data, 'tone', 'primary') }}">
+                                    @include('admin.components.icon', ['name' => data_get($notification->data, 'icon', 'bell')])
+                                </span>
+                                <span>
+                                    <strong>{{ data_get($notification->data, 'title', 'Administration update') }}</strong>
+                                    <small>{{ data_get($notification->data, 'message', 'There is a new administration update.') }}</small>
+                                    <time datetime="{{ $notification->created_at?->toIso8601String() }}">{{ $notification->created_at?->diffForHumans() }}</time>
+                                </span>
+                                @if (! $notification->read_at)
+                                    <i aria-hidden="true"></i>
+                                @endif
+                            </button>
+                        </form>
+                    @empty
+                        <div class="admin-notification-empty">
+                            @include('admin.components.icon', ['name' => 'bell'])
+                            <strong>No notifications yet</strong>
+                            <span>New account and resume activity will appear here.</span>
+                        </div>
+                    @endforelse
                 </div>
-                <a href="#" class="admin-dropdown-footer">View all notifications</a>
+                @if ($adminNotifications->isNotEmpty())
+                    <span class="admin-dropdown-footer">Showing the latest {{ $adminNotifications->count() }} notifications</span>
+                @endif
             </div>
         </li>
 

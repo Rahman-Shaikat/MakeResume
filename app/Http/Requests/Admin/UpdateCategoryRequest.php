@@ -48,7 +48,6 @@ class UpdateCategoryRequest extends FormRequest
             ],
             'short_desc' => ['nullable', 'string', 'max:2000'],
             'status' => ['required', Rule::in([1, 2])],
-            'position' => ['required', 'integer', 'min:0', 'max:4294967295'],
             'is_featured' => ['required', Rule::in([1, 2])],
         ];
     }
@@ -87,7 +86,6 @@ class UpdateCategoryRequest extends FormRequest
         $this->merge([
             'slug' => Str::slug($slugSource !== '' ? $slugSource : (string) $this->input('name')),
             'parent_id' => $this->input('parent_id', 0),
-            'position' => $this->input('position', 0),
         ]);
     }
 }

@@ -30,15 +30,16 @@
                         <td><span class="admin-badge {{ $adminUser->status === 1 ? 'is-active' : 'is-inactive' }}">{{ $adminUser->status === 1 ? 'Active' : 'Inactive' }}</span></td>
                         <td>
                             <div class="admin-table-actions">
-                                @if (auth('admin')->user()->hasPermission('admin-users-update'))
-                                    <a class="btn btn-sm btn-light" href="{{ route('admin.admin-users.edit', $adminUser) }}">Edit</a>
-                                @endif
-                                @if ($adminUser->status === 1 && auth('admin')->user()->hasPermission('admin-users-delete'))
-                                    <form action="{{ route('admin.admin-users.destroy', $adminUser) }}" method="POST" data-confirm="Deactivate this administrator?">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button class="btn btn-sm btn-outline-danger" type="submit">Deactivate</button>
-                                    </form>
+                                <x-admin.actions.edit
+                                    :url="route('admin.admin-users.edit', $adminUser)"
+                                    permission="admin-users-update"
+                                />
+                                @if ($adminUser->status === 1)
+                                    <x-admin.actions.delete
+                                        :url="route('admin.admin-users.destroy', $adminUser)"
+                                        permission="admin-users-delete"
+                                        confirm="Deactivate this administrator?"
+                                    />
                                 @endif
                             </div>
                         </td>

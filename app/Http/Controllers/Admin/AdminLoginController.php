@@ -5,13 +5,14 @@ declare(strict_types=1);
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\AdminUser;
+use App\Http\Requests\Admin\AdminLoginRequest;
+use App\Services\Admin\AdminAuthenticationService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
 
-class AdminLoginController extends Controller
+final class AdminLoginController extends Controller
 {
     public function showAdminLoginForm(): View|RedirectResponse
     {
@@ -22,42 +23,31 @@ class AdminLoginController extends Controller
         return view('admin.auth.login');
     }
 
-    public function adminLogin(Request $request): RedirectResponse
-    {
+    public function adminLogin(
+        AdminLoginRequest $request,
+        AdminAuthenticationService $service,
+    ): RedirectResponse {
         if (Auth::guard('admin')->check()) {
             return to_route('admin.dashboard');
         }
 
-        $credentials = $request->validate([
-            'email' => ['required', 'email', 'max:100'],
-            'password' => ['required', 'string', 'max:100'],
-        ]);
+        $result = $service->attempt($request->validated());
 
-        $admin = AdminUser::query()->where('email', $credentials['email'])->first();
-
-        if (! $admin) {
-            return back()->withErrors(['email' => 'Invalid credentials.'])->onlyInput('email');
+        if (! $result['success']) {
+            return back()->withErrors(['email' => $result['message']])->onlyInput('email');
         }
 
-        if ($admin->status !== 1) {
-            return back()->withErrors(['email' => 'Your account has been blocked.'])->onlyInput('email');
-        }
+        $request->session()->regenerate();
 
-        if (Auth::guard('admin')->attempt($credentials)) {
-            $request->session()->regenerate();
-
-            return redirect()->intended(route('admin.dashboard'))
-                ->with('success', 'You are successfully logged in.');
-        }
-
-        return back()
-            ->withErrors(['email' => 'The provided credentials do not match our records.'])
-            ->onlyInput('email');
+        return redirect()->intended(route('admin.dashboard'))
+            ->with('success', $result['message']);
     }
 
-    public function adminLogout(Request $request): RedirectResponse
-    {
-        Auth::guard('admin')->logout();
+    public function adminLogout(
+        Request $request,
+        AdminAuthenticationService $service,
+    ): RedirectResponse {
+        $service->logout();
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 

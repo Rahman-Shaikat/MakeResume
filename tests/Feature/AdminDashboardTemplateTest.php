@@ -24,6 +24,10 @@ test('the protected admin dashboard template is available to an active administr
         ->assertSee('Recent users')
         ->assertSee('data-admin-sidebar', false)
         ->assertSee('data-admin-content', false)
+        ->assertSee('data-admin-clear-cache', false)
+        ->assertSee(route('clear-cache'), false)
+        ->assertSee('data-admin-view-website', false)
+        ->assertSee(route('home'), false)
         ->assertSee('/build/assets/', false);
 });
 

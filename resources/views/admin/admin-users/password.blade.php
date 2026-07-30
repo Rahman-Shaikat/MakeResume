@@ -14,14 +14,24 @@
     <section class="admin-panel admin-narrow-panel">
         <div class="admin-panel-heading"><div><span>{{ $adminUser->email }}</span><h2>New password</h2></div></div>
         <div class="admin-panel-body admin-form">
-            <div>
-                <label class="form-label" for="password">Password</label>
-                <input class="form-control" id="password" name="password" type="password" minlength="8" maxlength="50" autocomplete="new-password" required>
-            </div>
-            <div>
-                <label class="form-label" for="password_confirmation">Confirm password</label>
-                <input class="form-control" id="password_confirmation" name="password_confirmation" type="password" minlength="8" maxlength="50" autocomplete="new-password" required>
-            </div>
+            <x-admin.forms.input
+                name="password"
+                label="Password"
+                type="password"
+                minlength="8"
+                maxlength="50"
+                autocomplete="new-password"
+                required
+            />
+            <x-admin.forms.input
+                name="password_confirmation"
+                label="Confirm password"
+                type="password"
+                minlength="8"
+                maxlength="50"
+                autocomplete="new-password"
+                required
+            />
         </div>
     </section>
     <div class="admin-form-actions admin-narrow-panel">

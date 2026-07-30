@@ -45,6 +45,9 @@
         @case('resume')
             <path d="M7 3h8l4 4v14H7zM15 3v5h4"/><circle cx="11" cy="11" r="2"/><path d="M8.5 17a2.5 2.5 0 0 1 5 0"/>
             @break
+        @case('refresh')
+            <path d="M20 7v5h-5"/><path d="M4 17v-5h5"/><path d="M6.1 8a7 7 0 0 1 11.8-1L20 9M4 15l2.1 2a7 7 0 0 0 11.8-1"/>
+            @break
         @case('search')
             <circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/>
             @break

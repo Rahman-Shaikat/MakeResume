@@ -10,6 +10,9 @@ use App\Models\Role;
 use Database\Seeders\PermissionGroupSeeder;
 use Database\Seeders\PermissionSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Blade;
+use Illuminate\Support\MessageBag;
+use Illuminate\Support\ViewErrorBag;
 
 uses(RefreshDatabase::class);
 
@@ -63,7 +66,6 @@ test('super administrator can create a parent category with generated slug', fun
             'slug' => '',
             'short_desc' => 'Resume templates for software engineering roles.',
             'status' => 1,
-            'position' => 3,
             'is_featured' => 1,
         ])
         ->assertSessionHasNoErrors();
@@ -73,7 +75,7 @@ test('super administrator can create a parent category with generated slug', fun
         'name' => 'Software Engineering',
         'slug' => 'software-engineering',
         'status' => 1,
-        'position' => 3,
+        'position' => 0,
         'is_featured' => 1,
     ]);
 });
@@ -89,7 +91,6 @@ test('super administrator can create a subcategory under an active parent', func
             'slug' => 'civil-engineering',
             'short_desc' => null,
             'status' => 1,
-            'position' => 2,
             'is_featured' => 2,
         ])
         ->assertSessionHasNoErrors();
@@ -113,7 +114,6 @@ test('subcategory cannot be selected as another category parent', function (): v
             'name' => 'Bridge Engineering',
             'slug' => 'bridge-engineering',
             'status' => 1,
-            'position' => 0,
             'is_featured' => 2,
         ])
         ->assertSessionHasErrors(['parent_id']);
@@ -129,7 +129,6 @@ test('category slug must remain unique', function (): void {
             'name' => 'Accounting Duplicate',
             'slug' => 'accounting',
             'status' => 1,
-            'position' => 0,
             'is_featured' => 2,
         ])
         ->assertSessionHasErrors(['slug']);
@@ -137,7 +136,10 @@ test('category slug must remain unique', function (): void {
 
 test('super administrator can update category fields', function (): void {
     $admin = makeCategoryCrudAdmin();
-    $category = Category::factory()->create(['slug' => 'software']);
+    $category = Category::factory()->create([
+        'slug' => 'software',
+        'position' => 7,
+    ]);
 
     $this->actingAs($admin, 'admin')
         ->patch(route('admin.categories.update', $category), [
@@ -153,7 +155,7 @@ test('super administrator can update category fields', function (): void {
 
     expect($category->refresh()->name)->toBe('Software Engineering')
         ->and($category->slug)->toBe('software-engineering')
-        ->and($category->position)->toBe(1)
+        ->and($category->position)->toBe(7)
         ->and($category->is_featured)->toBe(1);
 });
 
@@ -168,7 +170,6 @@ test('category cannot be its own parent', function (): void {
             'slug' => $category->slug,
             'short_desc' => null,
             'status' => 1,
-            'position' => 0,
             'is_featured' => 2,
         ])
         ->assertSessionHasErrors(['parent_id']);
@@ -187,7 +188,6 @@ test('parent category with active children cannot become a subcategory', functio
             'slug' => $category->slug,
             'short_desc' => null,
             'status' => 1,
-            'position' => 0,
             'is_featured' => 2,
         ])
         ->assertSessionHasErrors(['parent_id']);
@@ -210,7 +210,6 @@ test('making a parent inactive also deactivates active subcategories', function 
             'slug' => $parent->slug,
             'short_desc' => null,
             'status' => 2,
-            'position' => 0,
             'is_featured' => 2,
         ])
         ->assertSessionHasNoErrors();
@@ -232,7 +231,6 @@ test('inactive subcategory retains its parent but cannot reactivate under an ina
         'slug' => $child->slug,
         'short_desc' => null,
         'status' => 2,
-        'position' => 0,
         'is_featured' => 2,
     ];
 
@@ -287,6 +285,138 @@ test('category list respects position and filters category level', function (): 
         ->assertOk()
         ->assertSeeInOrder([$first->name, $later->name])
         ->assertDontSee('Clinical Nursing');
+});
+
+test('category form uses searchable parent selection and radio controls without a position field', function (): void {
+    $admin = makeCategoryCrudAdmin();
+    Category::factory()->create([
+        'name' => 'Engineering',
+        'slug' => 'engineering',
+    ]);
+
+    $this->actingAs($admin, 'admin')
+        ->get(route('admin.categories.create'))
+        ->assertOk()
+        ->assertSee('js-category-parent-select', false)
+        ->assertSee('name="status"', false)
+        ->assertSee('name="is_featured"', false)
+        ->assertSee('type="radio"', false)
+        ->assertDontSee('name="position"', false);
+});
+
+test('reusable category form components render validation errors beside fields', function (): void {
+    $admin = makeCategoryCrudAdmin();
+    $createUrl = route('admin.categories.create');
+
+    $this->actingAs($admin, 'admin')
+        ->from($createUrl)
+        ->post(route('admin.categories.store'), [
+            'parent_id' => 0,
+            'name' => '',
+            'slug' => '',
+            'status' => 1,
+            'is_featured' => 2,
+        ])
+        ->assertRedirect($createUrl)
+        ->assertSessionHasErrors(['name', 'slug']);
+
+    $errors = new ViewErrorBag;
+    $errors->put('default', new MessageBag(['name' => 'The name field is required.']));
+    view()->share('errors', $errors);
+    $html = Blade::render(
+        '<x-admin.forms.input name="name" label="Name" />',
+    );
+
+    expect($html)
+        ->toContain('admin-field-error')
+        ->toContain('The name field is required.');
+});
+
+test('new categories append after the highest position', function (): void {
+    $admin = makeCategoryCrudAdmin();
+    Category::factory()->create(['position' => 4]);
+    Category::factory()->create(['position' => 12]);
+
+    $this->actingAs($admin, 'admin')
+        ->post(route('admin.categories.store'), [
+            'parent_id' => 0,
+            'name' => 'Technical Writing',
+            'slug' => 'technical-writing',
+            'status' => 1,
+            'is_featured' => 2,
+        ])
+        ->assertSessionHasNoErrors();
+
+    $this->assertDatabaseHas('categories', [
+        'slug' => 'technical-writing',
+        'position' => 13,
+    ]);
+});
+
+test('super administrator can reorder the complete category list', function (): void {
+    $admin = makeCategoryCrudAdmin();
+    $first = Category::factory()->create(['position' => 10]);
+    $second = Category::factory()->create(['position' => 20]);
+    $third = Category::factory()->create(['position' => 30]);
+
+    $this->actingAs($admin, 'admin')
+        ->patchJson(route('admin.categories.reorder'), [
+            'category_ids' => [$third->id, $first->id, $second->id],
+        ])
+        ->assertOk()
+        ->assertJsonPath('message', 'Category order updated successfully.');
+
+    expect($third->refresh()->position)->toBe(0)
+        ->and($first->refresh()->position)->toBe(1)
+        ->and($second->refresh()->position)->toBe(2);
+});
+
+test('category reorder requires update permission', function (): void {
+    $admin = makeCategoryCrudAdmin(['is_super' => 2]);
+    $category = Category::factory()->create();
+
+    $this->actingAs($admin, 'admin')
+        ->patchJson(route('admin.categories.reorder'), [
+            'category_ids' => [$category->id],
+        ])
+        ->assertForbidden();
+});
+
+test('category reorder rejects duplicate and partial category lists', function (): void {
+    $admin = makeCategoryCrudAdmin();
+    $first = Category::factory()->create();
+    $second = Category::factory()->create();
+
+    $this->actingAs($admin, 'admin')
+        ->patchJson(route('admin.categories.reorder'), [
+            'category_ids' => [$first->id, $first->id],
+        ])
+        ->assertUnprocessable()
+        ->assertJsonValidationErrors(['category_ids.1']);
+
+    $this->actingAs($admin, 'admin')
+        ->patchJson(route('admin.categories.reorder'), [
+            'category_ids' => [$second->id],
+        ])
+        ->assertUnprocessable()
+        ->assertJsonValidationErrors(['category_ids']);
+});
+
+test('drag ordering is enabled only on the complete unfiltered category list', function (): void {
+    $admin = makeCategoryCrudAdmin();
+    Category::factory()->create();
+
+    $this->actingAs($admin, 'admin')
+        ->get(route('admin.categories.index'))
+        ->assertOk()
+        ->assertSee('data-category-sortable', false)
+        ->assertSee(route('admin.categories.reorder'), false);
+
+    $this->actingAs($admin, 'admin')
+        ->get(route('admin.categories.index', ['status' => 1]))
+        ->assertOk()
+        ->assertDontSee('data-category-sortable', false)
+        ->assertSee('Clear all filters to enable drag-and-drop ordering.');
 });
 
 test('category permissions are included in the project seeders', function (): void {

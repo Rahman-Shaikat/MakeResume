@@ -1,16 +1,24 @@
+@php($checkedPermissions = old('permission', $selectedPermissions))
+
 <div class="admin-form-grid">
     <section class="admin-panel">
         <div class="admin-panel-heading"><div><span>Role details</span><h2>Identity</h2></div></div>
         <div class="admin-panel-body admin-form">
             <input type="hidden" name="type" value="1">
-            <div>
-                <label class="form-label" for="name">Role name</label>
-                <input class="form-control @error('name') is-invalid @enderror" id="name" name="name" value="{{ old('name', $role->name ?? '') }}" maxlength="100" required>
-            </div>
-            <div>
-                <label class="form-label" for="short_desc">Description</label>
-                <textarea class="form-control @error('short_desc') is-invalid @enderror" id="short_desc" name="short_desc" rows="4" maxlength="255">{{ old('short_desc', $role->short_desc ?? '') }}</textarea>
-            </div>
+            <x-admin.forms.input
+                name="name"
+                label="Role name"
+                :value="old('name', $role->name ?? '')"
+                maxlength="100"
+                required
+            />
+            <x-admin.forms.textarea
+                name="short_desc"
+                label="Description"
+                :value="old('short_desc', $role->short_desc ?? '')"
+                rows="4"
+                maxlength="255"
+            />
         </div>
     </section>
 
@@ -22,17 +30,26 @@
                     <legend>{{ $group->name }}</legend>
                     @foreach ($group->parentPermissions as $permission)
                         <div class="admin-permission-module">
-                            <label class="form-check">
-                                <input class="form-check-input" type="checkbox" name="permission[]" value="{{ $permission->id }}" data-permission-parent="{{ $permission->id }}" @checked(in_array($permission->id, old('permission', $selectedPermissions)))>
-                                <span><strong>{{ $permission->name }}</strong><small>{{ $permission->short_desc }}</small></span>
-                            </label>
+                            <x-admin.forms.checkbox
+                                name="permission[]"
+                                :label="$permission->name"
+                                :description="$permission->short_desc"
+                                :value="$permission->id"
+                                :checked="in_array($permission->id, $checkedPermissions)"
+                                error-key="permission"
+                                :input-attributes="['data-permission-parent' => $permission->id]"
+                            />
                             @if ($permission->children->isNotEmpty())
                                 <div class="admin-permission-children">
                                     @foreach ($permission->children as $child)
-                                        <label class="form-check">
-                                            <input class="form-check-input" type="checkbox" name="permission[]" value="{{ $child->id }}" data-permission-child="{{ $permission->id }}" @checked(in_array($child->id, old('permission', $selectedPermissions)))>
-                                            <span>{{ $child->name }}</span>
-                                        </label>
+                                        <x-admin.forms.checkbox
+                                            name="permission[]"
+                                            :label="$child->name"
+                                            :value="$child->id"
+                                            :checked="in_array($child->id, $checkedPermissions)"
+                                            error-key="permission"
+                                            :input-attributes="['data-permission-child' => $permission->id]"
+                                        />
                                     @endforeach
                                 </div>
                             @endif
@@ -42,6 +59,7 @@
             @empty
                 <p class="admin-empty-state">No active permissions are available.</p>
             @endforelse
+            <x-admin.forms.error field="permission" />
         </div>
     </section>
 </div>

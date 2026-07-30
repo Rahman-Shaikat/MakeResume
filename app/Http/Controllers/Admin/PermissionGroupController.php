@@ -8,56 +8,56 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\StorePermissionGroupRequest;
 use App\Http\Requests\Admin\UpdatePermissionGroupRequest;
 use App\Models\PermissionGroup;
+use App\Services\Admin\PermissionGroupCrudService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
 
-class PermissionGroupController extends Controller
+final class PermissionGroupController extends Controller
 {
-    public function create(): View
+    public function create(PermissionGroupCrudService $service): View
     {
-        return view('admin.permissions.groups.create');
+        return view('admin.permissions.groups.create', $service->createData());
     }
 
-    public function store(StorePermissionGroupRequest $request): RedirectResponse
-    {
-        $group = PermissionGroup::query()->create(
-            $request->validated() + ['status' => 1],
-        );
+    public function store(
+        StorePermissionGroupRequest $request,
+        PermissionGroupCrudService $service,
+    ): RedirectResponse {
+        $result = $service->store($request->validated());
 
-        return to_route('admin.permission-groups.edit', $group)
-            ->with('success', 'Permission group created successfully.');
+        return to_route('admin.permission-groups.edit', $result['model'])
+            ->with('success', $result['message']);
     }
 
-    public function edit(PermissionGroup $permissionGroup): View
-    {
-        abort_unless($permissionGroup->type === 1 && $permissionGroup->status === 1, 404);
-
-        return view('admin.permissions.groups.edit', compact('permissionGroup'));
+    public function edit(
+        PermissionGroup $permissionGroup,
+        PermissionGroupCrudService $service,
+    ): View {
+        return view('admin.permissions.groups.edit', $service->editData($permissionGroup));
     }
 
     public function update(
         UpdatePermissionGroupRequest $request,
         PermissionGroup $permissionGroup,
+        PermissionGroupCrudService $service,
     ): RedirectResponse {
-        abort_unless($permissionGroup->type === 1 && $permissionGroup->status === 1, 404);
-
-        $permissionGroup->update($request->validated());
+        $result = $service->update($permissionGroup, $request->validated());
 
         return to_route('admin.permission-groups.edit', $permissionGroup)
-            ->with('success', 'Permission group updated successfully.');
+            ->with('success', $result['message']);
     }
 
-    public function destroy(PermissionGroup $permissionGroup): RedirectResponse
-    {
-        abort_unless($permissionGroup->type === 1 && $permissionGroup->status === 1, 404);
+    public function destroy(
+        PermissionGroup $permissionGroup,
+        PermissionGroupCrudService $service,
+    ): RedirectResponse {
+        $result = $service->delete($permissionGroup);
 
-        if ($permissionGroup->permissions()->where('status', 1)->exists()) {
-            return back()->with('error', 'Move or deactivate this group’s active permissions first.');
+        if (! $result['success']) {
+            return back()->with('error', $result['message']);
         }
 
-        $permissionGroup->update(['status' => 2]);
-
         return to_route('admin.permissions.index')
-            ->with('success', 'Permission group deactivated successfully.');
+            ->with('success', $result['message']);
     }
 }

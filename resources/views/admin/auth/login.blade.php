@@ -32,30 +32,22 @@
 
             <form action="{{ route('admin.login') }}" method="POST" class="admin-form">
                 @csrf
-                <div>
-                    <label class="form-label" for="email">Email address</label>
-                    <input
-                        class="form-control @error('email') is-invalid @enderror"
-                        id="email"
-                        name="email"
-                        type="email"
-                        value="{{ old('email') }}"
-                        autocomplete="username"
-                        autofocus
-                        required
-                    >
-                </div>
-                <div>
-                    <label class="form-label" for="password">Password</label>
-                    <input
-                        class="form-control @error('password') is-invalid @enderror"
-                        id="password"
-                        name="password"
-                        type="password"
-                        autocomplete="current-password"
-                        required
-                    >
-                </div>
+                <x-admin.forms.input
+                    name="email"
+                    label="Email address"
+                    type="email"
+                    :value="old('email')"
+                    autocomplete="username"
+                    autofocus
+                    required
+                />
+                <x-admin.forms.input
+                    name="password"
+                    label="Password"
+                    type="password"
+                    autocomplete="current-password"
+                    required
+                />
                 <button type="submit" class="btn btn-primary w-100">Sign in to administration</button>
             </form>
 
