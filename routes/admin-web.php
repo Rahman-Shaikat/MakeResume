@@ -5,6 +5,8 @@ use App\Http\Controllers\Admin\AdminLoginController;
 use App\Http\Controllers\Admin\AdminNotificationController;
 use App\Http\Controllers\Admin\AdminUserController;
 use App\Http\Controllers\Admin\CategoryController;
+use App\Http\Controllers\Admin\HomepageHeroController;
+use App\Http\Controllers\Admin\HomepageTemplateShowcaseController;
 use App\Http\Controllers\Admin\PermissionController;
 use App\Http\Controllers\Admin\PermissionGroupController;
 use App\Http\Controllers\Admin\ResumeTemplateController;
@@ -26,6 +28,44 @@ Route::prefix('admin')->name('admin.')->group(function (): void {
             ->name('notifications.read-all');
         Route::post('/notifications/{notification}/open', [AdminNotificationController::class, 'open'])
             ->name('notifications.open');
+
+        Route::get('/homepage-heroes', [HomepageHeroController::class, 'index'])
+            ->middleware('check-permission:homepage-heroes')
+            ->name('homepage-heroes.index');
+        Route::get('/homepage-heroes/create', [HomepageHeroController::class, 'create'])
+            ->middleware('check-permission:homepage-heroes-create')
+            ->name('homepage-heroes.create');
+        Route::post('/homepage-heroes', [HomepageHeroController::class, 'store'])
+            ->middleware('check-permission:homepage-heroes-create')
+            ->name('homepage-heroes.store');
+        Route::get('/homepage-heroes/{homepageHero}/edit', [HomepageHeroController::class, 'edit'])
+            ->middleware('check-permission:homepage-heroes-update')
+            ->name('homepage-heroes.edit');
+        Route::patch('/homepage-heroes/{homepageHero}', [HomepageHeroController::class, 'update'])
+            ->middleware('check-permission:homepage-heroes-update')
+            ->name('homepage-heroes.update');
+        Route::delete('/homepage-heroes/{homepageHero}', [HomepageHeroController::class, 'destroy'])
+            ->middleware('check-permission:homepage-heroes-delete')
+            ->name('homepage-heroes.destroy');
+
+        Route::get('/homepage-template-showcases', [HomepageTemplateShowcaseController::class, 'index'])
+            ->middleware('check-permission:homepage-template-showcases')
+            ->name('homepage-template-showcases.index');
+        Route::get('/homepage-template-showcases/create', [HomepageTemplateShowcaseController::class, 'create'])
+            ->middleware('check-permission:homepage-template-showcases-create')
+            ->name('homepage-template-showcases.create');
+        Route::post('/homepage-template-showcases', [HomepageTemplateShowcaseController::class, 'store'])
+            ->middleware('check-permission:homepage-template-showcases-create')
+            ->name('homepage-template-showcases.store');
+        Route::get('/homepage-template-showcases/{homepageTemplateShowcase}/edit', [HomepageTemplateShowcaseController::class, 'edit'])
+            ->middleware('check-permission:homepage-template-showcases-update')
+            ->name('homepage-template-showcases.edit');
+        Route::patch('/homepage-template-showcases/{homepageTemplateShowcase}', [HomepageTemplateShowcaseController::class, 'update'])
+            ->middleware('check-permission:homepage-template-showcases-update')
+            ->name('homepage-template-showcases.update');
+        Route::delete('/homepage-template-showcases/{homepageTemplateShowcase}', [HomepageTemplateShowcaseController::class, 'destroy'])
+            ->middleware('check-permission:homepage-template-showcases-delete')
+            ->name('homepage-template-showcases.destroy');
 
         Route::get('/categories', [CategoryController::class, 'index'])
             ->middleware('check-permission:categories')

@@ -17,6 +17,8 @@
     @php($canViewAdministrators = $admin->is_super === 1 || $admin->hasPermission('admin-users'))
     @php($canViewCategories = $admin->is_super === 1 || $admin->hasPermission('categories'))
     @php($canViewTemplates = $admin->is_super === 1 || $admin->hasPermission('templates'))
+    @php($canViewHomepageHeroes = $admin->is_super === 1 || $admin->hasPermission('homepage-heroes'))
+    @php($canViewHomepageTemplateShowcases = $admin->is_super === 1 || $admin->hasPermission('homepage-template-showcases'))
     @php($canViewUsers = $admin->is_super === 1 || $admin->hasPermission('users'))
 
     <nav class="admin-sidebar-nav" aria-label="Admin navigation">
@@ -34,7 +36,7 @@
             </a>
         @endif
 
-        @if ($canViewCategories || $canViewTemplates)
+        @if ($canViewCategories || $canViewTemplates || $canViewHomepageHeroes || $canViewHomepageTemplateShowcases)
             <span class="admin-nav-label">Template management</span>
         @endif
         @if ($canViewCategories)
@@ -47,6 +49,18 @@
             <a class="admin-nav-link {{ request()->routeIs('admin.templates.*') ? 'is-active' : '' }}" href="{{ route('admin.templates.index') }}">
                 @include('admin.components.icon', ['name' => 'resume'])
                 <span>Templates</span>
+            </a>
+        @endif
+        @if ($canViewHomepageHeroes)
+            <a class="admin-nav-link {{ request()->routeIs('admin.homepage-heroes.*') ? 'is-active' : '' }}" href="{{ route('admin.homepage-heroes.index') }}">
+                @include('admin.components.icon', ['name' => 'layout'])
+                <span>Homepage hero</span>
+            </a>
+        @endif
+        @if ($canViewHomepageTemplateShowcases)
+            <a class="admin-nav-link {{ request()->routeIs('admin.homepage-template-showcases.*') ? 'is-active' : '' }}" href="{{ route('admin.homepage-template-showcases.index') }}">
+                @include('admin.components.icon', ['name' => 'resume'])
+                <span>Template showcase</span>
             </a>
         @endif
 

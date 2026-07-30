@@ -19,6 +19,8 @@
             </a>
 
             <nav class="marketing-links" aria-label="Primary navigation">
+                <a href="{{ route('home') }}#templates">Templates</a>
+                <a href="{{ route('home') }}#how-it-works">How it works</a>
                 <a href="{{ route('about') }}">About</a>
                 <a href="{{ route('contact') }}">Contact</a>
             </nav>

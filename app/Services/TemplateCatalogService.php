@@ -32,6 +32,20 @@ final class TemplateCatalogService
     }
 
     /**
+     * @return Collection<int, ResumeTemplate>
+     */
+    public function homepageTemplates(int $limit = 4): Collection
+    {
+        return ResumeTemplate::query()
+            ->active()
+            ->orderByRaw('CASE WHEN is_featured = 1 THEN 0 ELSE 1 END')
+            ->orderBy('position')
+            ->orderBy('name')
+            ->limit($limit)
+            ->get();
+    }
+
+    /**
      * @return Collection<int, Category>
      */
     public function activeCategories(): Collection

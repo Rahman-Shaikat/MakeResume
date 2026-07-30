@@ -5,6 +5,41 @@ import './builder';
 window.bootstrap = bootstrap;
 window.$ = window.jQuery = $;
 
+const initializeRevealAnimations = () => {
+    const elements = Array.from(document.querySelectorAll('[data-reveal]'));
+
+    if (elements.length === 0) {
+        return;
+    }
+
+    elements.forEach((element) => element.classList.add('is-reveal-pending'));
+
+    if (!('IntersectionObserver' in window)
+        || window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        elements.forEach((element) => element.classList.add('is-revealed'));
+
+        return;
+    }
+
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+            if (!entry.isIntersecting) {
+                return;
+            }
+
+            entry.target.classList.add('is-revealed');
+            observer.unobserve(entry.target);
+        });
+    }, {
+        rootMargin: '0px 0px -8%',
+        threshold: 0.1,
+    });
+
+    elements.forEach((element) => observer.observe(element));
+};
+
+initializeRevealAnimations();
+
 const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content;
 
 const fitEmbeddedTemplatePreview = () => {

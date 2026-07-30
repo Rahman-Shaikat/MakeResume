@@ -96,6 +96,26 @@ class PermissionSeeder extends Seeder
                     ['name' => 'Delete', 'meta_name' => 'templates-delete'],
                 ],
             ],
+            [
+                'name' => 'Homepage Hero',
+                'meta_name' => 'homepage-heroes',
+                'short_desc' => 'View and manage the public homepage hero content.',
+                'children' => [
+                    ['name' => 'Create', 'meta_name' => 'homepage-heroes-create'],
+                    ['name' => 'Update', 'meta_name' => 'homepage-heroes-update'],
+                    ['name' => 'Delete', 'meta_name' => 'homepage-heroes-delete'],
+                ],
+            ],
+            [
+                'name' => 'Homepage Template Showcase',
+                'meta_name' => 'homepage-template-showcases',
+                'short_desc' => 'View and manage the homepage template showcase.',
+                'children' => [
+                    ['name' => 'Create', 'meta_name' => 'homepage-template-showcases-create'],
+                    ['name' => 'Update', 'meta_name' => 'homepage-template-showcases-update'],
+                    ['name' => 'Delete', 'meta_name' => 'homepage-template-showcases-delete'],
+                ],
+            ],
         ]);
     }
 
