@@ -56,6 +56,8 @@
         @yield('content')
     </main>
 
+    <x-site-footer />
+
     <div class="app-toast position-fixed bottom-0 end-0 p-3">
         <div class="toast align-items-center border-0 text-bg-dark" role="status" data-app-toast>
             <div class="d-flex">
