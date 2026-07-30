@@ -16,6 +16,7 @@
                     <h2 id="footer-explore">Explore</h2>
                     <a href="{{ route('about') }}">About us</a>
                     <a href="{{ route('contact') }}">Contact us</a>
+                    <a href="{{ route('pricing') }}">Pricing</a>
                     @auth
                         <a href="{{ route('dashboard') }}">My workspace</a>
                     @else
