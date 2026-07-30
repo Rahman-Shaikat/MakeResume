@@ -110,8 +110,14 @@
                                     Edit resume
                                     <svg viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg>
                                 </a>
-                                <a href="{{ route('resume.templates.index', $resume) }}" class="btn btn-light" aria-label="Change template for {{ $resumeTitle }}">
-                                    Change template
+                                <a
+                                    href="{{ route('resume.templates.index', $resume) }}"
+                                    class="btn btn-light"
+                                    aria-label="Change template for {{ $resumeTitle }}"
+                                    title="Change template"
+                                >
+                                    <i class="fa-solid fa-right-left" aria-hidden="true"></i>
+                                    <span class="visually-hidden">Change template</span>
                                 </a>
                                 <a href="{{ route('resume.preview', $resume) }}" target="_blank" class="btn btn-light" aria-label="Preview {{ $resumeTitle }}">
                                     <svg viewBox="0 0 24 24"><path d="M2.5 12s3.5-6 9.5-6 9.5 6 9.5 6-3.5 6-9.5 6-9.5-6-9.5-6Z"/><circle cx="12" cy="12" r="2.5"/></svg>
@@ -125,7 +131,7 @@
     </section>
 
     <div class="row g-4" id="resume-templates">
-        <div class="col-xl-8">
+        <div class="col-xl-12">
             <section class="panel-card" data-template-slider>
                 <div class="panel-heading">
                     <div>
@@ -133,19 +139,18 @@
                         <h2>Choose a resume template</h2>
                         <p>Each selection creates a separate resume in your workspace.</p>
                     </div>
-                    <div class="template-catalog-tools">
-                        <form action="{{ route('dashboard') }}#resume-templates" method="GET">
-                            <label class="visually-hidden" for="template-category">Filter templates by category</label>
-                            <select id="template-category" name="category" class="form-select" onchange="this.form.submit()">
-                                <option value="">All templates</option>
-                                @foreach ($templateCategories as $category)
-                                    <option value="{{ $category->slug }}" @selected($selectedCategory === $category->slug)>{{ $category->name }}</option>
-                                @endforeach
-                            </select>
-                        </form>
-                        <span class="template-count">{{ $templates->count() }} {{ Str::plural('template', $templates->count()) }}</span>
-                    </div>
+                    <span class="template-count">{{ $templates->count() }} {{ Str::plural('template', $templates->count()) }}</span>
                 </div>
+
+                <nav class="template-category-pills" aria-label="Filter templates by category">
+                    <a href="{{ route('dashboard') }}#resume-templates" class="{{ blank($selectedCategory) ? 'is-active' : '' }}">All templates</a>
+                    @foreach ($templateCategories as $category)
+                        <a
+                            href="{{ route('dashboard', ['category' => $category->slug]) }}#resume-templates"
+                            class="{{ $selectedCategory === $category->slug ? 'is-active' : '' }}"
+                        >{{ $category->name }}</a>
+                    @endforeach
+                </nav>
 
                 <div class="template-slider">
                     @if ($templates->count() > 1)

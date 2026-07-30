@@ -1,4 +1,5 @@
 @import 'bootstrap/dist/css/bootstrap.min.css';
+@import '@fortawesome/fontawesome-free/css/all.min.css';
 
 :root {
     --app-primary: #246bfd;
@@ -966,6 +967,10 @@ svg {
     width: 15px;
 }
 
+.saved-resume-actions .fa-right-left {
+    font-size: 14px;
+}
+
 .saved-resumes-empty {
     padding: 38px 20px;
     display: grid;
@@ -1105,7 +1110,7 @@ svg {
     place-items: center;
     border: 1px solid #d7e0ef;
     border-radius: 50%;
-    color: var(--app-blue);
+    color: var(--app-primary);
     background: #fff;
     box-shadow: 0 8px 22px rgba(24, 39, 75, .18);
     pointer-events: auto;
@@ -1113,9 +1118,9 @@ svg {
 }
 
 .template-slider-controls button:hover:not(:disabled) {
-    border-color: var(--app-blue);
+    border-color: var(--app-primary);
     color: #fff;
-    background: var(--app-blue);
+    background: var(--app-primary);
     transform: scale(1.06);
 }
 
@@ -1153,7 +1158,7 @@ svg {
 }
 
 .template-card {
-    flex: 0 0 calc((100% - 20px) / 2);
+    flex: 0 0 calc((100% - 60px) / 4);
     min-width: 0;
     overflow: hidden;
     border: 1px solid #dfe4eb;
@@ -1257,6 +1262,10 @@ svg {
     width: 15px;
 }
 
+.template-preview-actions .fa-eye {
+    font-size: 13px;
+}
+
 .selected-badge {
     display: none;
     align-items: center;
@@ -1281,29 +1290,40 @@ svg {
     width: 13px;
 }
 
-.template-details {
-    padding: 17px;
-    display: flex;
-    align-items: center;
-    gap: 18px;
+.selected-badge .fa-check {
+    font-size: 11px;
 }
 
-.template-details > div {
-    flex: 1;
+.template-details {
+    min-height: 112px;
+    padding: 14px 15px 15px;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: end;
+    gap: 12px;
+}
+
+.template-card-summary {
+    min-width: 0;
 }
 
 .template-details h3 {
-    margin: 0 0 4px;
+    margin: 0 0 3px;
     color: var(--app-navy);
-    font-size: 14px;
+    font-size: 15px;
     font-weight: 800;
+    line-height: 1.2;
 }
 
 .template-details p {
     margin: 0;
     color: var(--app-muted);
+    display: -webkit-box;
+    overflow: hidden;
     font-size: 10px;
-    line-height: 1.45;
+    line-height: 1.4;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
 }
 
 .select-template-button {
@@ -4843,10 +4863,84 @@ svg {
     border-radius: 999px;
     color: #526078;
     background: #edf3ff;
-    font-size: .7rem;
+    font-size: .62rem;
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: .03em;
+}
+
+.template-create-button {
+    width: 42px;
+    height: 42px;
+    flex: 0 0 auto;
+    padding: 0;
+    border: 0;
+    border-radius: 50%;
+    color: #fff;
+    background: var(--app-primary);
+    display: grid;
+    place-items: center;
+    box-shadow: 0 7px 16px rgba(36, 107, 253, .24);
+    transition: transform .2s ease, background .2s ease, box-shadow .2s ease;
+}
+
+.template-create-button:hover:not(:disabled) {
+    background: var(--app-primary-dark);
+    transform: translateY(-2px) scale(1.04);
+    box-shadow: 0 10px 20px rgba(36, 107, 253, .3);
+}
+
+.template-create-button:focus-visible {
+    outline: 3px solid rgba(36, 107, 253, .25);
+    outline-offset: 3px;
+}
+
+.template-create-button svg {
+    width: 19px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2.4px;
+    stroke-linecap: round;
+}
+
+.template-create-button > .fa-solid {
+    font-size: 16px;
+}
+
+.template-created-icon {
+    display: none;
+}
+
+.template-create-button.is-creating {
+    cursor: wait;
+    opacity: .78;
+}
+
+.template-create-button.is-creating .template-create-icon {
+    animation: template-create-pulse .8s ease-in-out infinite alternate;
+}
+
+.template-create-button.is-created {
+    background: var(--app-success);
+    box-shadow: none;
+}
+
+.template-create-button.is-created .template-create-icon {
+    display: none;
+}
+
+.template-create-button.is-created .template-created-icon {
+    display: block;
+}
+
+.template-create-button.is-current {
+    color: #167b53;
+    background: #e6f8ef;
+    box-shadow: none;
+}
+
+@keyframes template-create-pulse {
+    to { transform: scale(.72); }
 }
 
 .template-catalog-tools {
@@ -4870,7 +4964,71 @@ svg {
     text-align: center;
 }
 
+.template-category-pills {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+    margin: 0 auto 28px;
+    max-width: 1180px;
+}
+
+.template-category-pills a {
+    padding: 8px 18px;
+    border: 1px solid #dfe4eb;
+    border-radius: 999px;
+    color: #344b6d;
+    background: #fff;
+    font-size: 14px;
+    line-height: 1.3;
+    text-decoration: none;
+    transition: color .2s ease, background .2s ease, border-color .2s ease, box-shadow .2s ease;
+}
+
+.template-category-pills a:hover,
+.template-category-pills a.is-active {
+    border-color: var(--app-primary);
+    color: #fff;
+    background: var(--app-primary);
+    box-shadow: 0 6px 16px rgba(36, 107, 253, .16);
+}
+
+@media (max-width: 1199.98px) {
+    .template-card {
+        flex-basis: calc((100% - 40px) / 3);
+    }
+}
+
+@media (max-width: 991.98px) {
+    .template-card {
+        flex-basis: calc((100% - 20px) / 2);
+    }
+}
+
 @media (max-width: 767px) {
+    .template-card {
+        flex-basis: 100%;
+    }
+
+    .template-category-pills {
+        justify-content: flex-start;
+        flex-wrap: nowrap;
+        margin-inline: -4px;
+        padding: 0 4px 8px;
+        overflow-x: auto;
+        scrollbar-width: none;
+    }
+
+    .template-category-pills::-webkit-scrollbar {
+        display: none;
+    }
+
+    .template-category-pills a {
+        flex: 0 0 auto;
+        padding: 7px 14px;
+        font-size: 12px;
+    }
+
     .template-catalog-tools {
         width: 100%;
         align-items: stretch;

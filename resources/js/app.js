@@ -256,7 +256,8 @@ $(document).on('click', '.js-select-template', function () {
     const template = button.dataset.template;
 
     button.disabled = true;
-    button.textContent = 'Creating…';
+    button.classList.add('is-creating');
+    button.setAttribute('aria-label', 'Creating resume');
 
     $.ajax({
         url: button.dataset.url,
@@ -275,10 +276,11 @@ $(document).on('click', '.js-select-template', function () {
                 const cardButton = card.querySelector('.js-select-template');
 
                 card.classList.toggle('is-selected', isSelected);
-                cardButton.classList.toggle('btn-success', isSelected);
-                cardButton.classList.toggle('btn-primary', !isSelected);
+                cardButton.classList.toggle('is-created', isSelected);
+                cardButton.classList.remove('is-creating');
                 cardButton.disabled = isSelected;
-                cardButton.textContent = isSelected ? 'Created' : 'Create resume';
+                cardButton.setAttribute('aria-label', isSelected ? 'Resume created' : 'Create resume');
+                cardButton.title = isSelected ? 'Resume created' : 'Create resume';
             });
 
             const nextBar = document.querySelector('[data-template-next]');
@@ -290,7 +292,8 @@ $(document).on('click', '.js-select-template', function () {
         })
         .fail((xhr) => {
             button.disabled = false;
-            button.textContent = 'Create resume';
+            button.classList.remove('is-creating');
+            button.setAttribute('aria-label', 'Create resume');
             showToast(xhr.responseJSON?.message ?? 'Could not create the resume. Please try again.');
         });
 });
