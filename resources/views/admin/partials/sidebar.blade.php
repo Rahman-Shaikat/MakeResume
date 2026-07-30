@@ -16,6 +16,7 @@
     @php($canViewPermissions = $admin->is_super === 1 || $admin->hasPermission('permissions'))
     @php($canViewAdministrators = $admin->is_super === 1 || $admin->hasPermission('admin-users'))
     @php($canViewCategories = $admin->is_super === 1 || $admin->hasPermission('categories'))
+    @php($canViewUsers = $admin->is_super === 1 || $admin->hasPermission('users'))
 
     <nav class="admin-sidebar-nav" aria-label="Admin navigation">
         <span class="admin-nav-label">Overview</span>
@@ -23,6 +24,14 @@
             @include('admin.components.icon', ['name' => 'dashboard'])
             <span>Dashboard</span>
         </a>
+
+        @if ($canViewUsers)
+            <span class="admin-nav-label">User management</span>
+            <a class="admin-nav-link {{ request()->routeIs('admin.users.*') ? 'is-active' : '' }}" href="{{ route('admin.users.index') }}" @if(request()->routeIs('admin.users.*')) aria-current="page" @endif>
+                @include('admin.components.icon', ['name' => 'users'])
+                <span>Users</span>
+            </a>
+        @endif
 
         @if ($canViewCategories)
             <span class="admin-nav-label">Template management</span>

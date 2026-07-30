@@ -13,6 +13,7 @@ class PermissionGroupSeeder extends Seeder
     {
         $groups = [
             'Administrator' => 'Manage administrator accounts, roles, and access.',
+            'User Management' => 'Manage website user accounts and their access state.',
             'Template Management' => 'Manage resume template categories and related catalog data.',
         ];
 

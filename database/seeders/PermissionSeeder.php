@@ -52,6 +52,24 @@ class PermissionSeeder extends Seeder
 
         $this->seedModules($administratorGroup, $modules);
 
+        $userGroup = PermissionGroup::query()
+            ->where('name', 'User Management')
+            ->where('type', 1)
+            ->firstOrFail();
+
+        $this->seedModules($userGroup, [
+            [
+                'name' => 'Users',
+                'meta_name' => 'users',
+                'short_desc' => 'View website user accounts and resume activity.',
+                'children' => [
+                    ['name' => 'Create', 'meta_name' => 'users-create'],
+                    ['name' => 'Update', 'meta_name' => 'users-update'],
+                    ['name' => 'Delete', 'meta_name' => 'users-delete'],
+                ],
+            ],
+        ]);
+
         $templateGroup = PermissionGroup::query()
             ->where('name', 'Template Management')
             ->where('type', 1)

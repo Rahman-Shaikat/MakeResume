@@ -2072,6 +2072,11 @@ button.admin-profile-signout {
     background: #fff0f1;
 }
 
+.admin-badge.is-pending {
+    color: #8b5d00;
+    background: #fff3c9;
+}
+
 .admin-badge.is-super {
     color: #9a5200;
     background: #fff4dc;
@@ -2091,6 +2096,88 @@ button.admin-profile-signout {
 
 .admin-search-form .form-control {
     width: min(250px, 34vw);
+}
+
+.admin-search-form .form-select {
+    width: auto;
+    min-width: 165px;
+    border-color: var(--admin-border);
+    border-radius: 7px;
+    font-size: .65rem;
+}
+
+.admin-detail-table th {
+    width: 180px;
+    color: var(--admin-muted);
+    font-weight: 500;
+}
+
+.admin-user-summary {
+    min-height: 130px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+}
+
+.admin-user-summary .admin-event-icon {
+    width: 52px;
+    height: 52px;
+}
+
+.admin-user-summary .admin-event-icon .admin-icon {
+    width: 24px;
+    height: 24px;
+}
+
+.admin-user-summary strong,
+.admin-user-summary span {
+    display: block;
+}
+
+.admin-user-summary strong {
+    color: var(--admin-text);
+    font-size: 1.65rem;
+    line-height: 1;
+}
+
+.admin-user-summary span {
+    margin-top: 6px;
+    color: var(--admin-muted);
+    font-size: .66rem;
+}
+
+.admin-danger-zone {
+    margin-top: 16px;
+    padding: 16px 18px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 18px;
+    border: 1px solid #f0c7ca;
+    border-radius: 10px;
+    background: #fffafa;
+}
+
+.admin-danger-zone strong,
+.admin-danger-zone span {
+    display: block;
+}
+
+.admin-danger-zone strong {
+    color: #932f36;
+    font-size: .72rem;
+}
+
+.admin-danger-zone span {
+    margin-top: 3px;
+    color: var(--admin-muted);
+    font-size: .59rem;
+}
+
+.admin-danger-zone form {
+    margin: 0;
+    flex: 0 0 auto;
 }
 
 .admin-filter-heading {
@@ -2335,6 +2422,19 @@ button.admin-profile-signout {
 
     .admin-search-form {
         flex-direction: column;
+    }
+
+    .admin-search-form .form-select {
+        width: 100%;
+    }
+
+    .admin-danger-zone {
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    .admin-danger-zone .btn {
+        width: 100%;
     }
 
     .admin-category-filters {

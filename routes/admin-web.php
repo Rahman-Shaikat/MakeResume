@@ -8,6 +8,7 @@ use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\PermissionController;
 use App\Http\Controllers\Admin\PermissionGroupController;
 use App\Http\Controllers\Admin\RoleController;
+use App\Http\Controllers\Admin\UserController;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('admin')->name('admin.')->group(function (): void {
@@ -125,5 +126,33 @@ Route::prefix('admin')->name('admin.')->group(function (): void {
         Route::delete('/administrators/{adminUser}', [AdminUserController::class, 'destroy'])
             ->middleware('check-permission:admin-users-delete')
             ->name('admin-users.destroy');
+
+        Route::get('/users', [UserController::class, 'index'])
+            ->middleware('check-permission:users')
+            ->name('users.index');
+        Route::get('/users/create', [UserController::class, 'create'])
+            ->middleware('check-permission:users-create')
+            ->name('users.create');
+        Route::post('/users', [UserController::class, 'store'])
+            ->middleware('check-permission:users-create')
+            ->name('users.store');
+        Route::get('/users/{user}', [UserController::class, 'show'])
+            ->middleware('check-permission:users')
+            ->name('users.show');
+        Route::get('/users/{user}/edit', [UserController::class, 'edit'])
+            ->middleware('check-permission:users-update')
+            ->name('users.edit');
+        Route::patch('/users/{user}', [UserController::class, 'update'])
+            ->middleware('check-permission:users-update')
+            ->name('users.update');
+        Route::get('/users/{user}/password', [UserController::class, 'editPassword'])
+            ->middleware('check-permission:users-update')
+            ->name('users.password.edit');
+        Route::patch('/users/{user}/password', [UserController::class, 'updatePassword'])
+            ->middleware('check-permission:users-update')
+            ->name('users.password.update');
+        Route::delete('/users/{user}', [UserController::class, 'destroy'])
+            ->middleware('check-permission:users-delete')
+            ->name('users.destroy');
     });
 });
