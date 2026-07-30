@@ -62,20 +62,22 @@
     @endphp
 
     <main class="resume-canvas">
-        <article class="resume-template-six">
+        <article class="resume-template-six" style="--resume-accent: {{ $resumeTemplate->accent_color }}">
             <div class="template-six-primary">
-                <header class="template-six-header">
+                <header class="template-six-header {{ $resumeTemplate->allows_profile_photo === 1 ? '' : 'without-photo' }}">
                     <div class="template-six-identity">
                         <h1>{{ $content['full_name'] }}</h1>
                         <h2>{{ $content['professional_title'] }}</h2>
                     </div>
-                    <div class="template-six-photo">
-                        @if ($resume?->profile_image)
-                            <img src="{{ Storage::url($resume->profile_image) }}" alt="{{ $content['full_name'] }}">
-                        @else
-                            <span>{{ $initials }}</span>
-                        @endif
-                    </div>
+                    @if ($resumeTemplate->allows_profile_photo === 1)
+                        <div class="template-six-photo">
+                            @if ($resume?->profile_image)
+                                <img src="{{ Storage::url($resume->profile_image) }}" alt="{{ $content['full_name'] }}">
+                            @else
+                                <span>{{ $initials }}</span>
+                            @endif
+                        </div>
+                    @endif
                 </header>
 
                 @if ($resume)

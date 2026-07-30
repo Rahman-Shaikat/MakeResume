@@ -2446,3 +2446,86 @@ button.admin-profile-signout {
         justify-content: center;
     }
 }
+/* Resume template catalog */
+.admin-template-filters {
+    display: grid;
+    grid-template-columns: minmax(180px, 1.4fr) repeat(4, minmax(135px, 1fr)) auto auto;
+    gap: .65rem;
+    width: min(100%, 1100px);
+}
+
+.admin-template-identity {
+    display: flex;
+    align-items: center;
+    gap: .8rem;
+    min-width: 220px;
+}
+
+.admin-template-identity img,
+.admin-template-placeholder {
+    width: 46px;
+    height: 65px;
+    flex: 0 0 auto;
+    border: 1px solid #dfe4ec;
+    border-radius: .4rem;
+    object-fit: cover;
+    object-position: top;
+    background: #fff;
+}
+
+.admin-template-placeholder {
+    display: grid;
+    place-items: center;
+    border-top: 5px solid var(--template-accent, #246bfd);
+    color: #7c8798;
+    font-size: .72rem;
+    font-weight: 700;
+}
+
+.admin-template-identity span:last-child {
+    display: grid;
+}
+
+.admin-template-identity small,
+.admin-template-table td > small {
+    color: #8993a4;
+}
+
+.admin-template-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: .3rem;
+    max-width: 260px;
+}
+
+.admin-template-tags span {
+    padding: .2rem .48rem;
+    border: 1px solid #dfe4ec;
+    border-radius: 999px;
+    color: #526078;
+    background: #f8faff;
+    font-size: .75rem;
+}
+
+.admin-form .select2-container--default .select2-selection--multiple {
+    min-height: 44px;
+    border-color: #dfe4ec;
+    border-radius: .5rem;
+    padding: .15rem .35rem;
+}
+
+.admin-form .select2-container--default.select2-container--focus .select2-selection--multiple {
+    border-color: #7da5ff;
+}
+
+@media (max-width: 1200px) {
+    .admin-template-filters {
+        grid-template-columns: repeat(3, minmax(150px, 1fr));
+    }
+}
+
+@media (max-width: 767px) {
+    .admin-template-filters {
+        grid-template-columns: 1fr;
+    }
+}

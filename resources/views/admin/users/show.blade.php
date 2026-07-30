@@ -68,7 +68,7 @@
                 @forelse ($resumes as $resume)
                     <tr>
                         <td>
-                            <strong>{{ data_get($templateCatalog, $resume->template_slug.'.name', str($resume->template_slug)->headline()) }}</strong>
+                            <strong>{{ $resume->template?->name ?? str($resume->template_slug)->headline() }}</strong>
                             <small>{{ $resume->template_slug }}</small>
                         </td>
                         <td>{{ $resume->created_at?->format('M j, Y') }}</td>

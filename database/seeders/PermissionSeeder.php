@@ -86,6 +86,16 @@ class PermissionSeeder extends Seeder
                     ['name' => 'Delete', 'meta_name' => 'categories-delete'],
                 ],
             ],
+            [
+                'name' => 'Templates',
+                'meta_name' => 'templates',
+                'short_desc' => 'View and preview resume template catalog entries.',
+                'children' => [
+                    ['name' => 'Create', 'meta_name' => 'templates-create'],
+                    ['name' => 'Update', 'meta_name' => 'templates-update'],
+                    ['name' => 'Delete', 'meta_name' => 'templates-delete'],
+                ],
+            ],
         ]);
     }
 

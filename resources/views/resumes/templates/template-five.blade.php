@@ -52,15 +52,17 @@
     @endphp
 
     <main class="resume-canvas">
-        <article class="resume-template-five">
-            <header class="template-five-header">
-                <div class="template-five-photo">
-                    @if ($resume?->profile_image)
-                        <img src="{{ Storage::url($resume->profile_image) }}" alt="{{ $content['full_name'] }}">
-                    @else
-                        <span>{{ $initials }}</span>
-                    @endif
-                </div>
+        <article class="resume-template-five" style="--resume-accent: {{ $resumeTemplate->accent_color }}">
+            <header class="template-five-header {{ $resumeTemplate->allows_profile_photo === 1 ? '' : 'without-photo' }}">
+                @if ($resumeTemplate->allows_profile_photo === 1)
+                    <div class="template-five-photo">
+                        @if ($resume?->profile_image)
+                            <img src="{{ Storage::url($resume->profile_image) }}" alt="{{ $content['full_name'] }}">
+                        @else
+                            <span>{{ $initials }}</span>
+                        @endif
+                    </div>
+                @endif
                 <div class="template-five-identity">
                     <h1>{{ $content['full_name'] }}</h1>
                     <h2>{{ $content['professional_title'] }}</h2>

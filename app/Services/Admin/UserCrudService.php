@@ -65,9 +65,9 @@ final class UserCrudService
         return [
             'user' => $user->loadCount('resumes'),
             'resumes' => $user->resumes()
+                ->with('template')
                 ->latest()
                 ->paginate(10),
-            'templateCatalog' => config('resume_templates.catalog', []),
         ];
     }
 

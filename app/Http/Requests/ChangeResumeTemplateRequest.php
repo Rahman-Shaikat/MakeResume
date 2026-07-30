@@ -7,7 +7,7 @@ namespace App\Http\Requests;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
-final class SelectResumeTemplateRequest extends FormRequest
+final class ChangeResumeTemplateRequest extends FormRequest
 {
     public function authorize(): bool
     {

@@ -40,6 +40,10 @@ Route::middleware('auth')->group(function (): void {
             ->name('resume.templates.show');
 
         Route::prefix('/resumes/{resume}')->group(function (): void {
+            Route::get('/templates', [ResumeController::class, 'templates'])
+                ->name('resume.templates.index');
+            Route::patch('/template', [ResumeController::class, 'changeTemplate'])
+                ->name('resume.template.update');
             Route::get('/preview', [ResumeController::class, 'showResume'])
                 ->name('resume.preview');
             Route::post('/profile-image', [ResumeController::class, 'uploadProfileImage'])

@@ -26,8 +26,8 @@
     @endunless
 
     <main class="resume-canvas">
-        <article class="resume-template-one">
-            <header class="resume-top">
+        <article class="resume-template-one" style="--resume-accent: {{ $resumeTemplate->accent_color }}; --resume-cyan: {{ $resumeTemplate->accent_color }}">
+            <header class="resume-top {{ $resumeTemplate->allows_profile_photo === 1 ? '' : 'without-photo' }}">
                 <div class="resume-identity">
                     <h1>{{ strtoupper($content['full_name']) }}</h1>
                     <h2>{{ $content['professional_title'] }}</h2>
@@ -46,13 +46,15 @@
                         <span class="contact-wide"><b>●</b>{{ $content['location'] }}</span>
                     </div>
                 </div>
-                <div class="resume-photo">
-                    @if ($resume?->profile_image)
-                                <img src="{{ Storage::url($resume->profile_image) }}" alt="{{ $content['full_name'] }}">
-                    @else
+                @if ($resumeTemplate->allows_profile_photo === 1)
+                    <div class="resume-photo">
+                        @if ($resume?->profile_image)
+                            <img src="{{ Storage::url($resume->profile_image) }}" alt="{{ $content['full_name'] }}">
+                        @else
                             <span>{{ collect(explode(' ', $content['full_name']))->take(2)->map(fn ($part) => strtoupper(substr($part, 0, 1)))->implode('') }}</span>
-                    @endif
-                </div>
+                        @endif
+                    </div>
+                @endif
             </header>
 
             @if ($resume)

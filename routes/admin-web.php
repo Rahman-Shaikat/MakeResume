@@ -7,6 +7,7 @@ use App\Http\Controllers\Admin\AdminUserController;
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\PermissionController;
 use App\Http\Controllers\Admin\PermissionGroupController;
+use App\Http\Controllers\Admin\ResumeTemplateController;
 use App\Http\Controllers\Admin\RoleController;
 use App\Http\Controllers\Admin\UserController;
 use Illuminate\Support\Facades\Route;
@@ -47,6 +48,31 @@ Route::prefix('admin')->name('admin.')->group(function (): void {
         Route::delete('/categories/{category}', [CategoryController::class, 'destroy'])
             ->middleware('check-permission:categories-delete')
             ->name('categories.destroy');
+
+        Route::get('/templates', [ResumeTemplateController::class, 'index'])
+            ->middleware('check-permission:templates')
+            ->name('templates.index');
+        Route::get('/templates/create', [ResumeTemplateController::class, 'create'])
+            ->middleware('check-permission:templates-create')
+            ->name('templates.create');
+        Route::post('/templates', [ResumeTemplateController::class, 'store'])
+            ->middleware('check-permission:templates-create')
+            ->name('templates.store');
+        Route::patch('/templates/reorder', [ResumeTemplateController::class, 'reorder'])
+            ->middleware('check-permission:templates-update')
+            ->name('templates.reorder');
+        Route::get('/templates/{resumeTemplate}/preview', [ResumeTemplateController::class, 'preview'])
+            ->middleware('check-permission:templates')
+            ->name('templates.preview');
+        Route::get('/templates/{resumeTemplate}/edit', [ResumeTemplateController::class, 'edit'])
+            ->middleware('check-permission:templates-update')
+            ->name('templates.edit');
+        Route::patch('/templates/{resumeTemplate}', [ResumeTemplateController::class, 'update'])
+            ->middleware('check-permission:templates-update')
+            ->name('templates.update');
+        Route::delete('/templates/{resumeTemplate}', [ResumeTemplateController::class, 'destroy'])
+            ->middleware('check-permission:templates-delete')
+            ->name('templates.destroy');
 
         Route::get('/roles', [RoleController::class, 'index'])
             ->middleware('check-permission:roles')

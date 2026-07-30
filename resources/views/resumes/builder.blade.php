@@ -19,11 +19,12 @@
                     </a>
                     <div>
                         <span class="section-kicker">Resume builder</span>
-                        <h1>{{ $template['name'] }}</h1>
+                        <h1>{{ $template->name }}</h1>
                     </div>
                 </div>
                 <div class="builder-header-actions">
                     <x-builder.save-status />
+                    <a href="{{ route('resume.templates.index', $resume) }}" class="btn btn-outline-secondary">Change template</a>
                     <a href="{{ route('resume.preview', $resume) }}" target="_blank" class="btn btn-outline-secondary builder-preview-button">
                         <svg viewBox="0 0 24 24"><path d="M2.5 12s3.5-6 9.5-6 9.5 6 9.5 6-3.5 6-9.5 6-9.5-6-9.5-6Z"/><circle cx="12" cy="12" r="2.5"/></svg>
                         Full preview

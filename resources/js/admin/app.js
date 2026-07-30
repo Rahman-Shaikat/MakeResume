@@ -140,6 +140,37 @@ $('.js-category-parent-select').each(function () {
     });
 });
 
+$('.js-admin-multiselect').each(function () {
+    $(this).select2({
+        width: '100%',
+        minimumResultsForSearch: 0,
+        placeholder: this.dataset.placeholder,
+        closeOnSelect: false,
+    });
+});
+
+const templateName = document.querySelector('[data-template-name]');
+const templateSlug = document.querySelector('[data-template-slug]');
+
+if (templateName && templateSlug) {
+    let templateSlugIsManual = templateSlug.value.trim() !== '';
+    const slugifyTemplateName = () => templateName.value
+        .toLowerCase()
+        .trim()
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/^-+|-+$/g, '');
+
+    templateName.addEventListener('input', () => {
+        if (! templateSlugIsManual) {
+            templateSlug.value = slugifyTemplateName();
+        }
+    });
+
+    templateSlug.addEventListener('input', () => {
+        templateSlugIsManual = templateSlug.value.trim() !== '';
+    });
+}
+
 const categorySortableBody = document.querySelector('[data-category-sortable]');
 
 if (categorySortableBody) {
@@ -220,6 +251,75 @@ if (categorySortableBody) {
                 setSortStatus(error.message ?? 'The category order could not be saved.', 'error');
             } finally {
                 categorySortable.option('disabled', false);
+            }
+        },
+    });
+}
+
+const templateSortableBody = document.querySelector('[data-template-sortable]');
+
+if (templateSortableBody) {
+    const sortStatus = document.querySelector('[data-template-sort-status]');
+    const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content;
+    let previousOrder = [];
+
+    const setSortStatus = (message, state = '') => {
+        if (sortStatus) {
+            sortStatus.textContent = message;
+            sortStatus.dataset.state = state;
+        }
+    };
+
+    const templateSortable = new Sortable(templateSortableBody, {
+        animation: 160,
+        dataIdAttr: 'data-template-id',
+        handle: '[data-sort-handle]',
+        ghostClass: 'is-sorting-ghost',
+        chosenClass: 'is-sorting-chosen',
+        dragClass: 'is-sorting-drag',
+        onStart: () => {
+            previousOrder = templateSortable.toArray();
+            setSortStatus('Move the template to its new gallery position.');
+        },
+        onEnd: async (event) => {
+            if (event.oldIndex === event.newIndex) {
+                setSortStatus('Drag rows to update gallery order.');
+
+                return;
+            }
+
+            templateSortable.option('disabled', true);
+            setSortStatus('Saving the new template order…', 'saving');
+
+            try {
+                const response = await fetch(templateSortableBody.dataset.sortUrl, {
+                    method: 'PATCH',
+                    credentials: 'same-origin',
+                    headers: {
+                        Accept: 'application/json',
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': csrfToken,
+                    },
+                    body: JSON.stringify({
+                        template_ids: templateSortable.toArray().map(Number),
+                    }),
+                });
+                const result = await response.json().catch(() => ({}));
+
+                if (! response.ok) {
+                    throw new Error(
+                        result.errors?.template_ids?.[0]
+                        ?? result.message
+                        ?? 'The template order could not be saved.',
+                    );
+                }
+
+                setSortStatus(result.message ?? 'Template order updated successfully.', 'success');
+            } catch (error) {
+                templateSortable.sort(previousOrder);
+                setSortStatus(error.message ?? 'The template order could not be saved.', 'error');
+            } finally {
+                templateSortable.option('disabled', false);
             }
         },
     });

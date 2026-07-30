@@ -410,4 +410,26 @@ $catalog['template-six'] = [
     ]),
 ];
 
-return ['catalog' => $catalog];
+$defaultAccents = [
+    'template-one' => '#00B6CE',
+    'template-two' => '#075A9E',
+    'template-three' => '#0E594D',
+    'template-four' => '#087671',
+    'template-five' => '#39436B',
+    'template-six' => '#303B69',
+];
+
+$renderers = [];
+
+foreach ($catalog as $key => $template) {
+    $renderers[$key] = [
+        'view' => "resumes.templates.{$key}",
+        'sample' => $template['sample'],
+        'default_accent_color' => $defaultAccents[$key],
+        'supports_profile_photo' => true,
+    ];
+}
+
+return [
+    'renderers' => $renderers,
+];

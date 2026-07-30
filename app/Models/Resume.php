@@ -30,6 +30,11 @@ final class Resume extends Model
         return $this->belongsTo(User::class);
     }
 
+    public function template(): BelongsTo
+    {
+        return $this->belongsTo(ResumeTemplate::class, 'template_slug', 'slug');
+    }
+
     public function sections(): HasMany
     {
         return $this->hasMany(ResumeSection::class);

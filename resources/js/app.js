@@ -26,6 +26,115 @@ const fitEmbeddedTemplatePreview = () => {
 requestAnimationFrame(fitEmbeddedTemplatePreview);
 window.addEventListener('resize', fitEmbeddedTemplatePreview);
 
+const initializeLiveTemplatePreviews = () => {
+    const previews = Array.from(document.querySelectorAll('[data-live-template-preview]'));
+
+    if (previews.length === 0) {
+        return;
+    }
+
+    const loadPreview = (preview) => {
+        if (preview.dataset.previewState !== 'idle') {
+            return;
+        }
+
+        const mount = preview.querySelector('[data-live-preview-mount]');
+        const previewUrl = preview.dataset.livePreviewUrl;
+
+        if (!mount || !previewUrl) {
+            preview.dataset.previewState = 'error';
+            preview.setAttribute('aria-busy', 'false');
+
+            return;
+        }
+
+        preview.dataset.previewState = 'loading';
+        const iframe = document.createElement('iframe');
+        const loadingTimeout = window.setTimeout(() => {
+            if (preview.dataset.previewState !== 'loading') {
+                return;
+            }
+
+            preview.dataset.previewState = 'error';
+            preview.setAttribute('aria-busy', 'false');
+            iframe.remove();
+        }, 15000);
+
+        const showFallback = () => {
+            window.clearTimeout(loadingTimeout);
+            preview.dataset.previewState = 'error';
+            preview.setAttribute('aria-busy', 'false');
+            iframe.remove();
+        };
+
+        iframe.src = previewUrl;
+        iframe.title = preview.dataset.livePreviewTitle || 'Resume template live preview';
+        iframe.loading = 'eager';
+        iframe.tabIndex = -1;
+        iframe.setAttribute('aria-hidden', 'true');
+
+        iframe.addEventListener('load', () => {
+            const iframeUrl = new URL(iframe.src, window.location.href);
+            const hasResumeCanvas = iframeUrl.origin !== window.location.origin
+                || iframe.contentDocument?.querySelector('.resume-canvas');
+
+            if (!hasResumeCanvas) {
+                showFallback();
+
+                return;
+            }
+
+            window.clearTimeout(loadingTimeout);
+            preview.dataset.previewState = 'ready';
+            preview.setAttribute('aria-busy', 'false');
+            preview.classList.add('is-live-preview-ready');
+        }, { once: true });
+        iframe.addEventListener('error', showFallback, { once: true });
+
+        mount.replaceChildren(iframe);
+    };
+
+    if (!('IntersectionObserver' in window)) {
+        previews.forEach(loadPreview);
+
+        return;
+    }
+
+    const previewGroups = new Map();
+
+    previews.forEach((preview) => {
+        const root = preview.closest('[data-template-slider-track]');
+        const groupKey = root || document;
+
+        if (!previewGroups.has(groupKey)) {
+            previewGroups.set(groupKey, { root, previews: [] });
+        }
+
+        previewGroups.get(groupKey).previews.push(preview);
+    });
+
+    previewGroups.forEach(({ root, previews: groupedPreviews }) => {
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach((entry) => {
+                if (!entry.isIntersecting) {
+                    return;
+                }
+
+                loadPreview(entry.target);
+                observer.unobserve(entry.target);
+            });
+        }, {
+            root,
+            rootMargin: '0px 50%',
+            threshold: 0.05,
+        });
+
+        groupedPreviews.forEach((preview) => observer.observe(preview));
+    });
+};
+
+initializeLiveTemplatePreviews();
+
 document.querySelectorAll('[data-template-slider]').forEach((slider) => {
     const track = slider.querySelector('[data-template-slider-track]');
     const previousButton = slider.querySelector('[data-template-slider-previous]');

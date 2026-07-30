@@ -36,7 +36,7 @@
     @endphp
 
     <main class="resume-canvas">
-        <article class="resume-template-three">
+        <article class="resume-template-three" style="--resume-accent: {{ $resumeTemplate->accent_color }}">
             <aside class="template-three-sidebar">
                 <section class="template-three-section template-three-contact">
                     @include('resumes.partials.template-three-heading', ['type' => 'contact', 'title' => 'Contacts'])
@@ -69,9 +69,9 @@
 
             <div class="template-three-primary">
                 <header class="template-three-identity">
-                    <div class="template-three-name-row {{ $resume?->profile_image ? 'has-photo' : '' }}">
+                    <div class="template-three-name-row {{ $resumeTemplate->allows_profile_photo === 1 && $resume?->profile_image ? 'has-photo' : '' }}">
                         <h1>{{ $content['full_name'] }}</h1>
-                        @if ($resume?->profile_image)
+                        @if ($resumeTemplate->allows_profile_photo === 1 && $resume?->profile_image)
                             <div class="template-three-photo">
                                 <img src="{{ Storage::url($resume->profile_image) }}" alt="{{ $content['full_name'] }}">
                             </div>

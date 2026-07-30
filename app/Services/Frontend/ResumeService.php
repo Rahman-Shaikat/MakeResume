@@ -9,6 +9,8 @@ use App\Models\Resume;
 use App\Models\User;
 use App\Services\Admin\AdminNotificationService;
 use App\Services\ResumeBuilderService;
+use App\Services\TemplateCatalogService;
+use App\Services\TemplateRendererRegistry;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
@@ -18,22 +20,25 @@ final class ResumeService
     public function __construct(
         private readonly ResumeBuilderService $builderService,
         private readonly AdminNotificationService $adminNotifications,
+        private readonly TemplateCatalogService $catalog,
+        private readonly TemplateRendererRegistry $renderers,
     ) {}
 
     public function create(User $user, string $templateSlug): Resume
     {
+        $template = $this->catalog->findActiveBySlug($templateSlug);
+
         $resume = $user->resumes()->create([
-            'template_slug' => $templateSlug,
+            'template_slug' => $template->slug,
             'content' => [
                 'full_name' => $user->name,
                 'email' => $user->email,
             ],
         ]);
 
-        $templateName = config("resume_templates.catalog.{$templateSlug}.name", $templateSlug);
         $this->adminNotifications->notifyActiveAdministrators(
             title: 'New resume created',
-            message: "{$user->name} started the {$templateName} template.",
+            message: "{$user->name} started the {$template->name} template.",
             url: route('admin.dashboard'),
             icon: 'document',
             tone: 'primary',
@@ -72,52 +77,67 @@ final class ResumeService
     public function builderData(User $user, Resume $resume): array
     {
         $resume = $this->builderService->load($resume);
+        $template = $this->catalog->findBySlug($resume->template_slug);
         $payload = (new ResumeBuilderResource($resume))->resolve();
-        $payload['content'] = $this->contentFor($user, $resume, $resume->template_slug);
+        $payload['content'] = $this->contentFor($user, $resume, $template->renderer_key);
 
         return [
             'user' => $user,
             'resume' => $resume,
-            'template' => config("resume_templates.catalog.{$resume->template_slug}"),
+            'template' => $template,
             'builderPayload' => $payload,
         ];
     }
 
-    public function templateData(User $user, string $template, bool $embedded): array
+    public function templateData(User $user, string $templateSlug, bool $embedded): array
     {
-        abort_unless(array_key_exists($template, config('resume_templates.catalog')), 404);
+        $template = $this->catalog->findActiveBySlug($templateSlug);
+        abort_unless($this->renderers->has($template->renderer_key), 404);
+        $sample = $this->renderers->sample($template->renderer_key);
 
         return [
             'user' => $user,
             'resume' => null,
+            'resumeTemplate' => $template,
             'sections' => collect(),
-            'data' => config("resume_templates.catalog.{$template}.sample"),
-            'content' => $this->contentFor($user, null, $template),
+            'data' => $sample,
+            'content' => $this->contentFor($user, null, $template->renderer_key),
             'embedded' => $embedded,
+            'view' => $this->renderers->view($template->renderer_key),
         ];
     }
 
     public function previewData(User $user, Resume $resume, bool $embedded): array
     {
         $resume = $this->builderService->load($resume);
-        $template = $resume->template_slug;
-
-        abort_unless(array_key_exists($template, config('resume_templates.catalog')), 404);
+        $template = $this->catalog->findBySlug($resume->template_slug);
+        abort_unless($this->renderers->has($template->renderer_key), 404);
+        $sample = $this->renderers->sample($template->renderer_key);
 
         return [
             'user' => $user,
             'resume' => $resume,
+            'resumeTemplate' => $template,
             'sections' => $resume->sections,
-            'data' => config("resume_templates.catalog.{$template}.sample"),
-            'content' => $this->contentFor($user, $resume, $template),
+            'data' => $sample,
+            'content' => $this->contentFor($user, $resume, $template->renderer_key),
             'embedded' => $embedded,
+            'view' => $this->renderers->view($template->renderer_key),
         ];
+    }
+
+    public function switchTemplate(Resume $resume, string $templateSlug): Resume
+    {
+        $template = $this->catalog->findActiveBySlug($templateSlug);
+        $resume->update(['template_slug' => $template->slug]);
+
+        return $resume->refresh();
     }
 
     /** @return array<string, string> */
     private function contentFor(User $user, ?Resume $resume, string $templateSlug): array
     {
-        $sample = config("resume_templates.catalog.{$templateSlug}.sample");
+        $sample = $this->renderers->sample($templateSlug);
 
         return array_replace([
             'full_name' => $user->name,

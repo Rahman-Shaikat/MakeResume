@@ -16,6 +16,7 @@
     @php($canViewPermissions = $admin->is_super === 1 || $admin->hasPermission('permissions'))
     @php($canViewAdministrators = $admin->is_super === 1 || $admin->hasPermission('admin-users'))
     @php($canViewCategories = $admin->is_super === 1 || $admin->hasPermission('categories'))
+    @php($canViewTemplates = $admin->is_super === 1 || $admin->hasPermission('templates'))
     @php($canViewUsers = $admin->is_super === 1 || $admin->hasPermission('users'))
 
     <nav class="admin-sidebar-nav" aria-label="Admin navigation">
@@ -33,11 +34,19 @@
             </a>
         @endif
 
-        @if ($canViewCategories)
+        @if ($canViewCategories || $canViewTemplates)
             <span class="admin-nav-label">Template management</span>
+        @endif
+        @if ($canViewCategories)
             <a class="admin-nav-link {{ request()->routeIs('admin.categories.*') ? 'is-active' : '' }}" href="{{ route('admin.categories.index') }}">
                 @include('admin.components.icon', ['name' => 'layout'])
                 <span>Categories</span>
+            </a>
+        @endif
+        @if ($canViewTemplates)
+            <a class="admin-nav-link {{ request()->routeIs('admin.templates.*') ? 'is-active' : '' }}" href="{{ route('admin.templates.index') }}">
+                @include('admin.components.icon', ['name' => 'resume'])
+                <span>Templates</span>
             </a>
         @endif
 

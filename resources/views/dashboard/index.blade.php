@@ -51,8 +51,9 @@
                 @foreach ($resumes as $resume)
                     @php
                         $resumeContent = $resume->content ?? [];
-                        $template = $templates[$resume->template_slug];
-                        $resumeTitle = $resumeContent['professional_title'] ?? $template['name'].' Resume';
+                        $template = $resume->template;
+                        $templateName = $template?->name ?? str($resume->template_slug)->headline();
+                        $resumeTitle = $resumeContent['professional_title'] ?? $templateName.' Resume';
                         $resumeOwner = $resumeContent['full_name'] ?? $user->name;
                     @endphp
                     <article class="saved-resume-card">
@@ -99,7 +100,7 @@
 
                         <div class="saved-resume-content">
                             <div class="saved-resume-copy">
-                                <span>{{ $template['name'] }}</span>
+                                <span>{{ $templateName }}</span>
                                 <h3>{{ $resumeTitle }}</h3>
                                 <p>{{ $resumeOwner }}</p>
                                 <small>Updated {{ $resume->updated_at->diffForHumans() }}</small>
@@ -108,6 +109,9 @@
                                 <a href="{{ route('resume.builder', $resume) }}" class="btn btn-primary">
                                     Edit resume
                                     <svg viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg>
+                                </a>
+                                <a href="{{ route('resume.templates.index', $resume) }}" class="btn btn-light" aria-label="Change template for {{ $resumeTitle }}">
+                                    Change template
                                 </a>
                                 <a href="{{ route('resume.preview', $resume) }}" target="_blank" class="btn btn-light" aria-label="Preview {{ $resumeTitle }}">
                                     <svg viewBox="0 0 24 24"><path d="M2.5 12s3.5-6 9.5-6 9.5 6 9.5 6-3.5 6-9.5 6-9.5-6-9.5-6Z"/><circle cx="12" cy="12" r="2.5"/></svg>
@@ -129,11 +133,22 @@
                         <h2>Choose a resume template</h2>
                         <p>Each selection creates a separate resume in your workspace.</p>
                     </div>
-                    <span class="template-count">{{ count($templates) }} {{ Str::plural('template', count($templates)) }}</span>
+                    <div class="template-catalog-tools">
+                        <form action="{{ route('dashboard') }}#resume-templates" method="GET">
+                            <label class="visually-hidden" for="template-category">Filter templates by category</label>
+                            <select id="template-category" name="category" class="form-select" onchange="this.form.submit()">
+                                <option value="">All templates</option>
+                                @foreach ($templateCategories as $category)
+                                    <option value="{{ $category->slug }}" @selected($selectedCategory === $category->slug)>{{ $category->name }}</option>
+                                @endforeach
+                            </select>
+                        </form>
+                        <span class="template-count">{{ $templates->count() }} {{ Str::plural('template', $templates->count()) }}</span>
+                    </div>
                 </div>
 
                 <div class="template-slider">
-                    @if (count($templates) > 1)
+                    @if ($templates->count() > 1)
                         <div class="template-slider-controls" role="group" aria-label="Resume template navigation">
                             <button
                                 type="button"
@@ -162,42 +177,14 @@
                         tabindex="0"
                         aria-label="Resume templates"
                     >
-                        @foreach ($templates as $slug => $template)
-                            <article class="template-card" data-template-card="{{ $slug }}">
-                                <div class="template-preview">
-                                    <iframe
-                                        src="{{ route('resume.templates.show', ['template' => $slug, 'embed' => 1]) }}"
-                                        title="{{ $template['name'] }} preview"
-                                        loading="lazy"
-                                        tabindex="-1"
-                                    ></iframe>
-                                    <div class="template-preview-actions">
-                                        <a href="{{ route('resume.templates.show', $slug) }}" target="_blank" class="btn btn-light btn-sm">
-                                            <svg viewBox="0 0 24 24"><path d="M2.5 12s3.5-6 9.5-6 9.5 6 9.5 6-3.5 6-9.5 6-9.5-6-9.5-6Z"/><circle cx="12" cy="12" r="2.5"/></svg>
-                                            Full preview
-                                        </a>
-                                    </div>
-                                    <span class="selected-badge">
-                                        <svg viewBox="0 0 24 24"><path d="m5 12 4 4L19 6"/></svg>
-                                        Created
-                                    </span>
-                                </div>
-                                <div class="template-details">
-                                    <div>
-                                        <h3>{{ $template['name'] }}</h3>
-                                        <p>{{ $template['description'] }}</p>
-                                    </div>
-                                    <button
-                                        type="button"
-                                        class="btn btn-primary select-template-button js-select-template"
-                                        data-template="{{ $slug }}"
-                                        data-url="{{ route('resume.template.select') }}"
-                                    >
-                                        Create resume
-                                    </button>
-                                </div>
-                            </article>
-                        @endforeach
+                        @forelse ($templates as $template)
+                            <x-template-card :template="$template" />
+                        @empty
+                            <div class="template-empty-state">
+                                <h3>No active templates in this category</h3>
+                                <p>Choose “All templates” to browse the complete catalog.</p>
+                            </div>
+                        @endforelse
                     </div>
                 </div>
 

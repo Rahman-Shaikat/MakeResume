@@ -1175,15 +1175,45 @@ svg {
 }
 
 .template-preview {
-    height: 415px;
+    width: 100%;
+    aspect-ratio: 210 / 297;
     overflow: hidden;
     background: #e9edf3;
     position: relative;
 }
 
+.template-preview-fallback,
+.template-live-preview-mount {
+    position: absolute;
+    inset: 0;
+}
+
+.template-preview-fallback {
+    z-index: 0;
+    background: #e9edf3;
+    transition: opacity .2s ease, visibility .2s ease;
+}
+
+.template-live-preview-mount {
+    z-index: 1;
+    opacity: 0;
+    background: #fff;
+    transition: opacity .2s ease;
+}
+
+.template-preview.is-live-preview-ready .template-live-preview-mount {
+    opacity: 1;
+}
+
+.template-preview.is-live-preview-ready .template-preview-fallback {
+    opacity: 0;
+    visibility: hidden;
+}
+
 .template-preview iframe {
     width: 100%;
     height: 100%;
+    display: block;
     border: 0;
     pointer-events: none;
 }
@@ -1192,6 +1222,8 @@ svg {
     content: '';
     position: absolute;
     inset: 0;
+    z-index: 2;
+    pointer-events: none;
     background: rgba(17, 29, 56, .03);
     transition: .2s ease;
 }
@@ -1204,7 +1236,7 @@ svg {
     opacity: 0;
     position: absolute;
     inset: 0;
-    z-index: 2;
+    z-index: 3;
     display: grid;
     place-items: center;
     transition: .2s ease;
@@ -1838,6 +1870,10 @@ svg {
     gap: 10mm;
 }
 
+.resume-top.without-photo {
+    grid-template-columns: 1fr;
+}
+
 .resume-identity {
     padding-top: 1mm;
 }
@@ -2126,7 +2162,7 @@ svg {
 
 .template-two-identity h1 {
     margin: 0 0 1.2mm;
-    color: #075a9e;
+    color: var(--resume-accent, #075a9e);
     font-size: 24pt;
     font-weight: 700;
     line-height: .98;
@@ -2146,9 +2182,9 @@ svg {
     width: 22mm;
     height: 22mm;
     overflow: hidden;
-    border: .65mm solid #075a9e;
+    border: .65mm solid var(--resume-accent, #075a9e);
     border-radius: 50%;
-    background: #e8f4fd;
+    background: color-mix(in srgb, var(--resume-accent, #075a9e) 12%, white);
 }
 
 .template-two-photo img {
@@ -2163,7 +2199,7 @@ svg {
     min-height: 276mm;
     padding: 8mm 5mm;
     color: #4e565d;
-    background: #e8f4fd;
+    background: color-mix(in srgb, var(--resume-accent, #075a9e) 12%, white);
 }
 
 .template-two-section {
@@ -2179,7 +2215,7 @@ svg {
     margin: 0 0 4mm;
     padding: 0 0 1.7mm;
     border-bottom: .28mm solid #9da9b3;
-    color: #075a9e;
+    color: var(--resume-accent, #075a9e);
     font-size: 10.5pt;
     font-weight: 700;
     line-height: 1;
@@ -2302,7 +2338,7 @@ svg {
 .template-two-project a {
     display: inline-block;
     margin-bottom: 1mm;
-    color: #075a9e;
+    color: var(--resume-accent, #075a9e);
     font-size: 7.7pt;
     overflow-wrap: anywhere;
     text-decoration: none;
@@ -2368,7 +2404,7 @@ svg {
 
 .template-two-side-entry h4 {
     margin: 0 0 .8mm;
-    color: #075a9e;
+    color: var(--resume-accent, #075a9e);
     font-size: 8.5pt;
     font-weight: 700;
 }
@@ -2444,7 +2480,7 @@ svg {
     padding: 2.5mm 4mm;
     border-radius: 5.5mm;
     color: #3f4643;
-    background: #9edbb9;
+    background: color-mix(in srgb, var(--resume-accent, #0e594d) 35%, white);
     font-size: 11.8pt;
     line-height: 1.14;
     letter-spacing: 1.1pt;
@@ -2455,7 +2491,7 @@ svg {
     width: 20mm;
     height: 20mm;
     overflow: hidden;
-    border: .65mm solid #14594e;
+    border: .65mm solid var(--resume-accent, #14594e);
     border-radius: 50%;
     background: #c9ecdb;
 }
@@ -2490,8 +2526,8 @@ svg {
     display: grid;
     place-items: center;
     border-radius: 1.5mm;
-    color: #0e594d;
-    background: #caeddd;
+    color: var(--resume-accent, #0e594d);
+    background: color-mix(in srgb, var(--resume-accent, #0e594d) 15%, white);
 }
 
 .template-three-heading-icon svg {
@@ -2506,7 +2542,7 @@ svg {
 
 .template-three-section-heading h3 {
     margin: 0;
-    color: #0c5549;
+    color: var(--resume-accent, #0c5549);
     font-size: 11.3pt;
     font-weight: 700;
     line-height: 1;
@@ -2743,9 +2779,9 @@ svg {
     min-width: 0;
     min-height: 297mm;
     padding: 40mm 8mm 9mm;
-    border-top: 3.5mm solid #004d49;
+    border-top: 3.5mm solid color-mix(in srgb, var(--resume-accent, #087671) 78%, black);
     color: #fff;
-    background: #087671;
+    background: var(--resume-accent, #087671);
 }
 
 .template-four-identity {
@@ -2773,7 +2809,7 @@ svg {
 .template-four-identity h2 {
     max-width: 113mm;
     margin: 0 0 3.3mm;
-    color: #08b9bd;
+    color: var(--resume-accent, #08b9bd);
     font-size: 11.8pt;
     font-weight: 400;
     line-height: 1.2;
@@ -2783,7 +2819,7 @@ svg {
     width: 20mm;
     height: 20mm;
     overflow: hidden;
-    border: .65mm solid #08b9bd;
+    border: .65mm solid var(--resume-accent, #08b9bd);
     border-radius: 50%;
     background: #e6f8f8;
 }
@@ -3010,6 +3046,10 @@ svg {
     border-bottom: .25mm solid #aeb0b5;
 }
 
+.template-five-header.without-photo {
+    grid-template-columns: 1fr;
+}
+
 .template-five-photo {
     width: 24mm;
     height: 24mm;
@@ -3034,7 +3074,7 @@ svg {
 
 .template-five-photo span {
     color: #fff;
-    background: linear-gradient(145deg, #4d5fa2, #2f3d73);
+    background: var(--resume-accent, #3e4e91);
     font-size: 13pt;
     font-weight: 700;
     letter-spacing: .7pt;
@@ -3042,7 +3082,7 @@ svg {
 
 .template-five-identity h1 {
     margin: 0 0 1.4mm;
-    color: #3e4e91;
+    color: var(--resume-accent, #3e4e91);
     font-size: 25pt;
     font-weight: 500;
     line-height: 1;
@@ -3089,7 +3129,7 @@ svg {
     margin: 0 0 3mm;
     padding-bottom: 1.5mm;
     border-bottom: .25mm dotted #aeb0b5;
-    color: #3e4e91;
+    color: var(--resume-accent, #3e4e91);
     font-size: 10.2pt;
     font-weight: 700;
     line-height: 1;
@@ -3158,7 +3198,7 @@ svg {
 .template-five-skill-bar {
     height: 2.2mm;
     overflow: hidden;
-    border: .25mm solid #3e4e91;
+    border: .25mm solid var(--resume-accent, #3e4e91);
     background: #fff;
 }
 
@@ -3166,7 +3206,7 @@ svg {
     width: var(--skill-level);
     height: 100%;
     display: block;
-    background: #3e4e91;
+    background: var(--resume-accent, #3e4e91);
 }
 
 .template-five-education,
@@ -3198,7 +3238,7 @@ svg {
 .template-five-course strong {
     display: block;
     margin-bottom: .5mm;
-    color: #3e4e91;
+    color: var(--resume-accent, #3e4e91);
     font-size: 8.2pt;
 }
 
@@ -3245,7 +3285,7 @@ svg {
 }
 
 .template-five-entry-meta strong {
-    color: #3e4e91;
+    color: var(--resume-accent, #3e4e91);
     font-size: 8.3pt;
 }
 
@@ -3258,7 +3298,7 @@ svg {
 
 .template-five-entry-meta a {
     margin-left: auto;
-    color: #3e4e91;
+    color: var(--resume-accent, #3e4e91);
     font-size: 7.8pt;
     text-decoration: none;
     overflow-wrap: anywhere;
@@ -3285,7 +3325,7 @@ svg {
 }
 
 .template-five-project > strong {
-    color: #3e4e91;
+    color: var(--resume-accent, #3e4e91);
 }
 
 .template-five-project > time {
@@ -3318,6 +3358,10 @@ svg {
     display: flex;
     align-items: center;
     border-bottom: .65mm solid #171922;
+}
+
+.template-six-header.without-photo .template-six-identity {
+    max-width: none;
 }
 
 .template-six-identity {
@@ -3370,7 +3414,7 @@ svg {
     align-items: center;
     justify-content: center;
     color: #fff;
-    background: linear-gradient(145deg, #6172c0, #34417f);
+    background: var(--resume-accent, #3c4a91);
     font-size: 13pt;
     font-weight: 700;
     letter-spacing: .7pt;
@@ -3381,7 +3425,7 @@ svg {
     min-height: 297mm;
     padding: 10mm 6mm 10mm;
     color: #fff;
-    background: #3c4a91;
+    background: var(--resume-accent, #3c4a91);
 }
 
 .template-six-section {
@@ -3398,7 +3442,7 @@ svg {
 
 .template-six-section > h3 {
     margin: 0 0 3.5mm;
-    color: #3c4a91;
+    color: var(--resume-accent, #3c4a91);
     font-size: 14.5pt;
     font-weight: 700;
     line-height: 1;
@@ -3455,7 +3499,7 @@ svg {
 
 .template-six-entry-row time {
     flex: 0 0 auto;
-    color: #3c4a91;
+    color: var(--resume-accent, #3c4a91);
     font-size: 8.7pt;
     font-weight: 700;
     text-align: right;
@@ -3463,7 +3507,7 @@ svg {
 
 .template-six-entry-row a {
     max-width: 45mm;
-    color: #3c4a91;
+    color: var(--resume-accent, #3c4a91);
     font-size: 7.8pt;
     text-align: right;
     text-decoration: none;
@@ -3502,7 +3546,7 @@ svg {
 }
 
 .template-six-project-tech {
-    color: #3c4a91;
+    color: var(--resume-accent, #3c4a91);
     font-size: 8.2pt !important;
     font-style: italic;
 }
@@ -3510,7 +3554,7 @@ svg {
 .template-six-project > time {
     margin-top: .7mm;
     display: block;
-    color: #3c4a91;
+    color: var(--resume-accent, #3c4a91);
     font-size: 8pt;
     font-weight: 700;
 }
@@ -4624,10 +4668,6 @@ svg {
         align-items: flex-start;
     }
 
-    .template-preview {
-        height: 380px;
-    }
-
     .template-slider-controls {
         inset-inline: -14px;
     }
@@ -4735,5 +4775,105 @@ svg {
     *::after {
         scroll-behavior: auto !important;
         transition: none !important;
+    }
+}
+.template-preview-fallback > img {
+    width: 100%;
+    height: 100%;
+    display: block;
+    object-fit: cover;
+    object-position: top;
+    background: #fff;
+}
+
+.template-preview-loading {
+    position: absolute;
+    left: 50%;
+    bottom: 1rem;
+    z-index: 1;
+    display: inline-flex;
+    align-items: center;
+    gap: .45rem;
+    padding: .45rem .7rem;
+    border: 1px solid rgba(255, 255, 255, .65);
+    border-radius: 999px;
+    color: #fff;
+    background: rgba(17, 29, 56, .78);
+    font-size: .72rem;
+    font-weight: 600;
+    white-space: nowrap;
+    transform: translateX(-50%);
+    box-shadow: 0 6px 18px rgba(17, 29, 56, .2);
+}
+
+.template-preview[data-preview-state="idle"] .template-preview-loading,
+.template-preview[data-preview-state="error"] .template-preview-loading {
+    display: none;
+}
+
+.template-thumbnail-placeholder {
+    width: 100%;
+    height: 100%;
+    display: grid;
+    align-content: center;
+    justify-items: center;
+    gap: .65rem;
+    padding: 2rem;
+    border-top: 10px solid var(--resume-accent, #246bfd);
+    color: #526078;
+    text-align: center;
+    background: linear-gradient(145deg, #fff, #f2f5fa);
+}
+
+.template-thumbnail-placeholder span {
+    color: var(--resume-accent, #246bfd);
+    font-size: 2rem;
+    font-weight: 700;
+}
+
+.template-card-flags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: .35rem;
+    margin-bottom: .45rem;
+}
+
+.template-card-flags span {
+    padding: .18rem .45rem;
+    border-radius: 999px;
+    color: #526078;
+    background: #edf3ff;
+    font-size: .7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .03em;
+}
+
+.template-catalog-tools {
+    display: flex;
+    align-items: center;
+    gap: .75rem;
+}
+
+.template-catalog-tools .form-select {
+    min-width: 190px;
+}
+
+.template-switch-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+}
+
+.template-empty-state {
+    min-width: 100%;
+    padding: 3rem;
+    text-align: center;
+}
+
+@media (max-width: 767px) {
+    .template-catalog-tools {
+        width: 100%;
+        align-items: stretch;
+        flex-direction: column;
     }
 }

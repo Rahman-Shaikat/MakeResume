@@ -36,14 +36,14 @@
     @endphp
 
     <main class="resume-canvas">
-        <article class="resume-template-two">
+        <article class="resume-template-two" style="--resume-accent: {{ $resumeTemplate->accent_color }}">
             <div class="template-two-primary">
-                <header class="template-two-identity {{ $resume?->profile_image ? 'has-photo' : '' }}">
+                <header class="template-two-identity {{ $resumeTemplate->allows_profile_photo === 1 && $resume?->profile_image ? 'has-photo' : '' }}">
                     <div>
                         <h1>{{ $content['full_name'] }}</h1>
                         <h2>{{ $content['professional_title'] }}</h2>
                     </div>
-                    @if ($resume?->profile_image)
+                    @if ($resumeTemplate->allows_profile_photo === 1 && $resume?->profile_image)
                         <div class="template-two-photo">
                             <img src="{{ Storage::url($resume->profile_image) }}" alt="{{ $content['full_name'] }}">
                         </div>

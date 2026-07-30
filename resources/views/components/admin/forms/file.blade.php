@@ -22,7 +22,12 @@
         @endif
     </label>
     @if ($value)
-        <a class="admin-current-file" href="{{ asset('storage/' . ltrim($value, '/')) }}" target="_blank" rel="noopener">View current file</a>
+        <a
+            class="admin-current-file"
+            href="{{ Str::startsWith($value, 'assets/') ? asset($value) : asset('storage/' . ltrim($value, '/')) }}"
+            target="_blank"
+            rel="noopener"
+        >View current file</a>
     @endif
     <input
         {{ $attributes->class(['form-control', 'is-invalid' => $errors->has($field)]) }}

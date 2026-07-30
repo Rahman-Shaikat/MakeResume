@@ -4,10 +4,12 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\ChangeResumeTemplateRequest;
 use App\Http\Requests\ProfileImageRequest;
 use App\Http\Requests\SelectResumeTemplateRequest;
 use App\Models\Resume;
 use App\Services\Frontend\ResumeService;
+use App\Services\TemplateCatalogService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -92,21 +94,43 @@ final class ResumeController extends Controller
         return view('resumes.builder', $this->service->builderData($request->user(), $resume));
     }
 
+    public function templates(
+        Request $request,
+        Resume $resume,
+        TemplateCatalogService $catalog,
+    ): View {
+        Gate::authorize('update', $resume);
+
+        return view('resumes.templates.index', [
+            'resume' => $resume,
+            'templates' => $catalog->activeTemplates(),
+        ]);
+    }
+
+    public function changeTemplate(
+        ChangeResumeTemplateRequest $request,
+        Resume $resume,
+    ): RedirectResponse {
+        Gate::authorize('update', $resume);
+        $this->service->switchTemplate($resume, $request->validated('template_slug'));
+
+        return to_route('resume.builder', $resume)
+            ->with('status', 'Resume template changed successfully. Your content was preserved.');
+    }
+
     public function showTemplate(Request $request, string $template): View
     {
-        return view(
-            "resumes.templates.{$template}",
-            $this->service->templateData($request->user(), $template, $request->boolean('embed')),
-        );
+        $data = $this->service->templateData($request->user(), $template, $request->boolean('embed'));
+
+        return view($data['view'], $data);
     }
 
     public function showResume(Request $request, Resume $resume): View
     {
         Gate::authorize('view', $resume);
 
-        return view(
-            "resumes.templates.{$resume->template_slug}",
-            $this->service->previewData($request->user(), $resume, $request->boolean('embed')),
-        );
+        $data = $this->service->previewData($request->user(), $resume, $request->boolean('embed'));
+
+        return view($data['view'], $data);
     }
 }
