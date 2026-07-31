@@ -10,27 +10,6 @@
     </section>
 
     <section class="container-xl contact-shell">
-        <div class="contact-direct-links">
-            <a href="tel:+8801736769157">
-                <span><i class="fa-solid fa-phone" aria-hidden="true"></i></span>
-                <div>
-                    <small>Call us</small>
-                    <strong>+880 1736 769157</strong>
-                    <em>Monday–Friday, 9:00 AM–6:00 PM</em>
-                </div>
-                <i class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"></i>
-            </a>
-            <a href="mailto:makeresume@gmail.com">
-                <span><i class="fa-solid fa-envelope" aria-hidden="true"></i></span>
-                <div>
-                    <small>Gmail support</small>
-                    <strong>makeresume@gmail.com</strong>
-                    <em>We aim to reply within two business days</em>
-                </div>
-                <i class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"></i>
-            </a>
-        </div>
-
         <div class="contact-support-grid">
             <article>
                 <span><i class="fa-solid fa-life-ring" aria-hidden="true"></i></span>
@@ -56,7 +35,8 @@
                 <p>Give us a few details and our team will review your message. We aim to respond to genuine support requests within two business days.</p>
                 <div class="contact-expectations">
                     <span><i class="fa-solid fa-clock" aria-hidden="true"></i> Typical response: 1–2 business days</span>
-                    <span><i class="fa-solid fa-lock" aria-hidden="true"></i> Your details are handled with care</span>
+                    <span><i class="fa-solid fa-phone" aria-hidden="true"></i> <a href="tel:+8801736769157">+880 1736 769157</a></span>
+                    <span><i class="fa-solid fa-envelope" aria-hidden="true"></i> <a href="mailto:makeresume@gmail.com">makeresume@gmail.com</a></span>
                 </div>
             </div>
             <form class="contact-form" aria-label="Contact Resume Studio">

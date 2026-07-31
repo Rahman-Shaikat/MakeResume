@@ -16,3 +16,12 @@ it('renders the public pricing page with plans, comparison, and frequently asked
         ->assertSee('A clear view of what you can do.')
         ->assertSee('Questions before you begin?');
 });
+
+it('shows direct phone and Gmail links within the contact panel', function (): void {
+    $this->get(route('contact'))
+        ->assertOk()
+        ->assertSee('+880 1736 769157')
+        ->assertSee('makeresume@gmail.com')
+        ->assertDontSee('Gmail support')
+        ->assertDontSee('Your details are handled with care');
+});
