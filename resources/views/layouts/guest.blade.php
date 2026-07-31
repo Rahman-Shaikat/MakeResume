@@ -6,7 +6,7 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta name="theme-color" content="#f5f7fb">
     <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('assets/common/media/favicon.png') }}">
-    <title>{{ $title ?? 'Resume Studio' }}</title>
+    <title>{{ $title ?? 'Resume Engineer' }}</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 <body class="auth-page">
@@ -16,7 +16,7 @@
                 <span class="brand-mark">
                     <img src="{{ asset('assets/common/media/logo.png') }}" alt="" aria-hidden="true">
                 </span>
-                Resume<span>Studio</span>
+                Resume<span>Engineer</span>
             </a>
             <div class="showcase-copy">
                 <span class="showcase-kicker">Build with confidence</span>

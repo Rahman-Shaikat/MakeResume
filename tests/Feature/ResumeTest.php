@@ -40,10 +40,10 @@ test('dashboard success messages have spacing and dismiss automatically after fi
     $user = User::factory()->create();
 
     $this->actingAs($user)
-        ->withSession(['status' => 'Email verified successfully. Welcome to Resume Studio.'])
+        ->withSession(['status' => 'Email verified successfully. Welcome to Resume Engineer.'])
         ->get(route('dashboard'))
         ->assertOk()
-        ->assertSee('Email verified successfully. Welcome to Resume Studio.')
+        ->assertSee('Email verified successfully. Welcome to Resume Engineer.')
         ->assertSee('class="container-xl app-alert-container"', false)
         ->assertSee('data-auto-dismiss-alert', false)
         ->assertSee('data-dismiss-after="5000"', false);

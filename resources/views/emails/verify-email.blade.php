@@ -21,9 +21,9 @@
                                         <table role="presentation" cellspacing="0" cellpadding="0" border="0">
                                             <tr>
                                                 <td style="width:38px;height:38px;">
-                                                    <img src="{{ asset('assets/common/media/logo.png') }}" width="38" height="38" alt="Resume Studio" style="display:block;width:38px;height:38px;border:0;">
+                                                    <img src="{{ asset('assets/common/media/logo.png') }}" width="38" height="38" alt="Resume Engineer" style="display:block;width:38px;height:38px;border:0;">
                                                 </td>
-                                                <td style="padding-left:11px;color:#ffffff;font-size:19px;font-weight:800;letter-spacing:-.4px;">Resume<span style="color:#66dceb;">Studio</span></td>
+                                                <td style="padding-left:11px;color:#ffffff;font-size:19px;font-weight:800;letter-spacing:-.4px;">Resume<span style="color:#66dceb;">Engineer</span></td>
                                             </tr>
                                         </table>
                                     </td>
@@ -37,7 +37,7 @@
                         <td style="padding:44px 38px 18px;">
                             <div style="display:inline-block;padding:7px 11px;border-radius:20px;background:#eaf1ff;color:#246bfd;font-size:10px;font-weight:800;letter-spacing:1.1px;text-transform:uppercase;">Email verification</div>
                             <h1 style="margin:20px 0 12px;color:#111d38;font-size:30px;line-height:1.18;letter-spacing:-.8px;">Welcome, {{ $user->name }}.</h1>
-                            <p style="margin:0;color:#69758a;font-size:15px;line-height:1.7;">You’re one step away from creating a polished resume. Confirm that this email address belongs to you to secure your account and unlock Resume Studio.</p>
+                            <p style="margin:0;color:#69758a;font-size:15px;line-height:1.7;">You’re one step away from creating a polished resume. Confirm that this email address belongs to you to secure your account and unlock Resume Engineer.</p>
                         </td>
                     </tr>
 
@@ -86,7 +86,7 @@
                     <tr>
                         <td align="center" style="padding:23px 38px;background:#111d38;color:#8592aa;font-size:10px;line-height:1.7;">
                             If you didn’t create this account, you can safely ignore this email.<br>
-                            <span style="color:#c8d1df;">Resume Studio · Build your story with confidence.</span>
+                            <span style="color:#c8d1df;">Resume Engineer · Build your story with confidence.</span>
                         </td>
                     </tr>
                 </table>

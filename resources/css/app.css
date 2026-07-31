@@ -5233,10 +5233,16 @@ svg {
 .contact-form input, .contact-form select { min-height: 42px; padding: 9px 11px; }
 .contact-form textarea { min-height: 106px; padding: 11px; resize: vertical; }
 .contact-form input:focus, .contact-form select:focus, .contact-form textarea:focus { border-color: #89abf8; box-shadow: 0 0 0 3px rgba(36, 107, 253, .1); }
+.contact-form [aria-invalid="true"] { border-color: #dd6674; }
+.contact-form-alert { padding: 11px 13px; border-radius: 9px; display: flex; align-items: flex-start; gap: 9px; font-size: 11px; line-height: 1.5; }
+.contact-form-alert i { margin-top: 2px; }
+.contact-form-alert-success { color: #137b5f; background: #eaf8f3; }
+.contact-form-alert-error { color: #a33341; background: #fff0f2; }
+.contact-field-error { color: #bd4251; font-size: 10px; font-weight: 650; line-height: 1.35; }
+.contact-honeypot { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); clip-path: inset(50%); white-space: nowrap; }
 .contact-form-note { margin: -1px 0 0; color: #7b899c; font-size: 10px; line-height: 1.5; }
 .contact-form-note i { margin-right: 5px; color: var(--app-primary); }
 .contact-submit { justify-self: start; min-height: 41px; padding-inline: 16px; font-size: 11px; }
-.contact-submit:disabled { cursor: not-allowed; opacity: .58; }
 
 @media (max-width: 991.98px) {
     .legal-shell { grid-template-columns: 180px minmax(0, 1fr); gap: 40px; }

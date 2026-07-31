@@ -16,7 +16,8 @@ test('the protected admin dashboard template is available to an active administr
 
     $this->get(route('admin.dashboard'))
         ->assertOk()
-        ->assertSee('Resume Studio')
+        ->assertSee('Resume Engineer')
+        ->assertDontSee('Resume<span>Studio</span>', false)
         ->assertSee('Administration')
         ->assertSee('Platform overview')
         ->assertSee('Resume creation overview')
@@ -39,6 +40,8 @@ test('the generic admin root does not reveal the protected admin route', functio
 test('the standalone admin login template is available', function (): void {
     $this->get(route('admin.loginpage'))
         ->assertOk()
+        ->assertSee('Resume<span>Engineer</span>', false)
+        ->assertDontSee('Resume<span>Studio</span>', false)
         ->assertSee('Protected area')
         ->assertSee('Sign in to administration');
 });

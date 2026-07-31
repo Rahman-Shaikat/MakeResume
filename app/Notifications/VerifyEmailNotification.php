@@ -39,7 +39,7 @@ final class VerifyEmailNotification extends Notification
         ];
 
         return (new MailMessage)
-            ->subject('Verify your email address | Resume Studio')
+            ->subject('Verify your email address | Resume Engineer')
             ->view('emails.verify-email', $viewData)
             ->text('emails.verify-email-text', $viewData);
     }

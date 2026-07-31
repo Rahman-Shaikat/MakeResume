@@ -1,4 +1,4 @@
-Resume Studio
+Resume Engineer
 
 Welcome, {{ $user->name }}.
 

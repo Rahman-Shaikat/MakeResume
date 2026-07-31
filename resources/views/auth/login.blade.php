@@ -1,4 +1,4 @@
-<x-layouts.guest title="Sign in - Resume Studio">
+<x-layouts.guest title="Sign in - Resume Engineer">
     <div class="auth-heading">
         <span class="auth-eyebrow">Welcome back</span>
         <h2>Sign in to your account</h2>
@@ -45,5 +45,5 @@
         </button>
     </form>
 
-    <p class="auth-switch">New to Resume Studio? <a href="{{ route('register') }}">Create an account</a></p>
+    <p class="auth-switch">New to Resume Engineer? <a href="{{ route('register') }}">Create an account</a></p>
 </x-layouts.guest>

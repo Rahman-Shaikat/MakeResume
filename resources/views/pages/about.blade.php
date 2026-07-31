@@ -1,4 +1,4 @@
-@extends('layouts.marketing', ['title' => 'About us - Resume Studio'])
+@extends('layouts.marketing', ['title' => 'About us - Resume Engineer'])
 
 @section('content')
     <section class="about-hero">
@@ -6,7 +6,7 @@
             <div>
                 <span class="legal-hero-eyebrow">Built for the next chapter</span>
                 <h1>Make every opportunity feel within reach.</h1>
-                <p>Resume Studio gives ambitious professionals a calm, focused place to turn their experience into a resume they are proud to share.</p>
+                <p>Resume Engineer gives ambitious professionals a calm, focused place to turn their experience into a resume they are proud to share.</p>
                 <div class="about-hero-actions">
                     @auth
                         <a href="{{ route('dashboard') }}" class="btn btn-light">Open your workspace</a>
@@ -17,7 +17,7 @@
                 </div>
             </div>
 
-            <div class="about-hero-card" aria-label="Resume Studio promise">
+            <div class="about-hero-card" aria-label="Resume Engineer promise">
                 <span class="about-card-icon"><i class="fa-solid fa-sparkles" aria-hidden="true"></i></span>
                 <p>One focused workspace for every version of your career story.</p>
                 <div>
@@ -33,7 +33,7 @@
         <div class="about-intro-copy">
             <span class="section-kicker">Our point of view</span>
             <h2>A resume is more than a document.</h2>
-            <p>It is the short, clear story of the work you have done and the value you are ready to create. We built Resume Studio to make shaping that story feel less overwhelming and more intentional.</p>
+            <p>It is the short, clear story of the work you have done and the value you are ready to create. We built Resume Engineer to make shaping that story feel less overwhelming and more intentional.</p>
         </div>
         <div class="about-principles">
             <article>
@@ -58,10 +58,10 @@
         <div class="about-story-panel">
             <span class="section-kicker">Why we exist</span>
             <h2>Clear tools make confident decisions easier.</h2>
-            <p>Career transitions ask a lot of people. Resume Studio removes unnecessary friction from one important step, so you can spend more energy on the opportunities ahead.</p>
+            <p>Career transitions ask a lot of people. Resume Engineer removes unnecessary friction from one important step, so you can spend more energy on the opportunities ahead.</p>
             <a href="{{ route('contact') }}" class="text-link">Share feedback <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></a>
         </div>
-        <div class="about-stat-grid" aria-label="Resume Studio values">
+        <div class="about-stat-grid" aria-label="Resume Engineer values">
             <article><strong>Clarity</strong><span>over clutter</span></article>
             <article><strong>Progress</strong><span>over perfection</span></article>
             <article><strong>People</strong><span>at the center</span></article>

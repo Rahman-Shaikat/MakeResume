@@ -22,7 +22,7 @@
         </button>
 
         <div class="admin-topbar-context d-none d-md-block">
-            <span>Resume Studio</span>
+            <span>Resume Engineer</span>
             <strong>Administration</strong>
         </div>
     </div>
@@ -139,7 +139,7 @@
                     <div><strong>{{ $admin->name }}</strong><span>{{ $admin->email }}</span></div>
                 </div>
                 <div class="admin-profile-links">
-                    <a href="{{ route('home') }}">@include('admin.components.icon', ['name' => 'external']) Open Resume Studio</a>
+                    <a href="{{ route('home') }}">@include('admin.components.icon', ['name' => 'external']) Open Resume Engineer</a>
                 </div>
                 <form action="{{ route('admin.logout') }}" method="POST">
                     @csrf

@@ -1,4 +1,4 @@
-<x-layouts.guest title="Create account - Resume Studio">
+<x-layouts.guest title="Create account - Resume Engineer">
     <div class="auth-heading">
         <span class="auth-eyebrow">Get started</span>
         <h2>Create your account</h2>

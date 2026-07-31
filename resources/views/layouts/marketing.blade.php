@@ -5,17 +5,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="theme-color" content="#ffffff">
     <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('assets/common/media/favicon.png') }}">
-    <title>{{ $title ?? 'Resume Studio' }}</title>
+    <title>{{ $title ?? 'Resume Engineer' }}</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 <body class="marketing-page">
     <header class="marketing-header">
         <div class="container-xl marketing-nav">
-            <a href="{{ route('home') }}" class="brand" aria-label="Resume Studio home">
+            <a href="{{ route('home') }}" class="brand" aria-label="Resume Engineer home">
                 <span class="brand-mark">
                     <img src="{{ asset('assets/common/media/logo.png') }}" width="42" height="42" alt="" aria-hidden="true">
                 </span>
-                Resume<span>Studio</span>
+                Resume<span>Engineer</span>
             </a>
 
             <nav class="marketing-links" aria-label="Primary navigation">

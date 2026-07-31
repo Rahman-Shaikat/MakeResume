@@ -25,7 +25,7 @@
         <div class="legal-aside-card">
             <i class="fa-solid fa-shield-heart" aria-hidden="true"></i>
             <strong>Your career story matters.</strong>
-            <span>We design every part of Resume Studio with clarity and trust in mind.</span>
+            <span>We design every part of Resume Engineer with clarity and trust in mind.</span>
         </div>
     </aside>
 

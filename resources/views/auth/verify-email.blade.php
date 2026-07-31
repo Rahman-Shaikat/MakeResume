@@ -1,4 +1,4 @@
-<x-layouts.guest title="Verify your email - Resume Studio">
+<x-layouts.guest title="Verify your email - Resume Engineer">
     <div class="verification-card">
         <div class="verification-icon" aria-hidden="true">
             <svg viewBox="0 0 24 24"><path d="M4 6h16v12H4zM4 7l8 6 8-6"/><path d="m16.5 16.5 1.8 1.8 3.2-3.6"/></svg>
@@ -20,7 +20,7 @@
                 <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="m8 12 2.5 2.5L16 9"/></svg>
                 <div>
                     <strong>Email sent successfully</strong>
-                    <span>Open the latest message from Resume Studio to continue.</span>
+                    <span>Open the latest message from Resume Engineer to continue.</span>
                 </div>
             </div>
         @endif

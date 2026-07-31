@@ -1,5 +1,5 @@
 <footer class="admin-footer">
-    <p>© 2026 Resume Studio. Administration template.</p>
+    <p>© 2026 Resume Engineer. Administration template.</p>
     <div>
         <a href="#">Privacy</a>
         <a href="#">Documentation</a>

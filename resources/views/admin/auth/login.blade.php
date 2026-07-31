@@ -6,7 +6,7 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta name="theme-color" content="#ffffff">
     <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('assets/common/media/favicon.png') }}">
-    <title>Administrator sign in - Resume Studio</title>
+    <title>Administrator sign in - Resume Engineer</title>
     @vite(['resources/css/admin/app.css', 'resources/js/admin/app.js'])
 </head>
 <body class="admin-body admin-auth-body">
@@ -17,7 +17,7 @@
                     <img src="{{ asset('assets/common/media/logo.png') }}" alt="">
                 </span>
                 <span>
-                    <strong>Resume<span>Studio</span></strong>
+                    <strong>Resume<span>Engineer</span></strong>
                     <small>Administration</small>
                 </span>
             </div>
@@ -52,7 +52,7 @@
             </form>
 
             <footer>
-                <a href="{{ route('home') }}">Return to Resume Studio</a>
+                <a href="{{ route('home') }}">Return to Resume Engineer</a>
             </footer>
         </section>
     </main>

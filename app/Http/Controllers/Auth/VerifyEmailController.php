@@ -17,6 +17,6 @@ final class VerifyEmailController extends Controller
         }
 
         return redirect()->route('dashboard')
-            ->with('status', 'Email verified successfully. Welcome to Resume Studio.');
+            ->with('status', 'Email verified successfully. Welcome to Resume Engineer.');
     }
 }

@@ -1,10 +1,14 @@
 <?php
 
+use App\Http\Controllers\ContactMessageController;
 use App\Http\Controllers\HomeController;
 use Illuminate\Support\Facades\Route;
 
 Route::view('/about-us', 'pages.about')->name('about');
 Route::view('/contact-us', 'pages.contact')->name('contact');
+Route::post('/contact-us', ContactMessageController::class)
+    ->middleware('throttle:contact-form')
+    ->name('contact.store');
 Route::view('/pricing', 'pages.pricing')->name('pricing');
 Route::view('/privacy-policy', 'pages.privacy')->name('privacy');
 Route::view('/terms-of-service', 'pages.terms')->name('terms');

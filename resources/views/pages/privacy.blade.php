@@ -1,16 +1,16 @@
-@extends('layouts.marketing', ['title' => 'Privacy policy - Resume Studio'])
+@extends('layouts.marketing', ['title' => 'Privacy policy - Resume Engineer'])
 
 @section('content')
     <x-legal-page
-        eyebrow="Privacy at Resume Studio"
+        eyebrow="Privacy at Resume Engineer"
         title="Your career story is personal."
-        summary="This policy explains what information Resume Studio collects, why we use it, and the choices you have."
+        summary="This policy explains what information Resume Engineer collects, why we use it, and the choices you have."
         updated-at="July 30, 2026"
     >
         <section id="overview">
             <span class="legal-content-kicker">Our commitment</span>
             <h2>Privacy should be easy to understand.</h2>
-            <p>We collect only the information needed to provide Resume Studio, improve the product, protect the service, and communicate with you. We do not sell your personal information.</p>
+            <p>We collect only the information needed to provide Resume Engineer, improve the product, protect the service, and communicate with you. We do not sell your personal information.</p>
             <div class="legal-highlight"><i class="fa-solid fa-shield-heart" aria-hidden="true"></i><p>Your resume content belongs to you. You control the information you add and the resumes you create.</p></div>
         </section>
 
@@ -24,14 +24,14 @@
 
             <h2>How we use information</h2>
             <ul>
-                <li>Provide, maintain, and secure your Resume Studio account and workspace.</li>
+                <li>Provide, maintain, and secure your Resume Engineer account and workspace.</li>
                 <li>Respond to support requests and communicate important service updates.</li>
                 <li>Understand how the product performs and improve its reliability and usability.</li>
                 <li>Meet legal obligations and prevent misuse of the service.</li>
             </ul>
 
             <h2>How information is shared</h2>
-            <p>We do not sell personal information. We share data only with service providers that help us operate Resume Studio, when required by law, or when necessary to protect our users, rights, and service. Those providers may use information only to perform services on our behalf.</p>
+            <p>We do not sell personal information. We share data only with service providers that help us operate Resume Engineer, when required by law, or when necessary to protect our users, rights, and service. Those providers may use information only to perform services on our behalf.</p>
 
             <h2>Your choices</h2>
             <p>You can update the content in your workspace and delete resumes you no longer need. You may also contact us with questions about the information associated with your account.</p>
@@ -39,7 +39,7 @@
 
         <section id="questions" class="legal-questions">
             <i class="fa-regular fa-message" aria-hidden="true"></i>
-            <div><h2>Questions about privacy?</h2><p>We welcome questions about this policy and how Resume Studio handles personal information.</p></div>
+            <div><h2>Questions about privacy?</h2><p>We welcome questions about this policy and how Resume Engineer handles personal information.</p></div>
             <a href="{{ route('contact') }}" class="btn btn-outline-primary">Contact us</a>
         </section>
     </x-legal-page>

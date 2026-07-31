@@ -53,7 +53,7 @@ test('a user can verify their email with a valid signed link', function (): void
     $this->actingAs($user)
         ->get($verificationUrl)
         ->assertRedirect(route('dashboard'))
-        ->assertSessionHas('status', 'Email verified successfully. Welcome to Resume Studio.');
+        ->assertSessionHas('status', 'Email verified successfully. Welcome to Resume Engineer.');
 
     expect($user->fresh()->hasVerifiedEmail())->toBeTrue();
     Event::assertDispatched(Verified::class);
@@ -97,7 +97,7 @@ test('verified users are not sent another verification email', function (): void
     Notification::assertNothingSent();
 });
 
-test('the verification email uses the professional resume studio template', function (): void {
+test('the verification email uses the professional Resume Engineer template', function (): void {
     $user = User::factory()->unverified()->create([
         'name' => 'Taylor Morgan',
         'email' => 'taylor@example.com',
@@ -106,13 +106,13 @@ test('the verification email uses the professional resume studio template', func
     $html = view('emails.verify-email', $message->viewData)->render();
 
     expect($message->subject)
-        ->toBe('Verify your email address | Resume Studio')
+        ->toBe('Verify your email address | Resume Engineer')
         ->and($message->view)->toBe([
             'html' => 'emails.verify-email',
             'text' => 'emails.verify-email-text',
         ])
         ->and($html)
-        ->toContain('Resume<span style="color:#66dceb;">Studio</span>')
+        ->toContain('Resume<span style="color:#66dceb;">Engineer</span>')
         ->toContain('assets/common/media/logo.png')
         ->toContain('Verify email address')
         ->toContain('taylor@example.com')

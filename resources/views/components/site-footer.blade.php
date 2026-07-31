@@ -2,11 +2,11 @@
     <div class="container-xl">
         <div class="site-footer-main">
             <div class="site-footer-brand">
-                <a href="{{ route('home') }}" class="brand brand-light" aria-label="Resume Studio home">
+                <a href="{{ route('home') }}" class="brand brand-light" aria-label="Resume Engineer home">
                     <span class="brand-mark">
                         <img src="{{ asset('assets/common/media/logo.png') }}" width="42" height="42" alt="" aria-hidden="true">
                     </span>
-                    Resume<span>Studio</span>
+                    Resume<span>Engineer</span>
                 </a>
                 <p>Professional resumes, thoughtfully designed to help your next opportunity stand out.</p>
             </div>
@@ -32,7 +32,7 @@
         </div>
 
         <div class="site-footer-bottom">
-            <span>© {{ now()->year }} Resume Studio. All rights reserved.</span>
+            <span>© {{ now()->year }} Resume Engineer. All rights reserved.</span>
             <span>Build your story with confidence.</span>
         </div>
     </div>

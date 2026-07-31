@@ -14,7 +14,7 @@ class RoleSeeder extends Seeder
         Role::query()->updateOrCreate(
             ['name' => 'Super Admin', 'type' => 1],
             [
-                'short_desc' => 'Full access to every Resume Studio administration feature.',
+                'short_desc' => 'Full access to every Resume Engineer administration feature.',
                 'status' => 1,
             ],
         );

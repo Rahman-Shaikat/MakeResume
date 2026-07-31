@@ -1,4 +1,4 @@
-@extends('layouts.marketing', ['title' => 'Resume Studio - Build a resume that moves you forward'])
+@extends('layouts.marketing', ['title' => 'Resume Engineer - Build a resume that moves you forward'])
 
 @section('content')
     @php
@@ -34,7 +34,7 @@
                     </a>
                     <a href="#templates" class="home-secondary-cta">View templates <i class="fa-solid fa-arrow-down" aria-hidden="true"></i></a>
                 </div>
-                <div class="home-hero-reassurance" aria-label="Resume Studio benefits">
+                <div class="home-hero-reassurance" aria-label="Resume Engineer benefits">
                     <span><i class="fa-solid fa-circle-check" aria-hidden="true"></i> Start in minutes</span>
                     <span><i class="fa-solid fa-circle-check" aria-hidden="true"></i> Save and refine anytime</span>
                 </div>
@@ -44,7 +44,7 @@
                 <div class="home-visual-glow"></div>
                 <div class="home-status-card home-status-card-top"><i class="fa-solid fa-wand-magic-sparkles" aria-hidden="true"></i><span>{{ $heroTopBadge }}</span></div>
                 <div class="home-resume-paper">
-                    <img src="{{ $heroPreview }}" width="700" height="990" alt="A Resume Studio template preview" fetchpriority="high">
+                    <img src="{{ $heroPreview }}" width="700" height="990" alt="A Resume Engineer template preview" fetchpriority="high">
                 </div>
                 <div class="home-editor-card">
                     <div class="home-editor-card-head"><span><i class="fa-solid fa-pen" aria-hidden="true"></i></span><strong>{{ $heroEditorTitle }}</strong><i class="fa-solid fa-ellipsis" aria-hidden="true"></i></div>
@@ -71,7 +71,7 @@
         <div class="home-section-heading" data-reveal>
             <span class="section-kicker">A focused way to begin</span>
             <h2>From blank page to confident application in three clear steps.</h2>
-            <p>Resume Studio keeps the process simple while giving you the control to make every version feel like yours.</p>
+            <p>Resume Engineer keeps the process simple while giving you the control to make every version feel like yours.</p>
         </div>
 
         <div class="home-steps">

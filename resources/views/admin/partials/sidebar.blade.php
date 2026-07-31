@@ -1,11 +1,11 @@
 <aside class="admin-sidebar" data-admin-sidebar>
     <div class="admin-sidebar-brand">
-        <a href="{{ route('admin.dashboard') }}" aria-label="Resume Studio admin dashboard">
+        <a href="{{ route('admin.dashboard') }}" aria-label="Resume Engineer admin dashboard">
             <span class="admin-brand-mark">
                 <img src="{{ asset('assets/common/media/logo.png') }}" alt="">
             </span>
             <span class="admin-brand-copy">
-                <strong>Resume<span>Studio</span></strong>
+                <strong>Resume<span>Engineer</span></strong>
                 <small>Admin console</small>
             </span>
         </a>

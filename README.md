@@ -1,8 +1,8 @@
 <p align="center">
-    <img src="public/assets/common/media/logo.png" width="96" alt="Resume Studio logo">
+    <img src="public/assets/common/media/logo.png" width="96" alt="Resume Engineer logo">
 </p>
 
-<h1 align="center">Resume Studio</h1>
+<h1 align="center">Resume Engineer</h1>
 
 <p align="center">
     Build, customize, save, and export professional resumes from one focused workspace.
@@ -18,7 +18,7 @@
 
 ## Overview
 
-Resume Studio is a Laravel-based resume builder designed to help users move from
+Resume Engineer is a Laravel-based resume builder designed to help users move from
 a blank page to a polished, print-ready resume. Users create a verified account,
 choose a professionally coded template, edit their information beside a live
 preview, and retain multiple resumes in their personal dashboard.
@@ -122,7 +122,7 @@ Copy-Item .env.example .env
 Configure the application URL and database connection in `.env`:
 
 ```dotenv
-APP_NAME="Resume Studio"
+APP_NAME="Resume Engineer"
 APP_URL=http://localhost:8000
 
 DB_CONNECTION=mysql
@@ -145,7 +145,7 @@ The storage link is required for profile images. Uploaded files are saved to
 
 ## Administrator access
 
-Resume Studio has a separate administrator guard, login, roles, and exact
+Resume Engineer has a separate administrator guard, login, roles, and exact
 route-level permissions. Seed the initial RBAC records after migrating:
 
 ```bash
@@ -263,7 +263,7 @@ resources/
 \-- views/                  Blade layouts, emails, dashboard, builder, and resumes
 
 public/
-\-- assets/common/media/    Resume Studio logo and favicon
+\-- assets/common/media/    Resume Engineer logo and favicon
 
 tests/
 \-- Feature/                Authentication, verification, and resume workflows

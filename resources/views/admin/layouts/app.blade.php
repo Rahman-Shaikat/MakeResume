@@ -6,7 +6,7 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta name="theme-color" content="#ffffff">
     <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('assets/common/media/favicon.png') }}">
-    <title>@yield('title', 'Dashboard') - Resume Studio Admin</title>
+    <title>@yield('title', 'Dashboard') - Resume Engineer Admin</title>
     @vite(['resources/css/admin/app.css', 'resources/js/admin/app.js'])
 </head>
 <body class="admin-body">

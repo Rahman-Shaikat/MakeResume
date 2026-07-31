@@ -7,7 +7,7 @@
     <div>
         <span class="admin-eyebrow">Platform overview</span>
         <h1>Dashboard</h1>
-        <p>Monitor Resume Studio activity, adoption, and platform health.</p>
+        <p>Monitor Resume Engineer activity, adoption, and platform health.</p>
     </div>
     <div class="admin-heading-actions">
         @if (auth('admin')->user()->hasPermission('admin-users-create'))
@@ -218,7 +218,7 @@
             <div class="admin-activity-list">
                 <div>
                     <span class="admin-event-icon is-success">@include('admin.components.icon', ['name' => 'user-plus'])</span>
-                    <p><strong>New account created</strong><span>Nadia Rahman joined Resume Studio.</span><small>8 minutes ago</small></p>
+                    <p><strong>New account created</strong><span>Nadia Rahman joined Resume Engineer.</span><small>8 minutes ago</small></p>
                 </div>
                 <div>
                     <span class="admin-event-icon is-primary">@include('admin.components.icon', ['name' => 'resume'])</span>

@@ -23,7 +23,7 @@ final class UserRegistrationService
         Auth::login($user);
         $this->adminNotifications->notifyActiveAdministrators(
             title: 'New user registered',
-            message: "{$user->name} created a Resume Studio account.",
+            message: "{$user->name} created a Resume Engineer account.",
             url: route('admin.dashboard'),
             icon: 'user-plus',
             tone: 'success',

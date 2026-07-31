@@ -6,17 +6,17 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta name="theme-color" content="#ffffff">
     <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('assets/common/media/favicon.png') }}">
-    <title>{{ $title ?? 'Dashboard' }} - Resume Studio</title>
+    <title>{{ $title ?? 'Dashboard' }} - Resume Engineer</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 <body class="app-page">
     <nav class="navbar navbar-expand-lg app-navbar sticky-top">
         <div class="container-fluid px-3 px-lg-4">
-            <a href="{{ route('dashboard') }}" class="navbar-brand brand app-navbar-brand m-0" aria-label="Resume Studio dashboard">
+            <a href="{{ route('dashboard') }}" class="navbar-brand brand app-navbar-brand m-0" aria-label="Resume Engineer dashboard">
                 <span class="brand-mark">
                     <img src="{{ asset('assets/common/media/logo.png') }}" width="42" height="42" alt="" aria-hidden="true">
                 </span>
-                Resume<span>Studio</span>
+                Resume<span>Engineer</span>
             </a>
 
             <div class="d-flex align-items-center gap-3">

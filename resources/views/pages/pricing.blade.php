@@ -1,4 +1,4 @@
-@extends('layouts.marketing', ['title' => 'Pricing - Resume Studio'])
+@extends('layouts.marketing', ['title' => 'Pricing - Resume Engineer'])
 
 @section('content')
     @php
