@@ -15,7 +15,16 @@ final class HomepageTemplateShowcaseService
             ->with([
                 'templates' => fn ($query) => $query
                     ->active()
-                    ->select(['resume_templates.id', 'name', 'short_desc', 'thumbnail_path', 'accent_color', 'is_ats_friendly']),
+                    ->select([
+                        'resume_templates.id',
+                        'slug',
+                        'name',
+                        'short_desc',
+                        'thumbnail_path',
+                        'accent_color',
+                        'is_ats_friendly',
+                        'updated_at',
+                    ]),
             ])
             ->latest('updated_at')
             ->first();

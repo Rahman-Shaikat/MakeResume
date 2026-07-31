@@ -68,8 +68,28 @@ const initializeLiveTemplatePreviews = () => {
         return;
     }
 
-    const loadPreview = (preview) => {
+    const loadDeferredFallback = (preview) => {
+        const fallbackUrl = preview.dataset.livePreviewFallbackUrl;
+        const fallback = preview.querySelector('[data-template-preview-fallback]');
+
+        if (!fallback || !fallbackUrl || fallback.querySelector('img')) {
+            return;
+        }
+
+        const fallbackImage = new Image(700, 990);
+        fallbackImage.src = fallbackUrl;
+        fallbackImage.alt = preview.dataset.livePreviewFallbackAlt || 'Resume template thumbnail';
+        fallbackImage.loading = 'lazy';
+        fallbackImage.decoding = 'async';
+        fallback.append(fallbackImage);
+        preview.removeAttribute('data-live-preview-fallback-url');
+        preview.removeAttribute('data-live-preview-fallback-alt');
+    };
+
+    const loadPreview = (preview, onSettled = null) => {
         if (preview.dataset.previewState !== 'idle') {
+            onSettled?.();
+
             return;
         }
 
@@ -79,20 +99,29 @@ const initializeLiveTemplatePreviews = () => {
         if (!mount || !previewUrl) {
             preview.dataset.previewState = 'error';
             preview.setAttribute('aria-busy', 'false');
+            loadDeferredFallback(preview);
+            onSettled?.();
 
             return;
         }
 
         preview.dataset.previewState = 'loading';
         const iframe = document.createElement('iframe');
+        let settled = false;
+        const settle = () => {
+            if (settled) {
+                return;
+            }
+
+            settled = true;
+            onSettled?.();
+        };
         const loadingTimeout = window.setTimeout(() => {
             if (preview.dataset.previewState !== 'loading') {
                 return;
             }
 
-            preview.dataset.previewState = 'error';
-            preview.setAttribute('aria-busy', 'false');
-            iframe.remove();
+            showFallback();
         }, 15000);
 
         const showFallback = () => {
@@ -100,6 +129,8 @@ const initializeLiveTemplatePreviews = () => {
             preview.dataset.previewState = 'error';
             preview.setAttribute('aria-busy', 'false');
             iframe.remove();
+            loadDeferredFallback(preview);
+            settle();
         };
 
         iframe.src = previewUrl;
@@ -123,14 +154,50 @@ const initializeLiveTemplatePreviews = () => {
             preview.dataset.previewState = 'ready';
             preview.setAttribute('aria-busy', 'false');
             preview.classList.add('is-live-preview-ready');
+            settle();
         }, { once: true });
         iframe.addEventListener('error', showFallback, { once: true });
 
         mount.replaceChildren(iframe);
     };
 
+    const queuedHomePreviews = new Set();
+    const homePreviewQueue = [];
+    const maximumConcurrentHomePreviews = 2;
+    let activeHomePreviews = 0;
+
+    const drainHomePreviewQueue = () => {
+        while (activeHomePreviews < maximumConcurrentHomePreviews && homePreviewQueue.length > 0) {
+            const preview = homePreviewQueue.shift();
+            queuedHomePreviews.delete(preview);
+            activeHomePreviews += 1;
+
+            loadPreview(preview, () => {
+                activeHomePreviews -= 1;
+                drainHomePreviewQueue();
+            });
+        }
+    };
+
+    const schedulePreview = (preview) => {
+        if (preview.dataset.livePreviewContext !== 'home') {
+            loadPreview(preview);
+
+            return;
+        }
+
+        if (preview.dataset.previewState !== 'idle' || queuedHomePreviews.has(preview)) {
+            return;
+        }
+
+        queuedHomePreviews.add(preview);
+        homePreviewQueue.push(preview);
+        homePreviewQueue.sort((first, second) => Number(second.dataset.livePreviewPriority === 'hero') - Number(first.dataset.livePreviewPriority === 'hero'));
+        drainHomePreviewQueue();
+    };
+
     if (!('IntersectionObserver' in window)) {
-        previews.forEach(loadPreview);
+        previews.forEach(schedulePreview);
 
         return;
     }
@@ -155,7 +222,7 @@ const initializeLiveTemplatePreviews = () => {
                     return;
                 }
 
-                loadPreview(entry.target);
+                schedulePreview(entry.target);
                 observer.unobserve(entry.target);
             });
         }, {

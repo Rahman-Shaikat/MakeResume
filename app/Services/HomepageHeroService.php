@@ -12,7 +12,7 @@ final class HomepageHeroService
     {
         return HomepageHero::query()
             ->active()
-            ->with('resumeTemplate:id,name,thumbnail_path')
+            ->with('resumeTemplate')
             ->latest('updated_at')
             ->first();
     }

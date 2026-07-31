@@ -4,11 +4,18 @@
     @php
         $primaryUrl = auth()->check() ? route('dashboard') : route('register');
         $primaryLabel = auth()->check() ? 'Open my workspace' : 'Create my resume';
-        $heroTemplate = $hero?->resumeTemplate ?? $templates->first();
-        $heroPreview = $hero?->previewUrl()
+        $heroTemplate = $hero?->resumeTemplate?->status === 1
+            ? $hero->resumeTemplate
+            : $templates->first();
+        $heroFallback = $hero?->previewUrl()
             ?? $heroTemplate?->thumbnailUrl()
             ?? asset('assets/resume-templates/template-one.png');
-        $productPreview = $templates->get(1)?->thumbnailUrl() ?? asset('assets/resume-templates/template-three.png');
+        $productTemplate = $templates->get(1) ?? $heroTemplate;
+        $productFallback = $productTemplate?->thumbnailUrl() ?? asset('assets/resume-templates/template-three.png');
+        $publicPreviewUrl = fn ($template): string => route('home.template-preview', [
+            'template' => $template->slug,
+            'v' => $template->updated_at?->getTimestamp(),
+        ]);
         $heroEyebrow = $hero?->eyebrow ?? 'Your next role starts here';
         $heroHeadline = $hero?->headline ?? 'Build a resume that makes your next move feel possible.';
         $heroDescription = $hero?->description ?? 'Choose a thoughtful template, shape every detail around your experience, and see a polished resume take form as you work.';
@@ -44,7 +51,20 @@
                 <div class="home-visual-glow"></div>
                 <div class="home-status-card home-status-card-top"><i class="fa-solid fa-wand-magic-sparkles" aria-hidden="true"></i><span>{{ $heroTopBadge }}</span></div>
                 <div class="home-resume-paper">
-                    <img src="{{ $heroPreview }}" width="700" height="990" alt="A Resume Engineer template preview" fetchpriority="high">
+                    @if ($heroTemplate)
+                        <x-live-template-preview
+                            :template="$heroTemplate"
+                            :preview-url="$publicPreviewUrl($heroTemplate)"
+                            :fallback-url="$heroFallback"
+                            fallback-alt="A Resume Engineer template preview"
+                            defer-fallback
+                            context="home"
+                            priority="hero"
+                            class="home-live-template-preview"
+                        />
+                    @else
+                        <img src="{{ $heroFallback }}" width="700" height="990" alt="A Resume Engineer template preview" fetchpriority="high">
+                    @endif
                 </div>
                 <div class="home-editor-card">
                     <div class="home-editor-card-head"><span><i class="fa-solid fa-pen" aria-hidden="true"></i></span><strong>{{ $heroEditorTitle }}</strong><i class="fa-solid fa-ellipsis" aria-hidden="true"></i></div>
@@ -110,7 +130,15 @@
                 @forelse ($templates as $template)
                     <article class="home-template-card" data-reveal>
                         <div class="home-template-image" style="--template-accent: {{ $template->accent_color }}">
-                            <img src="{{ $template->thumbnailUrl() ?? asset('assets/resume-templates/template-one.png') }}" width="700" height="990" alt="{{ $template->name }} resume template" loading="lazy">
+                            <x-live-template-preview
+                                :template="$template"
+                                :preview-url="$publicPreviewUrl($template)"
+                                :fallback-url="$template->thumbnailUrl()"
+                                :fallback-alt="$template->name . ' resume template'"
+                                defer-fallback
+                                context="home"
+                                class="home-live-template-preview"
+                            />
                             <span>{{ $template->is_ats_friendly === 1 ? 'ATS friendly' : 'Professional layout' }}</span>
                         </div>
                         <div class="home-template-copy">
@@ -153,7 +181,21 @@
                         <article><span><i class="fa-solid fa-lightbulb" aria-hidden="true"></i></span><div><strong>Skills &amp; strengths</strong><small>Add what sets you apart</small></div><i class="fa-solid fa-chevron-down" aria-hidden="true"></i></article>
                         <span class="home-product-add-section"><i class="fa-solid fa-plus" aria-hidden="true"></i> Add a custom section</span>
                     </div>
-                    <div class="home-product-paper"><img src="{{ $productPreview }}" width="700" height="990" alt="Resume preview updating alongside editor" loading="lazy"></div>
+                    <div class="home-product-paper">
+                        @if ($productTemplate)
+                            <x-live-template-preview
+                                :template="$productTemplate"
+                                :preview-url="$publicPreviewUrl($productTemplate)"
+                                :fallback-url="$productFallback"
+                                fallback-alt="Resume preview updating alongside editor"
+                                defer-fallback
+                                context="home"
+                                class="home-live-template-preview"
+                            />
+                        @else
+                            <img src="{{ $productFallback }}" width="700" height="990" alt="Resume preview updating alongside editor" loading="lazy">
+                        @endif
+                    </div>
                 </div>
             </div>
         </div>

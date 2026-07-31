@@ -10,11 +10,23 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 uses(RefreshDatabase::class);
 
 test('guests can view the public homepage', function (): void {
+    $template = ResumeTemplate::query()->where('slug', 'template-one')->firstOrFail();
+
     $this->get('/')
         ->assertOk()
         ->assertSee('Build a resume that makes your next move feel possible.')
         ->assertSee('Create my resume')
-        ->assertSee('View templates');
+        ->assertSee('View templates')
+        ->assertSee('data-live-template-preview', false)
+        ->assertSee('data-live-preview-context="home"', false)
+        ->assertSee('template-preview-skeleton', false)
+        ->assertSee('data-live-preview-fallback-url=', false)
+        ->assertDontSee('data-live-preview-fallback-src=', false)
+        ->assertSee('data-live-preview-url="'.route('home.template-preview', [
+            'template' => $template->slug,
+            'v' => $template->updated_at?->getTimestamp(),
+        ]).'"', false)
+        ->assertDontSee('<iframe', false);
 });
 
 test('authenticated users see a workspace call to action on the home page', function (): void {

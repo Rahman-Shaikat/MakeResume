@@ -7,49 +7,23 @@
 ])
 
 <article class="template-card" data-template-card="{{ $template->slug }}">
-    <div
-        class="template-preview"
-        style="--resume-accent: {{ $template->accent_color }}"
-        data-live-template-preview
-        data-live-preview-url="{{ route('resume.templates.show', ['template' => $template->slug, 'embed' => 1]) }}"
-        data-live-preview-title="{{ $template->name }} live preview"
-        data-preview-state="idle"
-        aria-busy="true"
+    <x-live-template-preview
+        :template="$template"
+        :preview-url="route('resume.templates.show', ['template' => $template->slug, 'embed' => 1])"
     >
-        <div class="template-preview-fallback" data-template-preview-fallback>
-            @if ($template->thumbnailUrl())
-                <img
-                    src="{{ $template->thumbnailUrl() }}"
-                    alt="{{ $template->name }} resume thumbnail"
-                    loading="lazy"
-                    width="700"
-                    height="990"
-                >
-            @else
-                <div class="template-thumbnail-placeholder">
-                    <span>A4</span>
-                    <strong>{{ $template->name }}</strong>
-                </div>
-            @endif
-            <span class="template-preview-loading" aria-hidden="true">
-                <span class="spinner-border spinner-border-sm"></span>
-                Loading live preview
-            </span>
-        </div>
-        <div class="template-live-preview-mount" data-live-preview-mount></div>
-        <div class="template-preview-actions">
+        <x-slot:actions>
             <a href="{{ route('resume.templates.show', $template->slug) }}" target="_blank" rel="noopener" class="btn btn-light btn-sm">
                 <i class="fa-solid fa-eye" aria-hidden="true"></i>
                 Full preview
             </a>
-        </div>
+        </x-slot:actions>
         @if ($mode === 'create')
             <span class="selected-badge">
                 <i class="fa-solid fa-check" aria-hidden="true"></i>
                 Created
             </span>
         @endif
-    </div>
+    </x-live-template-preview>
     <div class="template-details">
         <div class="template-card-summary">
             <div class="template-card-flags">
