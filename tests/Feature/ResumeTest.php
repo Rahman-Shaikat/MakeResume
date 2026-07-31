@@ -681,7 +681,7 @@ test('indigo profile sidebar preview renders profile and all dynamic resume sect
 });
 
 test('a user can select a resume template with ajax', function (): void {
-    $user = User::factory()->create();
+    $user = User::factory()->unlimited()->create();
 
     $firstResponse = $this->actingAs($user)
         ->postJson(route('resume.template.select'), [

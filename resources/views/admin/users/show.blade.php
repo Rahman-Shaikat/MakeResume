@@ -35,6 +35,7 @@
                                 </span>
                             </td>
                         </tr>
+                        <tr><th>Resume allowance</th><td><strong>{{ $resumeQuota->usageLabel() }}</strong> <small>· {{ $resumeQuota->sourceLabel() }}</small></td></tr>
                         <tr><th>Verified at</th><td>{{ $user->email_verified_at?->format('M j, Y \a\t g:i A') ?? 'Not verified' }}</td></tr>
                         <tr><th>Joined</th><td>{{ $user->created_at?->format('M j, Y \a\t g:i A') }}</td></tr>
                         <tr><th>Last updated</th><td>{{ $user->updated_at?->diffForHumans() }}</td></tr>
@@ -50,8 +51,8 @@
                 <div class="admin-user-summary">
                     <span class="admin-event-icon is-primary">@include('admin.components.icon', ['name' => 'resume'])</span>
                     <div>
-                        <strong>{{ number_format($user->resumes_count) }}</strong>
-                        <span>{{ \Illuminate\Support\Str::plural('saved resume', $user->resumes_count) }}</span>
+                        <strong>{{ $resumeQuota->usageLabel() }}</strong>
+                        <span>{{ $resumeQuota->sourceLabel() }} allowance</span>
                     </div>
                 </div>
             </div>

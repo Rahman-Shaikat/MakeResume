@@ -43,12 +43,14 @@
                     <th>User</th>
                     <th>Verification</th>
                     <th>Resumes</th>
+                    <th>Allowance</th>
                     <th>Joined</th>
                     <th class="text-end">Actions</th>
                 </tr>
             </thead>
             <tbody>
                 @forelse ($users as $user)
+                    @php($quota = $userQuotas[$user->id])
                     <tr>
                         <td><strong>{{ $user->name }}</strong><small>{{ $user->email }}</small></td>
                         <td>
@@ -57,6 +59,7 @@
                             </span>
                         </td>
                         <td>{{ number_format($user->resumes_count) }}</td>
+                        <td><strong>{{ $quota->usageLabel() }}</strong><small>{{ $quota->sourceLabel() }}</small></td>
                         <td>{{ $user->created_at?->format('M j, Y') }}</td>
                         <td>
                             <div class="admin-table-actions">
@@ -78,7 +81,7 @@
                         </td>
                     </tr>
                 @empty
-                    <tr><td colspan="5" class="admin-empty-state">No users match the selected filters.</td></tr>
+                    <tr><td colspan="6" class="admin-empty-state">No users match the selected filters.</td></tr>
                 @endforelse
             </tbody>
         </table>

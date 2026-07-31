@@ -87,6 +87,7 @@ test('administrator can create a verified user with a securely hashed password',
             'name' => '  Nadia Rahman  ',
             'email' => 'NADIA@EXAMPLE.COM',
             'verification_status' => 1,
+            'resume_limit_mode' => 'inherit',
             'password' => 'secure-password',
             'password_confirmation' => 'secure-password',
         ])
@@ -96,6 +97,8 @@ test('administrator can create a verified user with a securely hashed password',
 
     expect($user->name)->toBe('Nadia Rahman')
         ->and($user->email_verified_at)->not->toBeNull()
+        ->and($user->resume_limit_mode->value)->toBe('inherit')
+        ->and($user->resume_limit)->toBeNull()
         ->and(Hash::check('secure-password', $user->password))->toBeTrue()
         ->and($user->password)->not->toBe('secure-password');
 
@@ -116,7 +119,8 @@ test('administrator can view a user and their saved resumes', function (): void 
         ->assertOk()
         ->assertSee('Resume Owner')
         ->assertSee('Professional Cyan')
-        ->assertSeeText('1 saved resume');
+        ->assertSeeText('1 / 1')
+        ->assertSeeText('Free allowance');
 });
 
 test('updating a user preserves their password and controls verification state', function (): void {
@@ -132,6 +136,7 @@ test('updating a user preserves their password and controls verification state',
             'name' => 'Updated Website User',
             'email' => 'updated-user@example.com',
             'verification_status' => 2,
+            'resume_limit_mode' => 'inherit',
         ])
         ->assertSessionHasNoErrors()
         ->assertRedirect(route('admin.users.show', $user));
@@ -166,10 +171,41 @@ test('duplicate website user email is rejected', function (): void {
             'name' => 'Duplicate User',
             'email' => strtoupper($existing->email),
             'verification_status' => 2,
+            'resume_limit_mode' => 'inherit',
             'password' => 'secure-password',
             'password_confirmation' => 'secure-password',
         ])
         ->assertSessionHasErrors(['email']);
+});
+
+test('administrator can control a user saved resume allowance', function (): void {
+    $admin = makeFrontendUserCrudAdmin();
+    $user = User::factory()->create();
+
+    $this->actingAs($admin, 'admin')
+        ->patch(route('admin.users.update', $user), [
+            'name' => $user->name,
+            'email' => $user->email,
+            'verification_status' => 1,
+            'resume_limit_mode' => 'limited',
+            'resume_limit' => 0,
+        ])
+        ->assertSessionHasNoErrors();
+
+    expect($user->refresh()->resume_limit_mode->value)->toBe('limited')
+        ->and($user->resume_limit)->toBe(0);
+
+    $this->actingAs($admin, 'admin')
+        ->patch(route('admin.users.update', $user), [
+            'name' => $user->name,
+            'email' => $user->email,
+            'verification_status' => 1,
+            'resume_limit_mode' => 'unlimited',
+        ])
+        ->assertSessionHasNoErrors();
+
+    expect($user->refresh()->resume_limit_mode->value)->toBe('unlimited')
+        ->and($user->resume_limit)->toBeNull();
 });
 
 test('deleting a user permanently removes their associated resume data', function (): void {

@@ -18,7 +18,7 @@
                         <span>Your workspace</span>
                         <strong>{{ $resumes->isEmpty() ? 'Create your first resume' : 'Resumes ready to edit' }}</strong>
                     </div>
-                    <span class="progress-number">{{ $resumes->count() }}</span>
+                    <span class="progress-number">{{ $resumeQuota->usageLabel() }}</span>
                 </div>
             </div>
         </div>
@@ -33,10 +33,16 @@
                 <h2>Previously saved resumes</h2>
                 <p>Select a resume to continue editing exactly where you left off.</p>
             </div>
-            <a href="#resume-templates" class="btn btn-primary create-resume-link">
-                <svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
-                Create new resume
-            </a>
+            @if ($resumeQuota->canCreate())
+                <a href="#resume-templates" class="btn btn-primary create-resume-link">
+                    <svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
+                    Create new resume
+                </a>
+            @else
+                <span class="btn btn-light create-resume-link is-disabled" aria-disabled="true">
+                    Resume limit reached
+                </span>
+            @endif
         </div>
 
         @if ($resumes->isEmpty())
@@ -142,6 +148,13 @@
                     <span class="template-count">{{ $templates->count() }} {{ Str::plural('template', $templates->count()) }}</span>
                 </div>
 
+                @if (! $resumeQuota->canCreate())
+                    <div class="resume-limit-notice" role="status">
+                        <i class="fa-solid fa-circle-info" aria-hidden="true"></i>
+                        <span>{{ $resumeQuota->limitReachedMessage() }}</span>
+                    </div>
+                @endif
+
                 <nav class="template-category-pills" aria-label="Filter templates by category">
                     <a href="{{ route('dashboard') }}#resume-templates" class="{{ blank($selectedCategory) ? 'is-active' : '' }}">All templates</a>
                     @foreach ($templateCategories as $category)
@@ -183,7 +196,11 @@
                         aria-label="Resume templates"
                     >
                         @forelse ($templates as $template)
-                            <x-template-card :template="$template" />
+                            <x-template-card
+                                :template="$template"
+                                :can-create="$resumeQuota->canCreate()"
+                                :create-disabled-message="$resumeQuota->limitReachedMessage()"
+                            />
                         @empty
                             <div class="template-empty-state">
                                 <h3>No active templates in this category</h3>
@@ -219,7 +236,7 @@
 
                 <div class="workspace-stat">
                     <span><svg viewBox="0 0 24 24"><path d="M7 3h7.5L19 7.5V21H7zM14.5 3v4.5H19"/></svg></span>
-                    <div><strong>{{ $resumes->count() }}</strong><small>Saved {{ Str::plural('resume', $resumes->count()) }}</small></div>
+                    <div><strong>{{ $resumeQuota->usageLabel() }}</strong><small>{{ $resumeQuota->sourceLabel() }} allowance</small></div>
                 </div>
                 <div class="workspace-stat">
                     <span><svg viewBox="0 0 24 24"><path d="M12 3v9l6 3M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18Z"/></svg></span>

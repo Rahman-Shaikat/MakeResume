@@ -724,6 +724,29 @@ svg {
     width: 16px;
 }
 
+.create-resume-link.is-disabled {
+    cursor: not-allowed;
+    opacity: .72;
+}
+
+.resume-limit-notice {
+    margin: -7px 0 20px;
+    padding: 11px 13px;
+    border: 1px solid #f1d3a5;
+    border-radius: 10px;
+    color: #80500e;
+    background: #fff9ed;
+    display: flex;
+    align-items: flex-start;
+    gap: 9px;
+    font-size: 11px;
+    line-height: 1.55;
+}
+
+.resume-limit-notice i {
+    margin-top: 2px;
+}
+
 .saved-resume-grid {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -4914,6 +4937,12 @@ svg {
 .template-create-button.is-creating {
     cursor: wait;
     opacity: .78;
+}
+
+.template-create-button:disabled {
+    cursor: not-allowed;
+    opacity: .42;
+    box-shadow: none;
 }
 
 .template-create-button.is-creating .template-create-icon {

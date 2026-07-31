@@ -110,6 +110,32 @@ const filterPermissionParents = () => {
 permissionGroupSelect?.addEventListener('change', filterPermissionParents);
 filterPermissionParents();
 
+const resumeLimitModeFieldset = document.querySelector('[data-resume-limit-mode]');
+const resumeLimitInputWrapper = document.querySelector('[data-resume-limit-input]');
+
+const syncResumeLimitInput = () => {
+    if (! resumeLimitModeFieldset || ! resumeLimitInputWrapper) {
+        return;
+    }
+
+    const mode = resumeLimitModeFieldset.querySelector('input:checked')?.value;
+    const input = resumeLimitInputWrapper.querySelector('input[name="resume_limit"]');
+    const isCustomLimit = mode === 'limited';
+
+    resumeLimitInputWrapper.hidden = ! isCustomLimit;
+
+    if (input) {
+        input.disabled = ! isCustomLimit;
+        input.required = isCustomLimit;
+    }
+};
+
+resumeLimitModeFieldset?.querySelectorAll('input').forEach((input) => {
+    input.addEventListener('change', syncResumeLimitInput);
+});
+
+syncResumeLimitInput();
+
 const categoryName = document.querySelector('[data-category-name]');
 const categorySlug = document.querySelector('[data-category-slug]');
 

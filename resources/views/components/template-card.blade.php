@@ -2,6 +2,8 @@
     'template',
     'mode' => 'create',
     'resume' => null,
+    'canCreate' => true,
+    'createDisabledMessage' => null,
 ])
 
 <article class="template-card" data-template-card="{{ $template->slug }}">
@@ -85,8 +87,10 @@
                 class="template-create-button js-select-template"
                 data-template="{{ $template->slug }}"
                 data-url="{{ route('resume.template.select') }}"
-                aria-label="Create a resume with {{ $template->name }}"
-                title="Create resume"
+                aria-label="{{ $canCreate ? "Create a resume with {$template->name}" : $createDisabledMessage }}"
+                title="{{ $canCreate ? 'Create resume' : $createDisabledMessage }}"
+                @disabled(! $canCreate)
+                @if (! $canCreate) aria-disabled="true" @endif
             >
                 <i class="fa-solid fa-plus template-create-icon" aria-hidden="true"></i>
                 <i class="fa-solid fa-check template-created-icon" aria-hidden="true"></i>

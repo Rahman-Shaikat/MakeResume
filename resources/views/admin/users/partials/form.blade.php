@@ -28,6 +28,29 @@
             required
         />
 
+        <x-admin.forms.radio
+            name="resume_limit_mode"
+            label="Saved resume allowance"
+            :value="old('resume_limit_mode', $user->resume_limit_mode?->value ?? 'inherit')"
+            :options="$resumeLimitModeOptions"
+            wrapper-class="admin-form-span"
+            data-resume-limit-mode
+            required
+        />
+
+        <div class="admin-form-span" data-resume-limit-input>
+            <x-admin.forms.input
+                name="resume_limit"
+                label="Custom saved resume limit"
+                type="number"
+                :value="old('resume_limit', $user->resume_limit ?? '')"
+                min="0"
+                step="1"
+                inputmode="numeric"
+                help="Set 0 to block new resume creation while keeping existing resumes available."
+            />
+        </div>
+
         @if (! isset($user))
             <x-admin.forms.input
                 name="password"

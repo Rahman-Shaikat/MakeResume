@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
+use App\Exceptions\ResumeLimitReached;
 use App\Http\Requests\ChangeResumeTemplateRequest;
 use App\Http\Requests\ProfileImageRequest;
 use App\Http\Requests\SelectResumeTemplateRequest;
@@ -25,10 +26,23 @@ final class ResumeController extends Controller
 
     public function selectTemplate(SelectResumeTemplateRequest $request): JsonResponse|RedirectResponse
     {
-        $resume = $this->service->create(
-            $request->user(),
-            $request->validated('template_slug'),
-        );
+        try {
+            $resume = $this->service->create(
+                $request->user(),
+                $request->validated('template_slug'),
+            );
+        } catch (ResumeLimitReached $exception) {
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'message' => $exception->getMessage(),
+                    'errors' => ['template_slug' => [$exception->getMessage()]],
+                ], 422);
+            }
+
+            return to_route('dashboard')->withErrors([
+                'template_slug' => $exception->getMessage(),
+            ]);
+        }
 
         if ($request->expectsJson()) {
             return response()->json([

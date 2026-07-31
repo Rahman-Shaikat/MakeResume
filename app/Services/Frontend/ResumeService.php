@@ -4,14 +4,17 @@ declare(strict_types=1);
 
 namespace App\Services\Frontend;
 
+use App\Exceptions\ResumeLimitReached;
 use App\Http\Resources\ResumeBuilderResource;
 use App\Models\Resume;
 use App\Models\User;
 use App\Services\Admin\AdminNotificationService;
+use App\Services\ResumeAllowanceResolver;
 use App\Services\ResumeBuilderService;
 use App\Services\TemplateCatalogService;
 use App\Services\TemplateRendererRegistry;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
@@ -22,19 +25,29 @@ final class ResumeService
         private readonly AdminNotificationService $adminNotifications,
         private readonly TemplateCatalogService $catalog,
         private readonly TemplateRendererRegistry $renderers,
+        private readonly ResumeAllowanceResolver $allowances,
     ) {}
 
     public function create(User $user, string $templateSlug): Resume
     {
         $template = $this->catalog->findActiveBySlug($templateSlug);
 
-        $resume = $user->resumes()->create([
-            'template_slug' => $template->slug,
-            'content' => [
-                'full_name' => $user->name,
-                'email' => $user->email,
-            ],
-        ]);
+        $resume = DB::transaction(function () use ($user, $template): Resume {
+            $lockedUser = User::query()->lockForUpdate()->findOrFail($user->id);
+            $quota = $this->allowances->quotaFor($lockedUser, $lockedUser->resumes()->count());
+
+            if (! $quota->canCreate()) {
+                throw new ResumeLimitReached($quota);
+            }
+
+            return $lockedUser->resumes()->create([
+                'template_slug' => $template->slug,
+                'content' => [
+                    'full_name' => $lockedUser->name,
+                    'email' => $lockedUser->email,
+                ],
+            ]);
+        });
 
         $this->adminNotifications->notifyActiveAdministrators(
             title: 'New resume created',

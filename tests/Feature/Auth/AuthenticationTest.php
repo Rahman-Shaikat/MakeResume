@@ -33,6 +33,8 @@ test('a guest can register and receives a verification email', function (): void
         'name' => 'Taylor Morgan',
         'email' => 'taylor@example.com',
         'email_verified_at' => null,
+        'resume_limit_mode' => 'inherit',
+        'resume_limit' => null,
     ]);
 
     Notification::assertSentTo(
