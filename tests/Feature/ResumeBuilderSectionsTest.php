@@ -148,6 +148,35 @@ test('every repeatable default section accepts its structured data', function ()
     expect($resume->sections()->withCount('items')->get()->sum('items_count'))->toBe(7);
 });
 
+test('a current experience entry persists and renders present from a browser form request', function (): void {
+    $user = User::factory()->create();
+    $resume = resumeFor($user);
+    app(ResumeBuilderService::class)->load($resume);
+    $experience = $resume->sections()->where('type', 'experience')->firstOrFail();
+    $item = $experience->items()->create([
+        'data' => ['title' => 'Software Engineer'],
+        'sort_order' => 0,
+    ]);
+
+    $this->actingAs($user)
+        ->patch(route('resume.builder.items.update', [$resume, $experience, $item]), [
+            'data' => [
+                'title' => 'Software Engineer',
+                'company' => 'Acme',
+                'start_date' => '2024-01',
+                'current' => 'true',
+            ],
+        ])
+        ->assertOk()
+        ->assertJsonPath('item.data.current', true);
+
+    $this->actingAs($user)
+        ->get(route('resume.preview', $resume))
+        ->assertOk()
+        ->assertSee('2024-01')
+        ->assertSee('Present');
+});
+
 test('section order and visibility persist in the rendered resume', function (): void {
     $user = User::factory()->create();
     $resume = resumeFor($user);

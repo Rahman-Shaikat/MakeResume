@@ -13,6 +13,19 @@ final class UpsertResumeSectionItemRequest extends FormRequest
         return $this->user() !== null;
     }
 
+    protected function prepareForValidation(): void
+    {
+        $data = $this->input('data');
+
+        if (! is_array($data) || ! array_key_exists('current', $data)) {
+            return;
+        }
+
+        $data['current'] = $this->boolean('data.current');
+
+        $this->merge(['data' => $data]);
+    }
+
     /**
      * @return array<string, array<int, string>>
      */

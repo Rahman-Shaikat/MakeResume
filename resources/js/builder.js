@@ -399,7 +399,7 @@ if (root) {
         if (itemField) {
             const section = findSection(event.target);
             const item = findItem(section, event.target);
-            item.data[itemField] = event.target.type === 'checkbox' ? event.target.checked : event.target.value;
+            item.data[itemField] = event.target.type === 'checkbox' ? Number(event.target.checked) : event.target.value;
             const heading = event.target.closest('[data-item-id]').querySelector('[data-item-heading]');
             heading.textContent = itemHeading(section, item, section.items.indexOf(item));
             markSaving();
