@@ -400,7 +400,51 @@ $(document).on('click', '.js-select-template', function () {
         });
 });
 
-$(document).on('click', '[data-print-resume]', () => window.print());
+const a4ResumeSelector = [
+    '.resume-template-one',
+    '.resume-template-two',
+    '.resume-template-three',
+    '.resume-template-four',
+    '.resume-template-five',
+    '.resume-template-six',
+].join(', ');
+
+const a4PageHeightInCssPixels = (297 / 25.4) * 96;
+
+const resetResumePrintFit = () => {
+    document.querySelectorAll(a4ResumeSelector).forEach((resumePage) => {
+        resumePage.style.removeProperty('--resume-print-scale');
+    });
+};
+
+const fitResumeToSingleA4Page = () => {
+    document.querySelectorAll(a4ResumeSelector).forEach((resumePage) => {
+        // Always measure the natural layout. The print-only zoom is applied only
+        // after the required scale has been calculated.
+        resumePage.style.setProperty('--resume-print-scale', '1');
+
+        const contentHeight = resumePage.scrollHeight;
+
+        if (contentHeight <= a4PageHeightInCssPixels) {
+            resumePage.style.removeProperty('--resume-print-scale');
+
+            return;
+        }
+
+        // A small buffer prevents browser rounding from moving the final line
+        // onto a second PDF page. Normal resumes need only a subtle adjustment.
+        const scale = Math.min(1, (a4PageHeightInCssPixels - 2) / contentHeight);
+        resumePage.style.setProperty('--resume-print-scale', scale.toFixed(4));
+    });
+};
+
+window.addEventListener('beforeprint', fitResumeToSingleA4Page);
+window.addEventListener('afterprint', resetResumePrintFit);
+
+$(document).on('click', '[data-print-resume]', () => {
+    fitResumeToSingleA4Page();
+    requestAnimationFrame(() => window.print());
+});
 
 $(document).on('submit', '[data-delete-resume-form]', function (event) {
     const resumeTitle = this.dataset.resumeTitle || 'this resume';

@@ -4995,7 +4995,9 @@ a.resume-custom-item-title:focus-visible {
         width: 210mm;
         height: 297mm;
         padding: 0;
-        display: block;
+        display: flex;
+        align-items: flex-start;
+        justify-content: center;
         overflow: visible !important;
     }
 
@@ -5011,17 +5013,13 @@ a.resume-custom-item-title:focus-visible {
         min-height: 297mm;
         margin: 0;
         transform: none;
+        zoom: var(--resume-print-scale, 1);
         box-shadow: none;
+        break-before: auto;
+        break-after: auto;
+        break-inside: avoid-page;
         print-color-adjust: exact;
         -webkit-print-color-adjust: exact;
-    }
-
-    .resume-template-two,
-    .resume-template-three,
-    .resume-template-four,
-    .resume-template-five,
-    .resume-template-six {
-        break-after: page;
     }
 }
 
