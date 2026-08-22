@@ -36,7 +36,13 @@
                     <article class="experience-item">
                         <h4>{{ $item->data['title'] ?? '' }}</h4>
                         @if (filled($item->data['company'] ?? null))
-                            <h5>{{ $item->data['company'] }}</h5>
+                            <h5>
+                                @if (filled($item->data['company_website'] ?? null))
+                                    <a class="resume-company-link" href="{{ $item->data['company_website'] }}" target="_blank" rel="noopener">{{ $item->data['company'] }}</a>
+                                @else
+                                    {{ $item->data['company'] }}
+                                @endif
+                            </h5>
                         @endif
                         <div class="resume-meta">
                             @if (filled($item->data['start_date'] ?? null) || filled($item->data['end_date'] ?? null))
@@ -77,8 +83,10 @@
                 @endforeach
             @elseif ($section->type === 'projects')
                 @foreach ($items as $item)
-                    <article class="project-item">
-                        <h4>{{ $item->data['name'] ?? '' }}</h4>
+                    <article @class(['project-item', 'project-without-description' => ! filled($item->data['description'] ?? null)])>
+                        <h4>
+                            {{ $item->data['name'] ?? '' }}@if (filled($item->data['project_domain'] ?? null)) <span class="resume-project-domain">({{ $item->data['project_domain'] }})</span>@endif
+                        </h4>
                         @if (filled($item->data['role'] ?? null))
                             <h5>{{ $item->data['role'] }}</h5>
                         @endif

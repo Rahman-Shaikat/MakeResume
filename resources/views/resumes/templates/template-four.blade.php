@@ -65,6 +65,11 @@
                         @if ($content['github'])
                             <span><b aria-hidden="true">↗</b>{{ preg_replace('#^https?://(www\.)?#', '', $content['github']) }}</span>
                         @endif
+                        @foreach ($content['social_links'] ?? [] as $socialLink)
+                            @if (filled($socialLink['platform'] ?? null) && filled($socialLink['url'] ?? null))
+                                <span><b aria-hidden="true">↗</b><a class="resume-social-link" href="{{ $socialLink['url'] }}" target="_blank" rel="noopener">{{ $socialLink['platform'] }}</a></span>
+                            @endif
+                        @endforeach
                         @if ($content['location'])
                             <span class="template-four-location"><b aria-hidden="true">●</b>{{ $content['location'] }}</span>
                         @endif

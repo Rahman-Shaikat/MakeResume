@@ -32,18 +32,23 @@
                     <h1>{{ strtoupper($content['full_name']) }}</h1>
                     <h2>{{ $content['professional_title'] }}</h2>
                     <div class="resume-contact">
-                        <span><b>☎</b>{{ $content['phone'] }}</span>
-                        <span><b>@</b>{{ $content['email'] }}</span>
-                        @if ($content['linkedin'])
-                            <a href="{{ $content['linkedin'] }}" target="_blank"><b>↗</b>{{ $content['linkedin'] }}</a>
-                        @endif
-                        @if ($content['github'])
-                            <a href="{{ $content['github'] }}" target="_blank"><b>↗</b>{{ $content['github'] }}</a>
-                        @endif
+                        <span><b><i class="fa-solid fa-phone" aria-hidden="true"></i></b>{{ $content['phone'] }}</span>
+                        <span><b><i class="fa-regular fa-envelope" aria-hidden="true"></i></b>{{ $content['email'] }}</span>
                         @if ($content['website'])
                             <a href="{{ $content['website'] }}" target="_blank" rel="noopener"><b>↗</b>{{ $content['website'] }}</a>
                         @endif
-                        <span class="contact-wide"><b>●</b>{{ $content['location'] }}</span>
+                        <span class="contact-wide"><b><i class="fa-solid fa-location-dot" aria-hidden="true"></i></b>{{ $content['location'] }}</span>
+                        @if ($content['linkedin'])
+                            <a href="{{ $content['linkedin'] }}" target="_blank" rel="noopener"><b>↗</b>LinkedIn</a>
+                        @endif
+                        @if ($content['github'])
+                            <a href="{{ $content['github'] }}" target="_blank" rel="noopener"><b>↗</b>GitHub</a>
+                        @endif
+                        @foreach ($content['social_links'] ?? [] as $socialLink)
+                            @if (filled($socialLink['platform'] ?? null) && filled($socialLink['url'] ?? null))
+                                <a class="resume-social-link" href="{{ $socialLink['url'] }}" target="_blank" rel="noopener"><b>↗</b>{{ $socialLink['platform'] }}</a>
+                            @endif
+                        @endforeach
                     </div>
                 </div>
                 @if ($resumeTemplate->allows_profile_photo === 1)

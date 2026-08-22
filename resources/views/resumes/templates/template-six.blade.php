@@ -115,6 +115,14 @@
                                 </li>
                             @endif
                         @endforeach
+                        @foreach ($content['social_links'] ?? [] as $socialLink)
+                            @if (filled($socialLink['platform'] ?? null) && filled($socialLink['url'] ?? null))
+                                <li>
+                                    <strong>↗</strong>
+                                    <a class="resume-social-link" href="{{ $socialLink['url'] }}" target="_blank" rel="noopener">{{ $socialLink['platform'] }}</a>
+                                </li>
+                            @endif
+                        @endforeach
                     </ul>
                 </section>
 

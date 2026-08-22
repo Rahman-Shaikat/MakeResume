@@ -24,7 +24,13 @@
                 <article class="template-five-experience">
                     <h4>{{ $item->data['title'] ?? '' }}</h4>
                     <div class="template-five-entry-meta">
-                        <strong>{{ $item->data['company'] ?? '' }}</strong>
+                        <strong>
+                            @if (filled($item->data['company_website'] ?? null))
+                                <a class="resume-company-link" href="{{ $item->data['company_website'] }}" target="_blank" rel="noopener">{{ $item->data['company'] ?? '' }}</a>
+                            @else
+                                {{ $item->data['company'] ?? '' }}
+                            @endif
+                        </strong>
                         @if (filled($item->data['location'] ?? null))
                             <span>- {{ $item->data['location'] }}</span>
                         @endif
@@ -49,8 +55,10 @@
             @endforeach
         @elseif ($section->type === 'projects')
             @foreach ($items as $item)
-                <article class="template-five-project">
-                    <h4>{{ $item->data['name'] ?? '' }}</h4>
+                <article @class(['template-five-project', 'project-without-description' => ! filled($item->data['description'] ?? null)])>
+                    <h4>
+                        {{ $item->data['name'] ?? '' }}@if (filled($item->data['project_domain'] ?? null)) <span class="resume-project-domain">({{ $item->data['project_domain'] }})</span>@endif
+                    </h4>
                     <div class="template-five-entry-meta">
                         @if (filled($item->data['role'] ?? null))
                             <strong>{{ $item->data['role'] }}</strong>

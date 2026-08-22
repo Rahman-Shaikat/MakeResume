@@ -54,6 +54,7 @@ final class PublicTemplatePreviewService
                 'website' => '',
                 'linkedin' => (string) $sample['linkedin'],
                 'github' => (string) $sample['github'],
+                'social_links' => [],
                 'summary' => (string) $sample['summary'],
             ],
             'embedded' => true,

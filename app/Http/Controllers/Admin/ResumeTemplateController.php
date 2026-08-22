@@ -78,6 +78,7 @@ final class ResumeTemplateController extends Controller
                 'website' => '',
                 'linkedin' => $sample['linkedin'],
                 'github' => $sample['github'],
+                'social_links' => [],
                 'summary' => $sample['summary'],
             ],
             'embedded' => request()->boolean('embedded'),

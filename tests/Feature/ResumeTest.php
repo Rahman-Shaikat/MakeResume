@@ -834,6 +834,122 @@ test('personal details can be saved from the resume builder', function (): void 
         ->assertSee('Senior Laravel Developer');
 });
 
+test('custom social links are validated, saved, and rendered by every resume template', function (): void {
+    $user = User::factory()->create();
+    $resume = Resume::query()->create([
+        'user_id' => $user->id,
+        'template_slug' => 'template-one',
+    ]);
+    $details = [
+        'full_name' => 'Alex Morgan',
+        'professional_title' => 'Senior Laravel Developer',
+        'email' => 'alex@example.com',
+        'phone' => '',
+        'location' => '',
+        'website' => '',
+        'linkedin' => 'https://linkedin.com/in/alex',
+        'github' => 'https://github.com/alex',
+        'social_links' => [[
+            'platform' => 'Medium',
+            'url' => 'https://medium.com/@alex',
+        ]],
+        'summary' => '',
+    ];
+
+    $this->actingAs($user)
+        ->patchJson(route('resume.builder.content.update', $resume), $details)
+        ->assertOk()
+        ->assertJsonPath('content.social_links.0.platform', 'Medium')
+        ->assertJsonPath('content.social_links.0.url', 'https://medium.com/@alex');
+
+    $this->actingAs($user)
+        ->patchJson(route('resume.builder.content.update', $resume), [
+            ...$details,
+            'social_links' => [['platform' => 'Medium', 'url' => 'javascript:alert(1)']],
+        ])
+        ->assertUnprocessable()
+        ->assertJsonValidationErrors('social_links.0.url');
+
+    foreach (['template-one', 'template-two', 'template-three', 'template-four', 'template-five', 'template-six'] as $templateSlug) {
+        $templateResume = $templateSlug === 'template-one'
+            ? $resume
+            : Resume::query()->create([
+                'user_id' => $user->id,
+                'template_slug' => $templateSlug,
+                'content' => $details,
+            ]);
+
+        $this->actingAs($user)
+            ->get(route('resume.preview', $templateResume))
+            ->assertOk()
+            ->assertSee('href="https://medium.com/@alex"', false)
+            ->assertSee('>Medium</a>', false);
+    }
+});
+
+test('experience company websites are saved and rendered as links in every resume template', function (): void {
+    $user = User::factory()->create();
+
+    foreach (['template-one', 'template-two', 'template-three', 'template-four', 'template-five', 'template-six'] as $templateSlug) {
+        $resume = Resume::query()->create([
+            'user_id' => $user->id,
+            'template_slug' => $templateSlug,
+        ]);
+        $experience = app(ResumeBuilderService::class)
+            ->load($resume)
+            ->sections
+            ->firstWhere('type', 'experience');
+
+        $this->actingAs($user)
+            ->postJson(route('resume.builder.items.store', [$resume, $experience]), [
+                'data' => [
+                    'title' => 'Software Engineer',
+                    'company' => 'Example Company',
+                    'company_website' => 'https://example.com',
+                ],
+            ])
+            ->assertCreated()
+            ->assertJsonPath('item.data.company_website', 'https://example.com');
+
+        $this->actingAs($user)
+            ->get(route('resume.preview', $resume))
+            ->assertOk()
+            ->assertSee('<a class="resume-company-link" href="https://example.com" target="_blank" rel="noopener">Example Company</a>', false);
+    }
+});
+
+test('project domains render beside project names and compact projects without descriptions', function (): void {
+    $user = User::factory()->create();
+
+    foreach (['template-one', 'template-two', 'template-three', 'template-four', 'template-five', 'template-six'] as $templateSlug) {
+        $resume = Resume::query()->create([
+            'user_id' => $user->id,
+            'template_slug' => $templateSlug,
+        ]);
+        $projects = app(ResumeBuilderService::class)
+            ->load($resume)
+            ->sections
+            ->firstWhere('type', 'projects');
+
+        $this->actingAs($user)
+            ->postJson(route('resume.builder.items.store', [$resume, $projects]), [
+                'data' => [
+                    'name' => 'bdnews24',
+                    'project_domain' => 'News portal CMS',
+                ],
+            ])
+            ->assertCreated()
+            ->assertJsonPath('item.data.project_domain', 'News portal CMS');
+
+        $this->actingAs($user)
+            ->get(route('resume.preview', $resume))
+            ->assertOk()
+            ->assertSee('bdnews24')
+            ->assertSee('(News portal CMS)')
+            ->assertSee('project-without-description', false);
+    }
+});
+
 test('editing a selected resume does not change another saved resume', function (): void {
     $user = User::factory()->create();
     $first = Resume::query()->create([
@@ -924,6 +1040,42 @@ test('a user profile image is stored under public images', function (): void {
         ->toEndWith('.jpg');
 
     Storage::disk('public')->assertExists($resume->profile_image);
+});
+
+test('a profile image is stored without recompression or resizing', function (): void {
+    Storage::fake('public');
+    $user = User::factory()->create();
+    $resume = Resume::query()->create([
+        'user_id' => $user->id,
+        'template_slug' => 'template-one',
+    ]);
+    $image = UploadedFile::fake()->image('high-resolution-profile.png', 1200, 1200)->size(1200);
+    $originalHash = hash('sha256', $image->get());
+
+    $this->actingAs($user)
+        ->post(route('resume.profile-image.store', $resume), [
+            'profile_image' => $image,
+        ])
+        ->assertRedirect();
+
+    $storedImage = Storage::disk('public')->get($resume->fresh()->profile_image);
+
+    expect(hash('sha256', $storedImage))->toBe($originalHash);
+});
+
+test('profile image validation requires print-quality dimensions', function (): void {
+    Storage::fake('public');
+    $user = User::factory()->create();
+    $resume = Resume::query()->create([
+        'user_id' => $user->id,
+        'template_slug' => 'template-one',
+    ]);
+
+    $this->actingAs($user)
+        ->post(route('resume.profile-image.store', $resume), [
+            'profile_image' => UploadedFile::fake()->image('low-resolution-profile.jpg', 400, 400)->size(300),
+        ])
+        ->assertSessionHasErrors('profile_image');
 });
 
 test('profile image upload returns its public URL for the live preview', function (): void {

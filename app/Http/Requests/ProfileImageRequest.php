@@ -23,8 +23,8 @@ final class ProfileImageRequest extends FormRequest
                 'required',
                 'image',
                 'mimes:jpg,jpeg,png,webp',
-                'max:2048',
-                'dimensions:min_width=160,min_height=160,max_width=4000,max_height=4000',
+                'max:5120',
+                'dimensions:min_width=600,min_height=600,max_width=4000,max_height=4000',
             ],
         ];
     }
@@ -37,8 +37,8 @@ final class ProfileImageRequest extends FormRequest
         return [
             'profile_image.required' => 'Choose a profile photo to upload.',
             'profile_image.mimes' => 'The profile photo must be a JPG, PNG, or WebP image.',
-            'profile_image.max' => 'The profile photo may not be larger than 2 MB.',
-            'profile_image.dimensions' => 'Use an image between 160 x 160 and 4000 x 4000 pixels.',
+            'profile_image.max' => 'The profile photo may not be larger than 5 MB.',
+            'profile_image.dimensions' => 'Use an image between 600 x 600 and 4000 x 4000 pixels for a sharp PDF.',
         ];
     }
 }

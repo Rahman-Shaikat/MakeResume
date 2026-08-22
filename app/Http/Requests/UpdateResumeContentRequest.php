@@ -27,6 +27,10 @@ final class UpdateResumeContentRequest extends FormRequest
             'website' => ['nullable', 'url:http,https', 'max:255'],
             'linkedin' => ['nullable', 'url:http,https', 'max:255'],
             'github' => ['nullable', 'url:http,https', 'max:255'],
+            'social_links' => ['nullable', 'array', 'max:8'],
+            'social_links.*' => ['array:platform,url'],
+            'social_links.*.platform' => ['nullable', 'string', 'max:60'],
+            'social_links.*.url' => ['nullable', 'url:http,https', 'max:255'],
             'summary' => ['nullable', 'string', 'max:1000'],
         ];
     }

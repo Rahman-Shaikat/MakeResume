@@ -11,8 +11,10 @@
 
         @if ($section->type === 'projects')
             @foreach ($section->items as $item)
-                <article class="template-four-project">
-                    <h4>{{ $item->data['name'] ?? '' }}</h4>
+                <article @class(['template-four-project', 'project-without-description' => ! filled($item->data['description'] ?? null)])>
+                    <h4>
+                        {{ $item->data['name'] ?? '' }}@if (filled($item->data['project_domain'] ?? null)) <span class="resume-project-domain">({{ $item->data['project_domain'] }})</span>@endif
+                    </h4>
                     @if (filled($item->data['role'] ?? null))
                         <strong>{{ $item->data['role'] }}</strong>
                     @endif

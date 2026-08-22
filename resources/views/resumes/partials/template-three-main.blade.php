@@ -23,7 +23,13 @@
             @foreach ($items as $item)
                 <article class="template-three-experience">
                     <div class="template-three-entry-heading">
-                        <strong>{{ $item->data['company'] ?? '' }}</strong>
+                        <strong>
+                            @if (filled($item->data['company_website'] ?? null))
+                                <a class="resume-company-link" href="{{ $item->data['company_website'] }}" target="_blank" rel="noopener">{{ $item->data['company'] ?? '' }}</a>
+                            @else
+                                {{ $item->data['company'] ?? '' }}
+                            @endif
+                        </strong>
                         @if (filled($item->data['location'] ?? null))
                             <span>{{ $item->data['location'] }}</span>
                         @endif
@@ -51,9 +57,11 @@
             @endforeach
         @else
             @foreach ($items as $item)
-                <article class="template-three-project">
+                <article @class(['template-three-project', 'project-without-description' => ! filled($item->data['description'] ?? null)])>
                     <div class="template-three-entry-heading">
-                        <strong>{{ $item->data['name'] ?? '' }}</strong>
+                        <strong>
+                            {{ $item->data['name'] ?? '' }}@if (filled($item->data['project_domain'] ?? null)) <span class="resume-project-domain">({{ $item->data['project_domain'] }})</span>@endif
+                        </strong>
                         @if (filled($item->data['role'] ?? null))
                             <span>{{ $item->data['role'] }}</span>
                         @endif

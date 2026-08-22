@@ -33,7 +33,13 @@
                         @endif
                     </div>
                     <div class="template-four-entry-row template-four-organization-row">
-                        <strong>{{ $item->data['company'] ?? '' }}</strong>
+                        <strong>
+                            @if (filled($item->data['company_website'] ?? null))
+                                <a class="resume-company-link" href="{{ $item->data['company_website'] }}" target="_blank" rel="noopener">{{ $item->data['company'] ?? '' }}</a>
+                            @else
+                                {{ $item->data['company'] ?? '' }}
+                            @endif
+                        </strong>
                         @if (filled($item->data['location'] ?? null))
                             <span>{{ $item->data['location'] }}</span>
                         @endif

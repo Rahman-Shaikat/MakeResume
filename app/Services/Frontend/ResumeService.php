@@ -147,7 +147,7 @@ final class ResumeService
         return $resume->refresh();
     }
 
-    /** @return array<string, string> */
+    /** @return array<string, mixed> */
     private function contentFor(User $user, ?Resume $resume, string $templateSlug): array
     {
         $sample = $this->renderers->sample($templateSlug);
@@ -161,6 +161,7 @@ final class ResumeService
             'website' => '',
             'linkedin' => $sample['linkedin'],
             'github' => $sample['github'],
+            'social_links' => [],
             'summary' => $sample['summary'],
         ], $resume?->content ?? []);
     }

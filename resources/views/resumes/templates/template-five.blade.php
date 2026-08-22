@@ -98,6 +98,14 @@
                                     </li>
                                 @endif
                             @endforeach
+                            @foreach ($content['social_links'] ?? [] as $socialLink)
+                                @if (filled($socialLink['platform'] ?? null) && filled($socialLink['url'] ?? null))
+                                    <li>
+                                        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 14a5 5 0 0 0 7 0l3-3a5 5 0 0 0-7-7l-2 2M14 10a5 5 0 0 0-7 0l-3 3a5 5 0 0 0 7 7l2-2"/></svg>
+                                        <a class="resume-social-link" href="{{ $socialLink['url'] }}" target="_blank" rel="noopener">{{ $socialLink['platform'] }}</a>
+                                    </li>
+                                @endif
+                            @endforeach
                         </ul>
                     </section>
 

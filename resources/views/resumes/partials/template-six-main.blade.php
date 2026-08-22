@@ -25,7 +25,13 @@
                     <div class="template-six-entry-row">
                         <div>
                             <h4>{{ $item->data['title'] ?? '' }}</h4>
-                            <strong>{{ $item->data['company'] ?? '' }}</strong>
+                            <strong>
+                                @if (filled($item->data['company_website'] ?? null))
+                                    <a class="resume-company-link" href="{{ $item->data['company_website'] }}" target="_blank" rel="noopener">{{ $item->data['company'] ?? '' }}</a>
+                                @else
+                                    {{ $item->data['company'] ?? '' }}
+                                @endif
+                            </strong>
                         </div>
                         @if (filled($item->data['start_date'] ?? null) || filled($item->data['end_date'] ?? null))
                             <time>
@@ -51,10 +57,12 @@
             @endforeach
         @elseif ($section->type === 'projects')
             @foreach ($items as $item)
-                <article class="template-six-project">
+                <article @class(['template-six-project', 'project-without-description' => ! filled($item->data['description'] ?? null)])>
                     <div class="template-six-entry-row">
                         <div>
-                            <h4>{{ $item->data['name'] ?? '' }}</h4>
+                            <h4>
+                                {{ $item->data['name'] ?? '' }}@if (filled($item->data['project_domain'] ?? null)) <span class="resume-project-domain">({{ $item->data['project_domain'] }})</span>@endif
+                            </h4>
                             @if (filled($item->data['role'] ?? null))
                                 <strong>{{ $item->data['role'] }}</strong>
                             @endif

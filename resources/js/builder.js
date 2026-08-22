@@ -33,6 +33,7 @@ if (root) {
         experience: [
             ['title', 'Job title', 'text', 'e.g. Software Engineer'],
             ['company', 'Company', 'text', 'Company name'],
+            ['company_website', 'Company website', 'url', 'https://company.com'],
             ['location', 'Location', 'text', 'City, Country'],
             ['start_date', 'Start date', 'month'],
             ['end_date', 'End date', 'month'],
@@ -41,6 +42,7 @@ if (root) {
         ],
         projects: [
             ['name', 'Project name', 'text', 'Project title'],
+            ['project_domain', 'Project domain', 'text', 'e.g. News portal CMS'],
             ['role', 'Role', 'text', 'e.g. Lead Developer'],
             ['tech_stack', 'Technology stack', 'text', 'Laravel, MySQL, Bootstrap'],
             ['url', 'Project link', 'url', 'https://example.com'],
@@ -138,6 +140,16 @@ if (root) {
             : (xhr.responseJSON?.message ?? 'Something went wrong. Please try again.');
 
         Object.entries(errors ?? {}).forEach(([key, messages]) => {
+            const socialLinkMatch = key.match(/^social_links\.(\d+)\.(platform|url)$/);
+            if (socialLinkMatch) {
+                const [, index, field] = socialLinkMatch;
+                const input = sectionList.querySelector(`[data-social-link-index="${index}"][data-social-link-field="${field}"]`);
+                const feedback = sectionList.querySelector(`[data-social-link-error="${index}-${field}"]`);
+                input?.classList.add('is-invalid');
+                if (feedback) feedback.textContent = messages[0];
+                return;
+            }
+
             const field = key.replace(/^content\./, '');
             const input = sectionList.querySelector(`[data-content-field="${field}"]`);
             const feedback = sectionList.querySelector(`[data-field-error="${field}"]`);
@@ -156,6 +168,40 @@ if (root) {
 
         return `<label class="dynamic-field"><span>${escapeHtml(label)}</span>${input}<small data-field-error="${name}"></small></label>`;
     };
+
+    const socialLinks = () => Array.isArray(payload.content.social_links)
+        ? payload.content.social_links
+        : [];
+
+    const socialLinksEditor = () => `
+        <div class="personal-social-links">
+            <div class="personal-social-links-header">
+                <div>
+                    <span>Additional social links</span>
+                    <small>Add platforms such as Medium, Behance, Dribbble, or X.</small>
+                </div>
+                <button type="button" class="builder-add-social-link" data-add-social-link>
+                    <i class="fa-solid fa-plus" aria-hidden="true"></i>
+                    Add more social links
+                </button>
+            </div>
+            ${socialLinks().map((socialLink, index) => `
+                <div class="personal-social-link-row">
+                    <label class="dynamic-field">
+                        <span>Platform</span>
+                        <input class="form-control" type="text" maxlength="60" value="${escapeHtml(socialLink.platform ?? '')}" placeholder="e.g. Medium" data-social-link-index="${index}" data-social-link-field="platform">
+                        <small data-social-link-error="${index}-platform"></small>
+                    </label>
+                    <label class="dynamic-field">
+                        <span>Profile URL</span>
+                        <input class="form-control" type="url" maxlength="255" value="${escapeHtml(socialLink.url ?? '')}" placeholder="https://medium.com/@username" data-social-link-index="${index}" data-social-link-field="url">
+                        <small data-social-link-error="${index}-url"></small>
+                    </label>
+                    <button type="button" class="remove-social-link" data-remove-social-link data-social-link-index="${index}" aria-label="Remove social link" title="Remove social link">
+                        <i class="fa-regular fa-trash-can" aria-hidden="true"></i>
+                    </button>
+                </div>`).join('')}
+        </div>`;
 
     const personalSection = () => {
         const initials = (payload.content.full_name || 'Your Name')
@@ -192,7 +238,7 @@ if (root) {
                         </label>
                         ${removeButton}
                     </div>
-                    <p>JPG, PNG, or WebP. Maximum 2 MB.</p>
+                    <p>JPG, PNG, or WebP. Minimum 600 × 600px for sharp PDFs; original image retained. Maximum 5 MB.</p>
                 </div>
             </div>
             <div class="dynamic-field-grid">
@@ -204,6 +250,7 @@ if (root) {
                 ${contentInput('website', 'Website / portfolio', 'url', 'https://yourwebsite.com')}
                 ${contentInput('linkedin', 'LinkedIn', 'url', 'https://linkedin.com/in/username')}
                 ${contentInput('github', 'GitHub', 'url', 'https://github.com/username')}
+                ${socialLinksEditor()}
             </div>`;
     };
 
@@ -367,6 +414,20 @@ if (root) {
     };
 
     sectionList.addEventListener('input', (event) => {
+        const socialLinkField = event.target.dataset.socialLinkField;
+        if (socialLinkField) {
+            const index = Number(event.target.dataset.socialLinkIndex);
+            payload.content.social_links = socialLinks();
+            payload.content.social_links[index] ??= { platform: '', url: '' };
+            payload.content.social_links[index][socialLinkField] = event.target.value;
+            event.target.classList.remove('is-invalid');
+            const feedback = sectionList.querySelector(`[data-social-link-error="${index}-${socialLinkField}"]`);
+            if (feedback) feedback.textContent = '';
+            markSaving();
+            debounce('content', saveContent);
+            return;
+        }
+
         const contentField = event.target.dataset.contentField;
         if (contentField) {
             payload.content[contentField] = event.target.value;
@@ -408,6 +469,28 @@ if (root) {
     });
 
     sectionList.addEventListener('click', (event) => {
+        const addSocialLink = event.target.closest('[data-add-social-link]');
+        if (addSocialLink) {
+            if (socialLinks().length >= 8) {
+                markError('You can add up to 8 additional social links.');
+                return;
+            }
+
+            payload.content.social_links = [...socialLinks(), { platform: '', url: '' }];
+            renderSections();
+            sectionList.querySelector(`[data-social-link-index="${payload.content.social_links.length - 1}"][data-social-link-field="platform"]`)?.focus();
+            return;
+        }
+
+        const removeSocialLink = event.target.closest('[data-remove-social-link]');
+        if (removeSocialLink) {
+            const index = Number(removeSocialLink.dataset.socialLinkIndex);
+            payload.content.social_links = socialLinks().filter((_, linkIndex) => linkIndex !== index);
+            renderSections();
+            saveContent();
+            return;
+        }
+
         const removeProfileImage = event.target.closest('[data-remove-builder-image]');
         if (removeProfileImage) {
             if (!window.confirm('Remove the profile photo from this resume?')) return;

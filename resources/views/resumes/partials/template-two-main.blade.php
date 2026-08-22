@@ -23,7 +23,13 @@
             @foreach ($items as $item)
                 <article class="template-two-experience">
                     <p class="template-two-employer">
-                        <strong>{{ $item->data['company'] ?? '' }}</strong>
+                        <strong>
+                            @if (filled($item->data['company_website'] ?? null))
+                                <a class="resume-company-link" href="{{ $item->data['company_website'] }}" target="_blank" rel="noopener">{{ $item->data['company'] ?? '' }}</a>
+                            @else
+                                {{ $item->data['company'] ?? '' }}
+                            @endif
+                        </strong>
                         @if (filled($item->data['location'] ?? null))
                             <span>, {{ $item->data['location'] }}</span>
                         @endif
@@ -49,9 +55,11 @@
             @endforeach
         @elseif ($section->type === 'projects')
             @foreach ($items as $item)
-                <article class="template-two-project">
+                <article @class(['template-two-project', 'project-without-description' => ! filled($item->data['description'] ?? null)])>
                     <div class="template-two-project-heading">
-                        <h4>{{ $item->data['name'] ?? '' }}</h4>
+                        <h4>
+                            {{ $item->data['name'] ?? '' }}@if (filled($item->data['project_domain'] ?? null)) <span class="resume-project-domain">({{ $item->data['project_domain'] }})</span>@endif
+                        </h4>
                         @if (filled($item->data['role'] ?? null)) <span>{{ $item->data['role'] }}</span> @endif
                     </div>
                     @if (filled($item->data['tech_stack'] ?? null))
