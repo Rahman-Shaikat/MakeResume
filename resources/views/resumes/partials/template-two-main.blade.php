@@ -77,9 +77,11 @@
             @foreach ($items as $item)
                 <article class="template-two-custom">
                     @if (filled($item->data['title'] ?? $item->data['name'] ?? null))
-                        <h4>{{ $item->data['title'] ?? $item->data['name'] }}</h4>
+                        <h4>@include('resumes.partials.custom-section-item-title', ['item' => $item])</h4>
                     @endif
-                    @if (filled($item->data['content'] ?? $item->data['description'] ?? null))
+                    @if ($section->type === 'custom')
+                        @include('resumes.partials.custom-section-item-content', ['item' => $item])
+                    @elseif (filled($item->data['content'] ?? $item->data['description'] ?? null))
                         <p>{{ $item->data['content'] ?? $item->data['description'] }}</p>
                     @endif
                 </article>

@@ -144,11 +144,9 @@
                 @foreach ($items as $item)
                     <article class="custom-resume-item">
                         @if (filled($item->data['title'] ?? null))
-                            <h4>{{ $item->data['title'] }}</h4>
+                            <h4>@include('resumes.partials.custom-section-item-title', ['item' => $item])</h4>
                         @endif
-                        @if (filled($item->data['content'] ?? null))
-                            <p class="resume-preserve-lines">{{ $item->data['content'] }}</p>
-                        @endif
+                        @include('resumes.partials.custom-section-item-content', ['item' => $item, 'class' => 'resume-preserve-lines'])
                     </article>
                 @endforeach
             @endif

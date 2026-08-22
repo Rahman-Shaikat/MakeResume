@@ -66,7 +66,11 @@ if (root) {
         ],
         custom: [
             ['title', 'Item title', 'text', 'Item heading'],
-            ['content', 'Content', 'textarea', 'Add the details you want to show'],
+            ['title_bold', 'Bold title', 'checkbox'],
+            ['title_italic', 'Italic title', 'checkbox'],
+            ['title_use_accent', 'Use template color', 'checkbox'],
+            ['url', 'Title link', 'url', 'https://example.com'],
+            ['content_html', 'Content', 'richtext', 'Write the details you want to show'],
         ],
     };
 
@@ -271,6 +275,22 @@ if (root) {
             return `<label class="dynamic-field field-wide"><span>${label}</span><textarea class="form-control" rows="3" data-item-field="${name}" placeholder="${escapeHtml(options)}">${escapeHtml(value)}</textarea></label>`;
         }
 
+        if (type === 'richtext') {
+            const richTextValue = item.data?.[name]
+                ? String(item.data[name])
+                : escapeHtml(item.data?.content ?? '');
+
+            return `<div class="dynamic-field field-wide rich-text-field">
+                <span>${label}</span>
+                <div class="rich-text-toolbar" role="toolbar" aria-label="Content formatting">
+                    <button type="button" data-rich-text-command="bold" title="Bold" aria-label="Bold"><i class="fa-solid fa-bold" aria-hidden="true"></i></button>
+                    <button type="button" data-rich-text-command="italic" title="Italic" aria-label="Italic"><i class="fa-solid fa-italic" aria-hidden="true"></i></button>
+                </div>
+                <div class="form-control rich-text-editor" contenteditable="true" role="textbox" aria-multiline="true" data-rich-text-editor data-item-field="${name}" data-placeholder="${escapeHtml(options)}">${richTextValue}</div>
+                <small>Use the formatting buttons for bold or italic text.</small>
+            </div>`;
+        }
+
         if (type === 'select') {
             const optionHtml = options.map((option) => `<option value="${escapeHtml(option)}" ${value === option ? 'selected' : ''}>${escapeHtml(option)}</option>`).join('');
             return `<label class="dynamic-field"><span>${label}</span><select class="form-select" data-item-field="${name}"><option value="">Select level</option>${optionHtml}</select></label>`;
@@ -384,7 +404,8 @@ if (root) {
             method: 'PATCH',
             data: payload.content,
         })
-            .done(() => {
+            .done((response) => {
+                item.data = response.item.data;
                 markSaved();
                 refreshPreview();
             })
@@ -409,7 +430,7 @@ if (root) {
         if (type === 'experience') return { title: 'New position', company: '' };
         if (type === 'education') return { degree: 'New qualification', institution: '' };
         if (type === 'awards') return { title: 'New award', organization: '' };
-        if (type === 'custom') return { title: 'New item', content: '' };
+        if (type === 'custom') return { title: 'New item', content_html: '', title_bold: false, title_italic: false, title_use_accent: false, url: '' };
         return { name: `New ${type.replace(/s$/, '')}` };
     };
 
@@ -460,7 +481,9 @@ if (root) {
         if (itemField) {
             const section = findSection(event.target);
             const item = findItem(section, event.target);
-            item.data[itemField] = event.target.type === 'checkbox' ? Number(event.target.checked) : event.target.value;
+            item.data[itemField] = event.target.matches('[data-rich-text-editor]')
+                ? event.target.innerHTML
+                : (event.target.type === 'checkbox' ? Number(event.target.checked) : event.target.value);
             const heading = event.target.closest('[data-item-id]').querySelector('[data-item-heading]');
             heading.textContent = itemHeading(section, item, section.items.indexOf(item));
             markSaving();
@@ -469,6 +492,15 @@ if (root) {
     });
 
     sectionList.addEventListener('click', (event) => {
+        const richTextCommand = event.target.closest('[data-rich-text-command]');
+        if (richTextCommand) {
+            const editor = richTextCommand.closest('.rich-text-field')?.querySelector('[data-rich-text-editor]');
+            editor?.focus();
+            document.execCommand(richTextCommand.dataset.richTextCommand, false);
+            editor?.dispatchEvent(new Event('input', { bubbles: true }));
+            return;
+        }
+
         const addSocialLink = event.target.closest('[data-add-social-link]');
         if (addSocialLink) {
             if (socialLinks().length >= 8) {
@@ -611,6 +643,19 @@ if (root) {
                 URL.revokeObjectURL(localUrl);
             }).fail(showError);
         }
+    });
+
+    sectionList.addEventListener('pointerdown', (event) => {
+        if (event.target.closest('[data-rich-text-command]')) {
+            event.preventDefault();
+        }
+    });
+
+    sectionList.addEventListener('paste', (event) => {
+        if (! event.target.matches('[data-rich-text-editor]')) return;
+
+        event.preventDefault();
+        document.execCommand('insertText', false, event.clipboardData?.getData('text/plain') ?? '');
     });
 
     sectionList.addEventListener('pointerdown', (event) => {

@@ -887,6 +887,42 @@ test('custom social links are validated, saved, and rendered by every resume tem
     }
 });
 
+test('custom section items support formatted content and linked styled titles in every resume template', function (): void {
+    $user = User::factory()->create();
+    $data = [
+        'title' => 'Featured Medium article',
+        'title_bold' => true,
+        'title_italic' => true,
+        'title_use_accent' => true,
+        'url' => 'https://medium.com/@alex/featured-article',
+        'content_html' => 'Read <b>the full article</b> on <i>Medium</i>.<script>alert("unsafe")</script>',
+    ];
+
+    foreach (['template-one', 'template-two', 'template-three', 'template-four', 'template-five', 'template-six'] as $templateSlug) {
+        $resume = Resume::query()->create([
+            'user_id' => $user->id,
+            'template_slug' => $templateSlug,
+        ]);
+        $section = app(ResumeBuilderService::class)->storeSection($resume, 'Writing');
+
+        $response = $this->actingAs($user)
+            ->postJson(route('resume.builder.items.store', [$resume, $section]), ['data' => $data])
+            ->assertCreated()
+            ->assertJsonPath('item.data.content_html', 'Read <strong>the full article</strong> on <em>Medium</em>.');
+
+        expect($response->json('item.data.content_html'))->not->toContain('script');
+
+        $this->actingAs($user)
+            ->get(route('resume.preview', $resume))
+            ->assertOk()
+            ->assertSee('href="https://medium.com/@alex/featured-article"', false)
+            ->assertSee('resume-custom-item-title is-bold is-italic is-template-colored', false)
+            ->assertSee('<strong>the full article</strong>', false)
+            ->assertSee('<em>Medium</em>', false)
+            ->assertDontSee('<script>', false);
+    }
+});
+
 test('experience company websites are saved and rendered as links in every resume template', function (): void {
     $user = User::factory()->create();
 

@@ -51,14 +51,22 @@
             <div class="template-three-feature-list">
                 @foreach ($section->items as $item)
                     <article>
-                        <h4>{{ $item->data['title'] ?? $item->data['name'] ?? '' }}</h4>
+                        <h4>
+                            @if ($section->type === 'custom')
+                                @include('resumes.partials.custom-section-item-title', ['item' => $item])
+                            @else
+                                {{ $item->data['title'] ?? $item->data['name'] ?? '' }}
+                            @endif
+                        </h4>
                         @if (filled($item->data['organization'] ?? $item->data['provider'] ?? null))
                             <strong>{{ $item->data['organization'] ?? $item->data['provider'] }}</strong>
                         @endif
                         @if (filled($item->data['date'] ?? null))
                             <small>{{ $item->data['date'] }}</small>
                         @endif
-                        @if (filled($item->data['content'] ?? $item->data['description'] ?? null))
+                        @if ($section->type === 'custom')
+                            @include('resumes.partials.custom-section-item-content', ['item' => $item])
+                        @elseif (filled($item->data['content'] ?? $item->data['description'] ?? null))
                             <p>{{ $item->data['content'] ?? $item->data['description'] }}</p>
                         @endif
                     </article>

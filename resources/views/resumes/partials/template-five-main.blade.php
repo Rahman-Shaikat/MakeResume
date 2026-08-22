@@ -78,14 +78,22 @@
         @else
             @foreach ($items as $item)
                 <article class="template-five-project">
-                    <h4>{{ $item->data['title'] ?? $item->data['name'] ?? '' }}</h4>
+                    <h4>
+                        @if ($section->type === 'custom')
+                            @include('resumes.partials.custom-section-item-title', ['item' => $item])
+                        @else
+                            {{ $item->data['title'] ?? $item->data['name'] ?? '' }}
+                        @endif
+                    </h4>
                     @if (filled($item->data['organization'] ?? null))
                         <strong>{{ $item->data['organization'] }}</strong>
                     @endif
                     @if (filled($item->data['date'] ?? null))
                         <time>{{ $item->data['date'] }}</time>
                     @endif
-                    @if (filled($item->data['content'] ?? $item->data['description'] ?? null))
+                    @if ($section->type === 'custom')
+                        @include('resumes.partials.custom-section-item-content', ['item' => $item])
+                    @elseif (filled($item->data['content'] ?? $item->data['description'] ?? null))
                         <p>{{ $item->data['content'] ?? $item->data['description'] }}</p>
                     @endif
                 </article>
