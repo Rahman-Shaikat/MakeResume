@@ -26,9 +26,16 @@
                 <article class="template-two-side-entry">
                     <h4>{{ $item->data['institution'] ?? '' }}</h4>
                     <p>{{ $item->data['degree'] ?? '' }}</p>
-                    @if (filled($item->data['location'] ?? null)) <p>{{ $item->data['location'] }}</p> @endif
-                    @if (filled($item->data['start_date'] ?? null) || filled($item->data['end_date'] ?? null))
-                        <time>{{ $formatMonth($item->data['start_date'] ?? null) }} - {{ $formatMonth($item->data['end_date'] ?? null) }}</time>
+                    @if (filled($item->data['location'] ?? null)) <p class="resume-entry-location"><i class="fa-solid fa-location-dot" aria-hidden="true"></i>{{ $item->data['location'] }}</p> @endif
+                    @if (filled($item->data['start_date'] ?? null) || filled($item->data['end_date'] ?? null) || filled($item->data['passing_year'] ?? null))
+                        <time class="resume-date-range">
+                            @include('resumes.partials.experience-date-range', [
+                                'startDate' => $item->data['start_date'] ?? null,
+                                'endDate' => $item->data['end_date'] ?? null,
+                                'passingYear' => $item->data['passing_year'] ?? null,
+                                'formatMonth' => $formatMonth,
+                            ])
+                        </time>
                     @endif
                     @if (filled($item->data['description'] ?? null)) <p>{{ $item->data['description'] }}</p> @endif
                 </article>

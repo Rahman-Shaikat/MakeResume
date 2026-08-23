@@ -31,16 +31,19 @@
                             @endif
                         </strong>
                         @if (filled($item->data['location'] ?? null))
-                            <span>, {{ $item->data['location'] }}</span>
+                            <span class="resume-entry-location">, <i class="fa-solid fa-location-dot" aria-hidden="true"></i>{{ $item->data['location'] }}</span>
                         @endif
                     </p>
                     <div class="template-two-role-row">
                         <h4>{{ $item->data['title'] ?? '' }}</h4>
                         @if (filled($item->data['start_date'] ?? null) || filled($item->data['end_date'] ?? null))
-                            <time>
-                                {{ $formatMonth($item->data['start_date'] ?? null) }}
-                                @if (filled($item->data['start_date'] ?? null)) - @endif
-                                {{ ($item->data['current'] ?? false) ? 'Present' : $formatMonth($item->data['end_date'] ?? null) }}
+                            <time class="resume-date-range">
+                                @include('resumes.partials.experience-date-range', [
+                                    'startDate' => $item->data['start_date'] ?? null,
+                                    'endDate' => $item->data['end_date'] ?? null,
+                                    'isCurrent' => $item->data['current'] ?? false,
+                                    'formatMonth' => $formatMonth,
+                                ])
                             </time>
                         @endif
                     </div>

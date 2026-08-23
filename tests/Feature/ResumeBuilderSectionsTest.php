@@ -57,7 +57,7 @@ test('a user can create rename and delete a custom section', function (): void {
     $this->assertDatabaseMissing('resume_sections', ['id' => $section->id]);
 });
 
-test('default sections cannot be renamed or deleted', function (): void {
+test('default sections can be renamed but cannot be deleted', function (): void {
     $user = User::factory()->create();
     $resume = resumeFor($user);
     app(ResumeBuilderService::class)->load($resume);
@@ -65,9 +65,10 @@ test('default sections cannot be renamed or deleted', function (): void {
 
     $this->actingAs($user)
         ->patchJson(route('resume.builder.sections.update', [$resume, $summary]), ['title' => 'Changed'])
-        ->assertOk();
+        ->assertOk()
+        ->assertJsonPath('section.title', 'Changed');
 
-    expect($summary->fresh()->title)->toBe('Professional Summary');
+    expect($summary->fresh()->title)->toBe('Changed');
 
     $this->actingAs($user)
         ->deleteJson(route('resume.builder.sections.destroy', [$resume, $summary]))
@@ -163,6 +164,7 @@ test('a current experience entry persists and renders present from a browser for
             'data' => [
                 'title' => 'Software Engineer',
                 'company' => 'Acme',
+                'location' => 'Dhaka, Bangladesh',
                 'start_date' => '2024-01',
                 'current' => 'true',
             ],
@@ -170,11 +172,60 @@ test('a current experience entry persists and renders present from a browser for
         ->assertOk()
         ->assertJsonPath('item.data.current', true);
 
+    $resume->sections()->where('type', 'education')->firstOrFail()->items()->create([
+        'data' => [
+            'degree' => 'BSc Computer Science',
+            'institution' => 'Example University',
+            'location' => 'Dhaka, Bangladesh',
+            'start_date' => '2020-01',
+            'end_date' => '2024-01',
+        ],
+        'sort_order' => 0,
+    ]);
+
     $this->actingAs($user)
         ->get(route('resume.preview', $resume))
         ->assertOk()
-        ->assertSee('2024-01')
+        ->assertSee('01/2024')
+        ->assertSee('01/2020 - 01/2024')
+        ->assertSee('fa-calendar-days', false)
+        ->assertSee('fa-location-dot', false)
         ->assertSee('Present');
+});
+
+test('an education entry may use a passing year instead of a date range', function (): void {
+    $user = User::factory()->create();
+    $resume = resumeFor($user);
+    app(ResumeBuilderService::class)->load($resume);
+    $education = $resume->sections()->where('type', 'education')->firstOrFail();
+
+    $this->actingAs($user)
+        ->postJson(route('resume.builder.items.store', [$resume, $education]), [
+            'data' => [
+                'degree' => 'BSc Computer Science',
+                'institution' => 'Example University',
+                'passing_year' => '2024-04',
+            ],
+        ])
+        ->assertCreated()
+        ->assertJsonPath('item.data.passing_year', '2024-04');
+
+    $this->actingAs($user)
+        ->postJson(route('resume.builder.items.store', [$resume, $education]), [
+            'data' => [
+                'degree' => 'BSc Computer Science',
+                'passing_year' => '2024-04',
+                'start_date' => '2020-01',
+            ],
+        ])
+        ->assertUnprocessable()
+        ->assertJsonValidationErrors('data.passing_year');
+
+    $this->actingAs($user)
+        ->get(route('resume.preview', $resume))
+        ->assertOk()
+        ->assertSee('04/2024')
+        ->assertSee('fa-calendar-days', false);
 });
 
 test('section order and visibility persist in the rendered resume', function (): void {

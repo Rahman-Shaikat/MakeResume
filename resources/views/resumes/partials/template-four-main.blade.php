@@ -25,10 +25,13 @@
                     <div class="template-four-entry-row">
                         <h4>{{ $item->data['title'] ?? '' }}</h4>
                         @if (filled($item->data['start_date'] ?? null) || filled($item->data['end_date'] ?? null))
-                            <time>
-                                {{ $formatMonth($item->data['start_date'] ?? null) }}
-                                @if (filled($item->data['start_date'] ?? null)) - @endif
-                                {{ ($item->data['current'] ?? false) ? 'Present' : $formatMonth($item->data['end_date'] ?? null) }}
+                            <time class="resume-date-range">
+                                @include('resumes.partials.experience-date-range', [
+                                    'startDate' => $item->data['start_date'] ?? null,
+                                    'endDate' => $item->data['end_date'] ?? null,
+                                    'isCurrent' => $item->data['current'] ?? false,
+                                    'formatMonth' => $formatMonth,
+                                ])
                             </time>
                         @endif
                     </div>
@@ -41,7 +44,7 @@
                             @endif
                         </strong>
                         @if (filled($item->data['location'] ?? null))
-                            <span>{{ $item->data['location'] }}</span>
+                            <span class="resume-entry-location"><i class="fa-solid fa-location-dot" aria-hidden="true"></i>{{ $item->data['location'] }}</span>
                         @endif
                     </div>
                     @if (filled($item->data['description'] ?? null))
@@ -60,14 +63,21 @@
                 <article class="template-four-education">
                     <div class="template-four-entry-row">
                         <h4>{{ $item->data['degree'] ?? '' }}</h4>
-                        @if (filled($item->data['start_date'] ?? null) || filled($item->data['end_date'] ?? null))
-                            <time>{{ $formatMonth($item->data['start_date'] ?? null) }} - {{ $formatMonth($item->data['end_date'] ?? null) }}</time>
+                        @if (filled($item->data['start_date'] ?? null) || filled($item->data['end_date'] ?? null) || filled($item->data['passing_year'] ?? null))
+                            <time class="resume-date-range">
+                                @include('resumes.partials.experience-date-range', [
+                                    'startDate' => $item->data['start_date'] ?? null,
+                                    'endDate' => $item->data['end_date'] ?? null,
+                                    'passingYear' => $item->data['passing_year'] ?? null,
+                                    'formatMonth' => $formatMonth,
+                                ])
+                            </time>
                         @endif
                     </div>
                     <div class="template-four-entry-row template-four-organization-row">
                         <strong>{{ $item->data['institution'] ?? '' }}</strong>
                         @if (filled($item->data['location'] ?? null))
-                            <span>{{ $item->data['location'] }}</span>
+                            <span class="resume-entry-location"><i class="fa-solid fa-location-dot" aria-hidden="true"></i>{{ $item->data['location'] }}</span>
                         @endif
                     </div>
                     @if (filled($item->data['description'] ?? null))

@@ -28,6 +28,7 @@ if (root) {
             ['location', 'Location', 'text', 'City, Country'],
             ['start_date', 'Start date', 'month'],
             ['end_date', 'End date', 'month'],
+            ['passing_year', 'Passing month & year (instead of date range)', 'month'],
             ['description', 'Description', 'textarea', 'Relevant coursework, achievements, or activities'],
         ],
         experience: [
@@ -356,9 +357,7 @@ if (root) {
                         <svg viewBox="0 0 24 24">${sectionIcons[section.type] ?? sectionIcons.custom}</svg>
                     </span>
                     <div class="dynamic-section-title">
-                        ${section.is_custom
-                            ? `<input value="${escapeHtml(section.title)}" maxlength="100" data-section-title aria-label="Custom section name">`
-                            : `<strong>${escapeHtml(section.title)}</strong>`}
+                        <input value="${escapeHtml(section.title)}" maxlength="100" data-section-title aria-label="Section name">
                         <small>${section.items.length ? `${section.items.length} ${section.items.length === 1 ? 'entry' : 'entries'}` : (section.type === 'personal' || section.type === 'summary' ? 'Autosaved' : 'Empty')}</small>
                     </div>
                     <div class="section-card-actions">
@@ -484,6 +483,23 @@ if (root) {
             item.data[itemField] = event.target.matches('[data-rich-text-editor]')
                 ? event.target.innerHTML
                 : (event.target.type === 'checkbox' ? Number(event.target.checked) : event.target.value);
+
+            if (section.type === 'education') {
+                const itemForm = event.target.closest('[data-item-id]');
+
+                if (itemField === 'passing_year' && item.data.passing_year) {
+                    item.data.start_date = '';
+                    item.data.end_date = '';
+                    itemForm.querySelector('[data-item-field="start_date"]').value = '';
+                    itemForm.querySelector('[data-item-field="end_date"]').value = '';
+                }
+
+                if (['start_date', 'end_date'].includes(itemField) && item.data[itemField]) {
+                    item.data.passing_year = '';
+                    itemForm.querySelector('[data-item-field="passing_year"]').value = '';
+                }
+            }
+
             const heading = event.target.closest('[data-item-id]').querySelector('[data-item-heading]');
             heading.textContent = itemHeading(section, item, section.items.indexOf(item));
             markSaving();

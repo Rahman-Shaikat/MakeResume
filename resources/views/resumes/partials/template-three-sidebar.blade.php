@@ -26,9 +26,18 @@
                     <h4>{{ $item->data['institution'] ?? '' }}</h4>
                     <p>{{ $item->data['degree'] ?? '' }}</p>
                     <div class="template-three-side-meta">
-                        <span>{{ $item->data['location'] ?? '' }}</span>
-                        @if (filled($item->data['start_date'] ?? null) || filled($item->data['end_date'] ?? null))
-                            <time>{{ $formatMonth($item->data['start_date'] ?? null) }} - {{ $formatMonth($item->data['end_date'] ?? null) }}</time>
+                        @if (filled($item->data['location'] ?? null))
+                            <span class="resume-entry-location"><i class="fa-solid fa-location-dot" aria-hidden="true"></i>{{ $item->data['location'] }}</span>
+                        @endif
+                        @if (filled($item->data['start_date'] ?? null) || filled($item->data['end_date'] ?? null) || filled($item->data['passing_year'] ?? null))
+                            <time class="resume-date-range">
+                                @include('resumes.partials.experience-date-range', [
+                                    'startDate' => $item->data['start_date'] ?? null,
+                                    'endDate' => $item->data['end_date'] ?? null,
+                                    'passingYear' => $item->data['passing_year'] ?? null,
+                                    'formatMonth' => $formatMonth,
+                                ])
+                            </time>
                         @endif
                     </div>
                     @if (filled($item->data['description'] ?? null))

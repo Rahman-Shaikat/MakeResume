@@ -46,14 +46,16 @@
                         @endif
                         <div class="resume-meta">
                             @if (filled($item->data['start_date'] ?? null) || filled($item->data['end_date'] ?? null))
-                                <span>
-                                    {{ $item->data['start_date'] ?? '' }}
-                                    @if (filled($item->data['start_date'] ?? null)) - @endif
-                                    {{ ($item->data['current'] ?? false) ? 'Present' : ($item->data['end_date'] ?? '') }}
+                                <span class="resume-date-range">
+                                    @include('resumes.partials.experience-date-range', [
+                                        'startDate' => $item->data['start_date'] ?? null,
+                                        'endDate' => $item->data['end_date'] ?? null,
+                                        'isCurrent' => $item->data['current'] ?? false,
+                                    ])
                                 </span>
                             @endif
                             @if (filled($item->data['location'] ?? null))
-                                <span>{{ $item->data['location'] }}</span>
+                                <span class="resume-entry-location"><i class="fa-solid fa-location-dot" aria-hidden="true"></i>{{ $item->data['location'] }}</span>
                             @endif
                         </div>
                         @if (filled($item->data['description'] ?? null))
@@ -69,11 +71,17 @@
                             <h5>{{ $item->data['institution'] }}</h5>
                         @endif
                         <div class="resume-meta">
-                            @if (filled($item->data['start_date'] ?? null) || filled($item->data['end_date'] ?? null))
-                                <span>{{ $item->data['start_date'] ?? '' }} - {{ $item->data['end_date'] ?? '' }}</span>
+                            @if (filled($item->data['start_date'] ?? null) || filled($item->data['end_date'] ?? null) || filled($item->data['passing_year'] ?? null))
+                                <span class="resume-date-range">
+                                    @include('resumes.partials.experience-date-range', [
+                                        'startDate' => $item->data['start_date'] ?? null,
+                                        'endDate' => $item->data['end_date'] ?? null,
+                                        'passingYear' => $item->data['passing_year'] ?? null,
+                                    ])
+                                </span>
                             @endif
                             @if (filled($item->data['location'] ?? null))
-                                <span>{{ $item->data['location'] }}</span>
+                                <span class="resume-entry-location"><i class="fa-solid fa-location-dot" aria-hidden="true"></i>{{ $item->data['location'] }}</span>
                             @endif
                         </div>
                         @if (filled($item->data['description'] ?? null))

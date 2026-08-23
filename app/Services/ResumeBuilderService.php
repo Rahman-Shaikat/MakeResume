@@ -68,7 +68,7 @@ final class ResumeBuilderService
     {
         $this->ensureSectionBelongsToResume($resume, $section);
         $section->update([
-            ...($section->is_custom && array_key_exists('title', $data)
+            ...(array_key_exists('title', $data)
                 ? ['title' => $data['title']]
                 : []),
             ...(array_key_exists('is_visible', $data)

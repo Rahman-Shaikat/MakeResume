@@ -4,8 +4,10 @@ declare(strict_types=1);
 
 namespace App\Http\Requests;
 
+use App\Models\ResumeSection;
 use App\Services\ResumeRichTextSanitizer;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Validator;
 
 final class UpsertResumeSectionItemRequest extends FormRequest
 {
@@ -52,6 +54,7 @@ final class UpsertResumeSectionItemRequest extends FormRequest
             'data.location' => ['nullable', 'string', 'max:160'],
             'data.start_date' => ['nullable', 'date_format:Y-m'],
             'data.end_date' => ['nullable', 'date_format:Y-m'],
+            'data.passing_year' => ['nullable', 'date_format:Y-m'],
             'data.current' => ['nullable', 'boolean'],
             'data.description' => ['nullable', 'string', 'max:2000'],
             'data.company' => ['nullable', 'string', 'max:160'],
@@ -70,5 +73,27 @@ final class UpsertResumeSectionItemRequest extends FormRequest
             'data.proficiency' => ['nullable', 'string', 'max:80'],
             'data.content' => ['nullable', 'string', 'max:3000'],
         ];
+    }
+
+    public function withValidator(Validator $validator): void
+    {
+        $validator->after(function (Validator $validator): void {
+            $section = $this->route('resumeSection');
+            $data = $this->input('data');
+
+            if (! $section instanceof ResumeSection || ! is_array($data) || ! filled($data['passing_year'] ?? null)) {
+                return;
+            }
+
+            if ($section->type !== 'education') {
+                $validator->errors()->add('data.passing_year', 'Passing month and year are available only for education entries.');
+
+                return;
+            }
+
+            if (filled($data['start_date'] ?? null) || filled($data['end_date'] ?? null)) {
+                $validator->errors()->add('data.passing_year', 'Use either passing month and year or a start and end date range.');
+            }
+        });
     }
 }

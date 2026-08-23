@@ -2127,6 +2127,14 @@ a.resume-custom-item-title:focus-visible {
     text-decoration: none;
 }
 
+.resume-date-range .fa-calendar-days {
+    margin-right: .8mm;
+}
+
+.resume-entry-location .fa-location-dot {
+    margin-right: .8mm;
+}
+
 .experience-item > p {
     margin-bottom: 1mm;
 }
