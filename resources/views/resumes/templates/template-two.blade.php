@@ -64,7 +64,7 @@
                         @if ($content['location']) <li>{{ $content['location'] }}</li> @endif
                         @if ($content['phone']) <li>{{ $content['phone'] }}</li> @endif
                         <li>{{ $content['email'] }}</li>
-                        @if ($content['website']) <li>{{ preg_replace('#^https?://(www\.)?#', '', $content['website']) }}</li> @endif
+                        @if ($content['website']) <li><a class="resume-social-link" href="{{ $content['website'] }}" target="_blank" rel="noopener">Portfolio</a></li> @endif
                         @if ($content['linkedin']) <li>{{ preg_replace('#^https?://(www\.)?#', '', $content['linkedin']) }}</li> @endif
                         @if ($content['github']) <li>{{ preg_replace('#^https?://(www\.)?#', '', $content['github']) }}</li> @endif
                         @foreach ($content['social_links'] ?? [] as $socialLink)

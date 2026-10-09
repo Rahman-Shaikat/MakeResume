@@ -56,11 +56,11 @@
                             <span><b aria-hidden="true">☎</b>{{ $content['phone'] }}</span>
                         @endif
                         <span><b aria-hidden="true">@</b>{{ $content['email'] }}</span>
+                        @if ($content['website'])
+                            <span><b aria-hidden="true">↗</b><a class="resume-social-link" href="{{ $content['website'] }}" target="_blank" rel="noopener">Portfolio</a></span>
+                        @endif
                         @if ($content['linkedin'])
                             <span><b aria-hidden="true">↗</b>{{ preg_replace('#^https?://(www\.)?#', '', $content['linkedin']) }}</span>
-                        @endif
-                        @if ($content['website'])
-                            <span><b aria-hidden="true">↗</b>{{ preg_replace('#^https?://(www\.)?#', '', $content['website']) }}</span>
                         @endif
                         @if ($content['github'])
                             <span><b aria-hidden="true">↗</b>{{ preg_replace('#^https?://(www\.)?#', '', $content['github']) }}</span>

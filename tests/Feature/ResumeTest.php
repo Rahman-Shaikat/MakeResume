@@ -153,6 +153,8 @@ test('classic blue sidebar preview renders saved content and ordered dynamic sec
         ->assertSee('Bristol University')
         ->assertSee('Selected Publications')
         ->assertSee('Reliable Delivery')
+        ->assertSee('>Portfolio</a>', false)
+        ->assertSee('href="https://taylor.example.com"', false)
         ->assertSee('/storage/images/template-two-profile.jpg', false);
 });
 

@@ -107,11 +107,15 @@
                                 <span>{{ $content['location'] }}</span>
                             </li>
                         @endif
-                        @foreach (['linkedin', 'website', 'github'] as $network)
+                        @foreach (['website', 'linkedin', 'github'] as $network)
                             @if ($content[$network])
                                 <li>
                                     <strong>{{ $network === 'linkedin' ? 'in' : '↗' }}</strong>
-                                    <span>{{ preg_replace('#^https?://(www\.)?#', '', $content[$network]) }}</span>
+                                    @if ($network === 'website')
+                                        <a class="resume-social-link" href="{{ $content[$network] }}" target="_blank" rel="noopener">Portfolio</a>
+                                    @else
+                                        <span>{{ preg_replace('#^https?://(www\.)?#', '', $content[$network]) }}</span>
+                                    @endif
                                 </li>
                             @endif
                         @endforeach

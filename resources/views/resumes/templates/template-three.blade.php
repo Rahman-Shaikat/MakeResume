@@ -45,11 +45,11 @@
                             <li><span aria-hidden="true">☎</span>{{ $content['phone'] }}</li>
                         @endif
                         <li><span aria-hidden="true">@</span>{{ $content['email'] }}</li>
+                        @if ($content['website'])
+                            <li><span aria-hidden="true">↗</span><a class="resume-social-link" href="{{ $content['website'] }}" target="_blank" rel="noopener">Portfolio</a></li>
+                        @endif
                         @if ($content['linkedin'])
                             <li><span aria-hidden="true">↗</span>{{ preg_replace('#^https?://(www\.)?#', '', $content['linkedin']) }}</li>
-                        @endif
-                        @if ($content['website'])
-                            <li><span aria-hidden="true">↗</span>{{ preg_replace('#^https?://(www\.)?#', '', $content['website']) }}</li>
                         @endif
                         @if ($content['github'])
                             <li><span aria-hidden="true">↗</span>{{ preg_replace('#^https?://(www\.)?#', '', $content['github']) }}</li>

@@ -34,10 +34,10 @@
                     <div class="resume-contact">
                         <span><b><i class="fa-solid fa-phone" aria-hidden="true"></i></b>{{ $content['phone'] }}</span>
                         <span><b><i class="fa-regular fa-envelope" aria-hidden="true"></i></b>{{ $content['email'] }}</span>
-                        @if ($content['website'])
-                            <a href="{{ $content['website'] }}" target="_blank" rel="noopener"><b>↗</b>{{ $content['website'] }}</a>
-                        @endif
                         <span class="contact-wide"><b><i class="fa-solid fa-location-dot" aria-hidden="true"></i></b>{{ $content['location'] }}</span>
+                        @if ($content['website'])
+                            <a href="{{ $content['website'] }}" target="_blank" rel="noopener"><b>↗</b>Portfolio</a>
+                        @endif
                         @if ($content['linkedin'])
                             <a href="{{ $content['linkedin'] }}" target="_blank" rel="noopener"><b>↗</b>LinkedIn</a>
                         @endif
